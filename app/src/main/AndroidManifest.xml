@@ -10,6 +10,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".achievements"
+            android:label="@string/title_activity_achievements"
+            android:parentActivityName=".home"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fyp.c16398141.healthlete.home" />
+        </activity>
+        <activity
+            android:name=".fitness"
+            android:label="@string/title_activity_fitness"
+            android:parentActivityName=".home"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fyp.c16398141.healthlete.home" />
+        </activity>
+        <activity
             android:name=".food_log"
             android:label="@string/title_activity_food_log"
             android:parentActivityName=".home"
