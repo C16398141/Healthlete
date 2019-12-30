@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1030506320648",
+    "firebase_url": "https://healthlete-25a98.firebaseio.com",
+    "project_id": "healthlete-25a98",
+    "storage_bucket": "healthlete-25a98.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030506320648:android:3491838f003ff3d2ef12bd",
+        "android_client_info": {
+          "package_name": "fyp.c16398141.healthlete"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1030506320648-jdmci31qo4nbqnc97nrcghbvd4s8e193.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fyp.c16398141.healthlete",
+            "certificate_hash": "82975ce1c72c91ffba13cd8fc54186476aa9c3c0"
+          }
+        },
+        {
+          "client_id": "1030506320648-njfvurcsd769vkr8oo9i3m2l5gibcbfh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9UGXL8wfvA3yUebWckdjBYOfhuyJYo_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1030506320648-njfvurcsd769vkr8oo9i3m2l5gibcbfh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
