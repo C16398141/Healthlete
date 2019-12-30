@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/editprofile"
+            android:icon="@drawable/ic_edit_black_24dp"
+            android:title="Edit Profile" />
+        <item
+            android:id="@+id/addgym"
+            android:icon="@drawable/ic_fitness_center_black_24dp"
+            android:title="Add Gym" />
+        <item
+            android:id="@+id/createreminder"
+            android:icon="@drawable/ic_add_alarm_black_24dp"
+            android:title="Create Reminder" />
+        <item
+            android:id="@+id/howtoguide"
+            android:icon="@drawable/ic_ondemand_video_black_24dp"
+            android:title="How to Guide" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/share"
+                android:icon="@drawable/ic_share_black_24dp"
+                android:title="Share" />
+        </menu>
+    </item>
+</menu>
