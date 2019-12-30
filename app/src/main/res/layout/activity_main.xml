@@ -23,7 +23,7 @@
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
         <include layout="@layout/content_main" />
-        
+
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
