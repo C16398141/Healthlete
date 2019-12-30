@@ -14,7 +14,7 @@ public class LocalDB
     private static final String KEY_ROWID = "_id";
     private static final String KEY_NAME = "name";
     private static final String KEY_RANK = "rank";
-    private static final String KEY_POINTS = "points";
+    private static final String KEY_POINTS = "pointss";
     private static final String KEY_DOB = "DOB";
     private static final String KEY_nationality = "nationality";
     private static final String DATABASE_NAME = "Players1";
