@@ -9,7 +9,13 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Button;
+import android.text.Spannable;
 import android.widget.RelativeLayout;
 
 public class food_log extends AppCompatActivity {
@@ -22,7 +28,12 @@ public class food_log extends AppCompatActivity {
         setSupportActionBar(toolbar);
         RelativeLayout layout1 = findViewById(R.id.relative1);
         layout1.setBackgroundColor(Color.CYAN);
-
+        /*Button addButton = findViewById(R.id.addButton);
+        Spannable buttonLabel = new SpannableString(" Add New");
+        buttonLabel.setSpan(new ImageSpan(getApplicationContext(), R.drawable.plus_circle,
+                ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        addButton.setText(buttonLabel);
+*/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
