@@ -41,66 +41,17 @@
             android:layout_weight="3" >
 
             <ScrollView
+                android:id="@+id/scrolling"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:scrollbars="none"
                 android:layout_weight="1">
 
                 <TableLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:id="@+id/food_table"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:stretchColumns="1,2,3,4">
-                    <TableRow
-                        android:id="@+id/tableRow1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageButton
-                            android:id="@+id/addButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:minWidth="0dp"
-                            android:minHeight="0dp"
-                            android:src="@mipmap/plus_circle"
-                            app:layout_constraintHorizontal_weight="1" />
-                        <TextView
-                            android:id="@+id/name"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_toEndOf="@id/addButton"
-                            android:text="Name"
-                            app:layout_constraintHorizontal_weight="2.25"
-                            android:gravity="center"
-                            android:padding="0dip" />
-                        <TextView
-                            android:id="@+id/calories"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_toEndOf="@id/name"
-                            android:text="Calories"
-                            app:layout_constraintHorizontal_weight="2.25"
-                            android:gravity="center"
-                            android:padding="0dip" />
-                        <TextView
-                            android:id="@+id/carbs"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_toEndOf="@id/calories"
-                            android:text="Carbs"
-                            app:layout_constraintHorizontal_weight="2.25"
-                            android:gravity="center"
-                            android:padding="0dip" />
-                        <TextView
-                            android:id="@+id/protein"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_toEndOf="@id/carbs"
-                            android:text="Protein"
-                            app:layout_constraintHorizontal_weight="2.25"
-                            android:gravity="center"
-                            android:padding="0dip" />
-                    </TableRow>
                 </TableLayout>
             </ScrollView>
         </RelativeLayout>
