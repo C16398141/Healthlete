@@ -1,5 +1,6 @@
 package fyp.c16398141.healthlete;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -23,6 +24,8 @@ import android.widget.RelativeLayout;
 
 public class food_log extends AppCompatActivity {
 
+    LocalDB ldb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,8 @@ public class food_log extends AppCompatActivity {
 */
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init();
+        //addRows()
+        //displayRows();
     }
 
     public void init() {
@@ -92,4 +97,17 @@ public class food_log extends AppCompatActivity {
             table.addView(tbrow);
         }
     }
+
+    public void addRows()
+    {
+        String foodname = "porridge";
+        ldb.addFoodEntry(foodname,10,"16022020",68,20,12);
+    }
+
+    public void displayRows()
+    {
+        Cursor entries;
+        entries = ldb.getAllFoodEntries();
+    }
 }
+

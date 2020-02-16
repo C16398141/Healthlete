@@ -35,14 +35,19 @@ public class LocalDB
                     "foodname text unique not null, " +
                     "quantity integer not null, " +
                     "date text not null, "  +
-                    "nationality text not null);";
+                    "cals_per_qty integer not null, " +
+                    "carbs_per_qty integer not null, " +
+                    "protein_per_qty integer not null);";
+    //later on make food table with nutrient per qty values and take from them - remove from entry table
 
-    private static final String DATABASE_CREATE2 =
-            "create table Points (_id integer primary key autoincrement, " +
-                    "tournamentname text not null, " +
-                    "playername text unique not null, " +
-                    "points integer not null, " +
-                    "date1 text not null);";
+    private static final String CreateWorkoutEntryTable =
+            "create table WorkoutEntry (entry_id integer primary key autoincrement, " +
+                    "exercisename text not null, " +
+                    "weight integer unique not null, " +
+                    "sets integer not null, " +
+                    "repetitions integer not null, " +
+                    "date text not null);";
+    //add running/aerobic exercise formats and sports with duration perhaps
 
     private final Context context;
     private DatabaseHelper DBHelper;
@@ -78,7 +83,7 @@ public class LocalDB
         {
             db.execSQL(CreateUserTable);
             db.execSQL(CreateFoodEntryTable);
-            db.execSQL(DATABASE_CREATE2);
+            db.execSQL(CreateWorkoutEntryTable);
         }
 
         @Override
@@ -98,15 +103,16 @@ public class LocalDB
         DBHelper.close();
     }
 
-    public boolean insertPerson(String name1, Integer points, String DOB, String nationality)
+    public boolean addFoodEntry(String foodname, Integer quantity, String date, Integer cals_per_qty, Integer carbs_per_qty, Integer proteins_per_qty)
     {
         ContentValues initialValues = new ContentValues();
-        initialValues.put(KEY_NAME, name1);
-        initialValues.put(KEY_RANK, 100);
-        initialValues.put(KEY_POINTS, points);
-        initialValues.put(KEY_DOB, DOB);
-        initialValues.put(KEY_nationality, nationality);
-        long result = db.insert(DATABASE_TABLE, null, initialValues);
+        initialValues.put("foodname", foodname);
+        initialValues.put("quantity", quantity);
+        initialValues.put("date", date);
+        initialValues.put("cals_per_qty", cals_per_qty);
+        initialValues.put("carbs_per_qty", carbs_per_qty);
+        initialValues.put("protein_per_qty" , proteins_per_qty);
+        long result = db.insert(CreateFoodEntryTable , null, initialValues);
         if (result==-1) {
             return false;
         }
@@ -116,14 +122,20 @@ public class LocalDB
     }
 
 
-    public boolean deletePerson(long rowId)
+    public boolean deleteFoodEntry(long rowId)
     {
-        return true;
+        long result = db.delete("FoodEntry","entry_id = rowId",null);
+        if (result==-1) {
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
-    public Cursor getAllPeople() {
+    public Cursor getAllFoodEntries() {
 
-        Cursor data = db.rawQuery("SELECT * FROM Contact_Details2 ORDER BY name DESC;", null);
+        Cursor data = db.rawQuery("SELECT * FROM FoodEntry ORDER BY foodname DESC;", null);
         /**db.delete("DATABASE_TABLE", null, null);*/
         return data;
 
