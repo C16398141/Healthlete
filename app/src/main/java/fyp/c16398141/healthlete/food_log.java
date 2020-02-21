@@ -1,5 +1,6 @@
 package fyp.c16398141.healthlete;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,9 +10,11 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
 
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -39,17 +42,13 @@ public class food_log extends AppCompatActivity {
         buttonLabel.setSpan(new ImageSpan(getApplicationContext(), R.drawable.plus_circle,
                 ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         addButton.setText(buttonLabel);
-*/
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        init();
-        //addRows()
-        //displayRows();
-    }
 
-    public void init() {
+*/
         TableLayout table = (TableLayout) findViewById(R.id.food_table);
         TableRow heading = new TableRow(this);
-        ImageButton add = new ImageButton(this);
+        int buttonStyle = R.style.Widget_AppCompat_Button_Borderless;
+        ImageButton add = new ImageButton(new ContextThemeWrapper(this, buttonStyle));
+        add.setId(View.generateViewId());
         add.setImageResource(R.mipmap.plus_circle);
         heading.addView(add);
         TextView tv1 = new TextView(this);
@@ -69,6 +68,25 @@ public class food_log extends AppCompatActivity {
         tv4.setTextColor(Color.BLACK);
         heading.addView(tv4);
         table.addView(heading);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        init(table);
+        //addRows()
+        //displayRows();
+
+
+        //ImageButton add = this.findViewById();
+        add.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                Intent intent = new Intent(food_log.this, food_entry.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void init(TableLayout table) {
         for (int i = 0; i < 10; i++) {
             TableRow tbrow = new TableRow(this);
             ImageButton minus = new ImageButton(this);
