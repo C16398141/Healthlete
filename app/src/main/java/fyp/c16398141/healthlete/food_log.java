@@ -87,6 +87,17 @@ public class food_log extends AppCompatActivity {
     }
 
     public void init(TableLayout table) {
+        displayRows(table);
+    }
+
+    public void addRows()
+    {
+        String foodname = "porridge";
+        ldb.addFoodEntry(foodname,10,"16022020",68,20,12);
+    }
+
+    public void displayRows(TableLayout table)
+    {
         for (int i = 0; i < 10; i++) {
             TableRow tbrow = new TableRow(this);
             ImageButton minus = new ImageButton(this);
@@ -113,19 +124,9 @@ public class food_log extends AppCompatActivity {
             t5v.setGravity(Gravity.CENTER);
             tbrow.addView(t5v);
             table.addView(tbrow);
+            //Cursor entries;
+            //entries = ldb.getAllFoodEntries();
         }
-    }
-
-    public void addRows()
-    {
-        String foodname = "porridge";
-        ldb.addFoodEntry(foodname,10,"16022020",68,20,12);
-    }
-
-    public void displayRows()
-    {
-        Cursor entries;
-        entries = ldb.getAllFoodEntries();
     }
 }
 
