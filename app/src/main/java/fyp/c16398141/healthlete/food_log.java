@@ -69,6 +69,8 @@ public class food_log extends AppCompatActivity {
         heading.addView(tv4);
         table.addView(heading);
 
+        ldb = new LocalDB(this);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init(table);
         //addRows()
@@ -87,7 +89,9 @@ public class food_log extends AppCompatActivity {
     }
 
     public void init(TableLayout table) {
+        ldb.open();
         displayRows(table);
+        ldb.close();
     }
 
     public void addRows()
@@ -98,34 +102,38 @@ public class food_log extends AppCompatActivity {
 
     public void displayRows(TableLayout table)
     {
-        for (int i = 0; i < 10; i++) {
-            TableRow tbrow = new TableRow(this);
-            ImageButton minus = new ImageButton(this);
-            minus.setImageResource(R.mipmap.ic_minus);
-            tbrow.addView(minus);
-            TextView t2v = new TextView(this);
-            t2v.setText("Food " + i);
-            t2v.setTextColor(Color.BLACK);
-            t2v.setGravity(Gravity.CENTER);
-            tbrow.addView(t2v);
-            TextView t3v = new TextView(this);
-            t3v.setText("Cals" + i);
-            t3v.setTextColor(Color.BLACK);
-            t3v.setGravity(Gravity.CENTER);
-            tbrow.addView(t3v);
-            TextView t4v = new TextView(this);
-            t4v.setText("Carbs" + i * 15 / 32 * 10);
-            t4v.setTextColor(Color.BLACK);
-            t4v.setGravity(Gravity.CENTER);
-            tbrow.addView(t4v);
-            TextView t5v = new TextView(this);
-            t5v.setText("Proteins" + i);
-            t5v.setTextColor(Color.BLACK);
-            t5v.setGravity(Gravity.CENTER);
-            tbrow.addView(t5v);
-            table.addView(tbrow);
-            //Cursor entries;
-            //entries = ldb.getAllFoodEntries();
+        Cursor entries = ldb.getAllFoodEntries();
+        int rows = entries.getCount();
+        if (rows == 0) {
+        } else {
+            entries.moveToFirst();
+            do {
+                TableRow tbrow = new TableRow(this);
+                ImageButton minus = new ImageButton(this);
+                minus.setImageResource(R.mipmap.ic_minus);
+                tbrow.addView(minus);
+                TextView t2v = new TextView(this);
+                t2v.setText(entries.getString(1));
+                t2v.setTextColor(Color.BLACK);
+                t2v.setGravity(Gravity.CENTER);
+                tbrow.addView(t2v);
+                TextView t3v = new TextView(this);
+                t3v.setText(Integer.toString(entries.getInt(4)));
+                t3v.setTextColor(Color.BLACK);
+                t3v.setGravity(Gravity.CENTER);
+                tbrow.addView(t3v);
+                TextView t4v = new TextView(this);
+                t4v.setText(Integer.toString(entries.getInt(5)));
+                t4v.setTextColor(Color.BLACK);
+                t4v.setGravity(Gravity.CENTER);
+                tbrow.addView(t4v);
+                TextView t5v = new TextView(this);
+                t5v.setText(Integer.toString(entries.getInt(6)));
+                t5v.setTextColor(Color.BLACK);
+                t5v.setGravity(Gravity.CENTER);
+                tbrow.addView(t5v);
+                table.addView(tbrow);
+            } while (entries.moveToNext());
         }
     }
 }

@@ -24,14 +24,14 @@ public class LocalDB
 
     // SQL statement to create the database
     private static final String CreateUserTable =
-            "create table User (user_id integer primary key autoincrement, " +
+            "create table if not exists User (user_id integer primary key autoincrement, " +
                     "firstname text unique not null, " +
                     "surname text unique not null, " +
                     "dob text not null, " +
                     "height integer not null);";
 
     private static final String CreateFoodEntryTable =
-            "create table FoodEntry (entry_id integer primary key autoincrement, " +
+            "create table if not exists FoodEntry (entry_id integer primary key autoincrement, " +
                     "foodname text unique not null, " +
                     "quantity integer not null, " +
                     "date text not null, "  +
@@ -41,7 +41,7 @@ public class LocalDB
     //later on make food table with nutrient per qty values and take from them - remove from entry table
 
     private static final String CreateWorkoutEntryTable =
-            "create table WorkoutEntry (entry_id integer primary key autoincrement, " +
+            "create table if not exists WorkoutEntry (entry_id integer primary key autoincrement, " +
                     "exercisename text not null, " +
                     "weight integer unique not null, " +
                     "sets integer not null, " +
@@ -112,7 +112,7 @@ public class LocalDB
         initialValues.put("cals_per_qty", cals_per_qty);
         initialValues.put("carbs_per_qty", carbs_per_qty);
         initialValues.put("protein_per_qty" , proteins_per_qty);
-        long result = db.insert(CreateFoodEntryTable , null, initialValues);
+        long result = db.insert("FoodEntry", null, initialValues);
         if (result==-1) {
             return false;
         }

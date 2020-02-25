@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ public class food_entry extends AppCompatActivity {
         setContentView(R.layout.activity_food_entry);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ldb = new LocalDB(this);
 
         field1   = (EditText)findViewById(R.id.field1);
         field2   = (EditText)findViewById(R.id.field2);
@@ -54,6 +56,7 @@ public class food_entry extends AppCompatActivity {
                 int proteinsperqty = Integer.parseInt(proteins);
 
                 int result = 1;
+                ldb.open();
 
                 //if previous activity says to insert, then call the insert method
                 if(result==1) {
@@ -71,7 +74,15 @@ public class food_entry extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), "unsuccessful insert", Toast.LENGTH_SHORT).show();
                     }
+                    ViewGroup group = (ViewGroup)findViewById(R.id.constraint);
+                    for (int i = 0, count = group.getChildCount(); i < count; ++i) {
+                        View view = group.getChildAt(i);
+                        if (view instanceof EditText) {
+                            ((EditText)view).setText("");
+                        }
+                    }
                 }
+                ldb.close();
                 /*
                 //if previous activity says to update, then call the update method
                 else{

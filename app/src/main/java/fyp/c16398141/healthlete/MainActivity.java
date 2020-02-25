@@ -20,6 +20,7 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
+    LocalDB ldb;
     private DrawerLayout drawer;
 
     @Override
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        ldb = new LocalDB(this);
+        ldb.open();
+        ldb.close();
     }
 
     @Override
