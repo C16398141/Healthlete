@@ -3,8 +3,13 @@ package fyp.c16398141.healthlete;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
 
+import com.anychart.AnyChart;
+import com.anychart.AnyChartView;
+import com.anychart.charts.Polar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -14,6 +19,7 @@ import androidx.core.view.ViewCompat;
 
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
@@ -24,10 +30,16 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.text.Spannable;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class food_log extends AppCompatActivity {
 
     LocalDB ldb;
+    //AnyChartView anyChartView;
+    List<ImageButton> list = new ArrayList<ImageButton>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +56,7 @@ public class food_log extends AppCompatActivity {
         addButton.setText(buttonLabel);
 
 */
+        //anyChartView = findViewById(R.id.any_chart_view);
         TableLayout table = (TableLayout) findViewById(R.id.food_table);
         TableRow heading = new TableRow(this);
         int buttonStyle = R.style.Widget_AppCompat_Button_Borderless;
@@ -73,9 +86,14 @@ public class food_log extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init(table);
+        /*setupPolarChart();
+        drawArc(oval, 0F, 90F, true, turquoisePaint);
+        drawArc(oval, 90F, 90F, true, orangePaint);
+        drawArc(oval, 180F, 90F, true, yellowPaint);
+        drawArc(oval, 270F, 90F, true, hotPinkPaint);*/
+
         //addRows()
         //displayRows();
-
 
         //ImageButton add = this.findViewById();
         add.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +104,9 @@ public class food_log extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+
     }
 
     public void init(TableLayout table) {
@@ -94,10 +115,18 @@ public class food_log extends AppCompatActivity {
         ldb.close();
     }
 
+    public void setupPolarChart(){
+        Polar polar = AnyChart.polar();
+    }
+
     public void addRows()
     {
         String foodname = "porridge";
         ldb.addFoodEntry(foodname,10,"16022020",68,20,12);
+    }
+
+    public void drawArc(RectF oval, float startAngle, float sweepAngle, boolean useCenter, Paint paint){
+
     }
 
     public void displayRows(TableLayout table)
@@ -107,12 +136,17 @@ public class food_log extends AppCompatActivity {
         if (rows == 0) {
         } else {
             entries.moveToFirst();
+            int i = 0;
             do {
+                i++;
                 TableRow tbrow = new TableRow(this);
                 ImageButton minus = new ImageButton(this);
                 minus.setImageResource(R.mipmap.ic_minus);
+                minus.setId(i);
                 tbrow.addView(minus);
+                list.add(minus);
                 TextView t2v = new TextView(this);
+                t2v.setId(i);
                 t2v.setText(entries.getString(1));
                 t2v.setTextColor(Color.BLACK);
                 t2v.setGravity(Gravity.CENTER);
@@ -134,6 +168,24 @@ public class food_log extends AppCompatActivity {
                 tbrow.addView(t5v);
                 table.addView(tbrow);
             } while (entries.moveToNext());
+
+            for(final ImageButton minus : list){
+                minus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int id = minus.getId();
+                        Log.i("TAG", "The id is" + id);
+                        ldb.open();
+                        boolean result = ldb.deleteFoodEntry(id);
+                        ldb.close();
+                        if (result == true) {
+                            Toast.makeText(getApplicationContext(), "Successfully deleted", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "unsuccessful delete", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
         }
     }
 }

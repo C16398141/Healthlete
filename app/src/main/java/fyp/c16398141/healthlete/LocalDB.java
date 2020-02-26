@@ -122,9 +122,9 @@ public class LocalDB
     }
 
 
-    public boolean deleteFoodEntry(long rowId)
+    public boolean deleteFoodEntry(Integer rowId)
     {
-        long result = db.delete("FoodEntry","entry_id = rowId",null);
+        long result = db.delete("FoodEntry","entry_id = ?",new String[] { String.valueOf(rowId) });
         if (result==-1) {
             return false;
         }

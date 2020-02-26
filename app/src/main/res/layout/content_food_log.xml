@@ -67,11 +67,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pie Charts"
-                android:layout_centerInParent="true"
-                app:layout_constraintHorizontal_weight="5"
-                tools:layout_editor_absoluteX="215dp"
-                tools:layout_editor_absoluteY="127dp" />
-
+                android:layout_centerHorizontal="true"
+                app:layout_constraintTop_toTopOf="parent" />
+<!--
+            <com.anychart.AnyChartView
+                android:id="@+id/any_chart_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                app:layout_constraintTop_toBottomOf="@id/titleEnd"/>
+-->
         </RelativeLayout>
 
     </LinearLayout>
