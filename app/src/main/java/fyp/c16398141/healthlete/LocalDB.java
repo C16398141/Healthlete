@@ -124,7 +124,12 @@ public class LocalDB
 
     public boolean deleteFoodEntry(Integer rowId)
     {
-        long result = db.delete("FoodEntry","entry_id = ?",new String[] { String.valueOf(rowId) });
+        //String strId = String.valueOf(rowId);
+        String whereClause = "entry_id=?";
+        String whereArgs[] = {rowId.toString()};
+        //new String[] { strId }
+        long result = db.delete("FoodEntry",whereClause,whereArgs);
+        //long result = db.execSQL(DELETE FROM TABLE);
         if (result==-1) {
             return false;
         }

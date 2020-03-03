@@ -58,29 +58,6 @@ public class food_log extends AppCompatActivity {
 */
         //anyChartView = findViewById(R.id.any_chart_view);
         TableLayout table = (TableLayout) findViewById(R.id.food_table);
-        TableRow heading = new TableRow(this);
-        int buttonStyle = R.style.Widget_AppCompat_Button_Borderless;
-        ImageButton add = new ImageButton(new ContextThemeWrapper(this, buttonStyle));
-        add.setId(View.generateViewId());
-        add.setImageResource(R.mipmap.plus_circle);
-        heading.addView(add);
-        TextView tv1 = new TextView(this);
-        tv1.setText(" Name ");
-        tv1.setTextColor(Color.BLACK);
-        heading.addView(tv1);
-        TextView tv2 = new TextView(this);
-        tv2.setText(" Calories ");
-        tv2.setTextColor(Color.BLACK);
-        heading.addView(tv2);
-        TextView tv3 = new TextView(this);
-        tv3.setText(" Carbs ");
-        tv3.setTextColor(Color.BLACK);
-        heading.addView(tv3);
-        TextView tv4 = new TextView(this);
-        tv4.setText(" Protein ");
-        tv4.setTextColor(Color.BLACK);
-        heading.addView(tv4);
-        table.addView(heading);
 
         ldb = new LocalDB(this);
 
@@ -96,14 +73,6 @@ public class food_log extends AppCompatActivity {
         //displayRows();
 
         //ImageButton add = this.findViewById();
-        add.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-
-                Intent intent = new Intent(food_log.this, food_entry.class);
-                startActivity(intent);
-            }
-        });
 
 
 
@@ -129,8 +98,41 @@ public class food_log extends AppCompatActivity {
 
     }
 
-    public void displayRows(TableLayout table)
+    public void displayRows(final TableLayout table)
     {
+        TableRow heading = new TableRow(this);
+        int buttonStyle = R.style.Widget_AppCompat_Button_Borderless;
+        ImageButton add = new ImageButton(new ContextThemeWrapper(this, buttonStyle));
+        add.setId(View.generateViewId());
+        add.setImageResource(R.mipmap.plus_circle);
+        heading.addView(add);
+        TextView tv1 = new TextView(this);
+        tv1.setText(" Name ");
+        tv1.setTextColor(Color.BLACK);
+        heading.addView(tv1);
+        TextView tv2 = new TextView(this);
+        tv2.setText(" Calories ");
+        tv2.setTextColor(Color.BLACK);
+        heading.addView(tv2);
+        TextView tv3 = new TextView(this);
+        tv3.setText(" Carbs ");
+        tv3.setTextColor(Color.BLACK);
+        heading.addView(tv3);
+        TextView tv4 = new TextView(this);
+        tv4.setText(" Protein ");
+        tv4.setTextColor(Color.BLACK);
+        heading.addView(tv4);
+        table.addView(heading);
+
+        add.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+
+                Intent intent = new Intent(food_log.this, food_entry.class);
+                startActivity(intent);
+            }
+        });
+
         Cursor entries = ldb.getAllFoodEntries();
         int rows = entries.getCount();
         if (rows == 0) {
@@ -142,11 +144,11 @@ public class food_log extends AppCompatActivity {
                 TableRow tbrow = new TableRow(this);
                 ImageButton minus = new ImageButton(this);
                 minus.setImageResource(R.mipmap.ic_minus);
-                minus.setId(i);
+                minus.setId(entries.getInt(0));
                 tbrow.addView(minus);
                 list.add(minus);
                 TextView t2v = new TextView(this);
-                t2v.setId(i);
+                //t2v.setId(i);
                 t2v.setText(entries.getString(1));
                 t2v.setTextColor(Color.BLACK);
                 t2v.setGravity(Gravity.CENTER);
@@ -177,12 +179,14 @@ public class food_log extends AppCompatActivity {
                         Log.i("TAG", "The id is" + id);
                         ldb.open();
                         boolean result = ldb.deleteFoodEntry(id);
-                        ldb.close();
                         if (result == true) {
                             Toast.makeText(getApplicationContext(), "Successfully deleted", Toast.LENGTH_SHORT).show();
+                            table.removeAllViews();
+                            displayRows(table);
                         } else {
                             Toast.makeText(getApplicationContext(), "unsuccessful delete", Toast.LENGTH_SHORT).show();
                         }
+                        ldb.close();
                     }
                 });
             }
