@@ -51,7 +51,8 @@
                     android:id="@+id/food_table"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:stretchColumns="1,2,3,4">
+                    android:stretchColumns="1,2,3,4"
+                    android:background="#f1f1f1">
                 </TableLayout>
             </ScrollView>
         </RelativeLayout>
