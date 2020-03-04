@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraint1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -63,21 +64,21 @@
             android:layout_height="match_parent"
             android:layout_weight="6.5" >
 
-            <TextView
-                android:id="@+id/titleEnd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pie Charts"
-                android:layout_centerHorizontal="true"
-                app:layout_constraintTop_toTopOf="parent" />
-<!--
-            <com.anychart.AnyChartView
-                android:id="@+id/any_chart_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                app:layout_constraintTop_toBottomOf="@id/titleEnd"/>
--->
+            <!--          <TextView
+                          android:id="@+id/titleEnd"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="Pie Charts"
+                          android:layout_centerHorizontal="true"
+                          app:layout_constraintTop_toTopOf="parent" />
+
+                      <com.anychart.AnyChartView
+                          android:id="@+id/any_chart_view"
+                          android:layout_width="match_parent"
+                          android:layout_height="match_parent"
+                          android:layout_centerHorizontal="true"
+                          app:layout_constraintTop_toBottomOf="@id/titleEnd"/>
+          -->
         </RelativeLayout>
 
     </LinearLayout>

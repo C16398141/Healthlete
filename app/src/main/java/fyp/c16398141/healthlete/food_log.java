@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.anychart.AnyChart;
@@ -16,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.ViewCompat;
 
 import android.text.SpannableString;
@@ -24,6 +26,7 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -36,6 +39,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import android.widget.TableRow.LayoutParams;
+
+import static java.lang.String.valueOf;
 //import android.widget.RelativeLayout.LayoutParams;
 //import android.widget.LinearLayout.LayoutParams;
 
@@ -44,6 +49,7 @@ public class food_log extends AppCompatActivity {
     LocalDB ldb;
     //AnyChartView anyChartView;
     List<ImageButton> list = new ArrayList<ImageButton>();
+    List<Integer> dimensions = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,41 @@ public class food_log extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init(table);
+
+        final RelativeLayout rl = findViewById(R.id.relative3);
+        final ConstraintLayout cl = findViewById(R.id.constraint1);
+        ViewTreeObserver vto = rl.getViewTreeObserver();
+        ViewTreeObserver vto2 = rl.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                rl.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int rlwidth  = rl.getMeasuredWidth();
+                int rlheight = rl.getMeasuredHeight();
+                dimensions.add(rlheight);
+                Log.i("TAG","**************");
+                Log.i("TAG",valueOf(rlwidth));
+                Log.i("TAG",valueOf(rlheight));
+            }
+        });
+        vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                cl.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int clwidth  = cl.getMeasuredWidth();
+                int clheight = cl.getMeasuredHeight();
+                dimensions.add(clheight);
+                dimensions.add(clwidth);
+                Log.i("TAG","**************");
+                Log.i("TAG",valueOf(clwidth));
+                Log.i("TAG",valueOf(clheight));
+                setupPieChart();
+            }
+        });
+
+        //int difference = dimensions.get(0) - dimensions.get(0);
+        //Log.i("TAG",valueOf(difference));
+
         /*setupPolarChart();
         drawArc(oval, 0F, 90F, true, turquoisePaint);
         drawArc(oval, 90F, 90F, true, orangePaint);
@@ -77,9 +118,6 @@ public class food_log extends AppCompatActivity {
         //displayRows();
 
         //ImageButton add = this.findViewById();
-
-
-
     }
 
     @Override
@@ -96,8 +134,12 @@ public class food_log extends AppCompatActivity {
         ldb.close();
     }
 
-    public void setupPolarChart(){
-        Polar polar = AnyChart.polar();
+    public void setupPieChart(){
+        Log.i("TAG","HERE");
+        for (Integer i: dimensions){
+            Log.i("TAG",valueOf(i));
+            Log.i("TAG","HERE");
+        }
     }
 
     public void addRows()
@@ -172,9 +214,7 @@ public class food_log extends AppCompatActivity {
         if (rows == 0) {
         } else {
             entries.moveToFirst();
-            int i = 0;
             do {
-                i++;
                 TableRow tbrow = new TableRow(this);
                 tbrow.setGravity(Gravity.CENTER);
                 ImageButton minus = new ImageButton(this);
@@ -185,7 +225,6 @@ public class food_log extends AppCompatActivity {
                 list.add(minus);
                 TextView t2v = new TextView(this);
                 t2v.setBackgroundColor(Color.WHITE);
-                //t2v.setId(i);
                 t2v.setText(entries.getString(1));
                 t2v.setTextColor(Color.BLACK);
                 t2v.setGravity(Gravity.CENTER);
