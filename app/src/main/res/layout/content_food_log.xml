@@ -64,6 +64,12 @@
             android:layout_height="match_parent"
             android:layout_weight="6.5" >
 
+            <ImageView
+                android:id="@+id/imageview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </ImageView>
+
             <!--          <TextView
                           android:id="@+id/titleEnd"
                           android:layout_width="wrap_content"

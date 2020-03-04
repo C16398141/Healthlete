@@ -2,6 +2,8 @@ package fyp.c16398141.healthlete;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -25,9 +27,11 @@ import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -54,6 +58,8 @@ public class food_log extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //View myView = null;
+        //LayoutInflater.from(context).inflate(R.layout.activity_food_log, myView, true);
         setContentView(R.layout.activity_food_log);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,13 +90,12 @@ public class food_log extends AppCompatActivity {
                 rl.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 int rlwidth  = rl.getMeasuredWidth();
                 int rlheight = rl.getMeasuredHeight();
+                dimensions.add(rlwidth);
                 dimensions.add(rlheight);
-                Log.i("TAG","**************");
-                Log.i("TAG",valueOf(rlwidth));
-                Log.i("TAG",valueOf(rlheight));
+                setupPieChart();
             }
         });
-        vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        /*vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 cl.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -98,12 +103,9 @@ public class food_log extends AppCompatActivity {
                 int clheight = cl.getMeasuredHeight();
                 dimensions.add(clheight);
                 dimensions.add(clwidth);
-                Log.i("TAG","**************");
-                Log.i("TAG",valueOf(clwidth));
-                Log.i("TAG",valueOf(clheight));
                 setupPieChart();
             }
-        });
+        });*/
 
         //int difference = dimensions.get(0) - dimensions.get(0);
         //Log.i("TAG",valueOf(difference));
@@ -128,18 +130,74 @@ public class food_log extends AppCompatActivity {
         startActivity(getIntent());
     }
 
+    protected void onDraw(Canvas canvas) {
+        /*Float drawUpto = 46f;
+
+
+        float mouthInset = mRadius / 3f;
+        mArcBounds.set(mouthInset, mouthInset, mRadius * 2 - mouthInset, mRadius * 2 - mouthInset);
+        canvas.drawArc(mArcBounds, 0f, 360f, false, circleGray);
+
+        canvas.drawArc(mArcBounds, 270f, drawUpto, false, circleYellow);*/
+
+
+    }
     public void init(TableLayout table) {
         ldb.open();
         displayRows(table);
         ldb.close();
     }
 
-    public void setupPieChart(){
-        Log.i("TAG","HERE");
-        for (Integer i: dimensions){
-            Log.i("TAG",valueOf(i));
-            Log.i("TAG","HERE");
-        }
+    public void setupPieChart() {
+
+        int imageViewWidth = dimensions.get(0);
+        int imageViewHeight = dimensions.get(1);
+        Log.i("TAG",valueOf(imageViewWidth));
+        Log.i("TAG",valueOf(imageViewHeight));
+        ImageView imageView = (ImageView) findViewById(R.id.imageview);
+        Bitmap bitmap = Bitmap.createBitmap(imageViewWidth, imageViewHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.BLACK);
+        canvas.drawCircle(3*imageViewWidth/16, imageViewHeight/2, imageViewWidth/8, paint);
+        canvas.drawCircle(8*imageViewWidth/16, imageViewHeight/2, imageViewWidth/8, paint);
+        canvas.drawCircle(13*imageViewWidth/16, imageViewHeight/2, imageViewWidth/8, paint);
+
+        Paint paint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint2.setColor(Color.BLUE);
+        RectF arc = new RectF(imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,5*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
+        canvas.drawArc (arc, -90, 90, true,  paint2);
+        RectF arc2 = new RectF(6*imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,10*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
+        canvas.drawArc (arc2, -90, 90, true,  paint2);
+        RectF arc3 = new RectF(11*imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,15*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
+        canvas.drawArc (arc3, -90, 90, true,  paint2);
+        imageView.setImageBitmap(bitmap);
+        /*
+        int difference = dimensions.get(0) - dimensions.get(0);
+        Log.i("TAG",valueOf(difference));
+        Paint circleYellow;
+        Paint circleGray;
+        float radius;
+        RectF arcBounds = new RectF();
+
+        circleYellow = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circleYellow.setStyle(Paint.Style.FILL);
+        circleYellow.setColor(Color.YELLOW);
+        circleYellow.setStyle(Paint.Style.STROKE);
+        circleYellow.setStrokeWidth(15 * getResources().getDisplayMetrics().density);
+        circleYellow.setStrokeCap(Paint.Cap.SQUARE);
+        // mEyeAndMouthPaint.setColor(getResources().getColor(R.color.colorAccent));
+        circleYellow.setColor(Color.parseColor("#F9A61A"));
+
+        circleGray = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circleGray.setStyle(Paint.Style.FILL);
+        circleGray.setColor(Color.GRAY);
+        circleGray.setStyle(Paint.Style.STROKE);
+        circleGray.setStrokeWidth(15 * getResources().getDisplayMetrics().density);
+        circleGray.setStrokeCap(Paint.Cap.SQUARE);
+        // mEyeAndMouthPaint.setColor(getResources().getColor(R.color.colorAccent));
+        circleGray.setColor(Color.parseColor("#76787a"));
+         */
     }
 
     public void addRows()
