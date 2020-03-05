@@ -165,9 +165,9 @@ public class food_log extends AppCompatActivity {
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.BLUE);
-        canvas.drawCircle(3*imageViewWidth/16, imageViewHeight/2, imageViewWidth/8, paint);
-        canvas.drawCircle(8*imageViewWidth/16, imageViewHeight/2, imageViewWidth/8, paint);
-        canvas.drawCircle(13*imageViewWidth/16, imageViewHeight/2, imageViewWidth/8, paint);
+        canvas.drawCircle(3*imageViewWidth/16, imageViewHeight/2 +40, imageViewWidth/8, paint);
+        canvas.drawCircle(8*imageViewWidth/16, imageViewHeight/2 +40, imageViewWidth/8, paint);
+        canvas.drawCircle(13*imageViewWidth/16, imageViewHeight/2 +40, imageViewWidth/8, paint);
 
         ldb.open();
         Integer targetCals = 0;
@@ -203,12 +203,33 @@ public class food_log extends AppCompatActivity {
         Log.i("TAG",valueOf(totalCals));
         Log.i("TAG",valueOf(targetCals));
         Log.i("TAG",valueOf(angle));
-        RectF arc  = new RectF(imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,5*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
+        RectF arc  = new RectF(imageViewWidth/16,imageViewHeight/2 +40 - imageViewWidth/8,5*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8 +40);
         canvas.drawArc (arc, -90, angle, true,  paint2);
-        RectF arc2 = new RectF(6*imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,10*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
+        RectF arc2 = new RectF(6*imageViewWidth/16,imageViewHeight/2+40 - imageViewWidth/8,10*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8 +40);
         canvas.drawArc (arc2, -90, angle2, true,  paint2);
-        RectF arc3 = new RectF(11*imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,15*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
+        RectF arc3 = new RectF(11*imageViewWidth/16,imageViewHeight/2+40 - imageViewWidth/8,15*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8 +40);
         canvas.drawArc (arc3, -90, angle3, true,  paint2);
+
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(50);
+        canvas.drawText("Calories", 100, 65, paint);
+        canvas.drawText("Carbs", 470, 65, paint);
+        canvas.drawText("Protein", 800, 65, paint);
+
+        Float calFigure = (float)totalCals/targetCals*100;
+        Integer calInt = Math.round(calFigure);
+        String calPercent = calInt + "%";
+        canvas.drawText(calPercent, 160, 245, paint);
+
+        Float carbsFigure = (float)totalCarbos/targetCarbs*100;
+        Integer carbsInt = Math.round(carbsFigure);
+        String carbsPercent = carbsInt + "%";
+        canvas.drawText(carbsPercent, 500, 245, paint);
+
+        Float proteinFigure = (float)totalProteins/targetProtein*100;
+        Integer proteInt = Math.round(proteinFigure);
+        String proteinPercent = proteInt + "%";
+        canvas.drawText(proteinPercent, 830, 245, paint);
         imageView.setImageBitmap(bitmap);
         /*
         circleYellow = new Paint(Paint.ANTI_ALIAS_FLAG);
