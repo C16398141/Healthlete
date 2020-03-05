@@ -404,6 +404,53 @@ public class food_log extends AppCompatActivity {
             totrow.addView(total4,lp);
             table.addView(totrow);
 
+            ldb.open();
+            Integer targetCals = 0;
+            Integer targetCarbs = 0;
+            Integer targetProtein = 0;
+            Cursor goals = ldb.getGoals();
+            while (goals.moveToNext()){
+                targetCals = goals.getInt(2);
+                targetCarbs = goals.getInt(3);
+                targetProtein = goals.getInt(4);
+            }
+            ldb.close();
+
+            TableRow targetrow = new TableRow(this);
+            TextView target = new TextView(this);
+            totrow.setGravity(Gravity.CENTER);
+            target.setBackgroundColor(Color.WHITE);
+            target.setText("Target:");
+            target.setTextColor(Color.BLACK);
+            target.setGravity(Gravity.CENTER);
+            targetrow.addView(target,lp);
+            TextView target1 = new TextView(this);
+            targetrow.setGravity(Gravity.CENTER);
+            target1.setBackgroundColor(Color.WHITE);
+            target1.setText("-");
+            target1.setTextColor(Color.BLACK);
+            target1.setGravity(Gravity.CENTER);
+            targetrow.addView(target1,lp);
+            TextView target2 = new TextView(this);
+            target2.setText(valueOf(targetCals));
+            target2.setBackgroundColor(Color.WHITE);
+            target2.setTextColor(Color.BLACK);
+            target2.setGravity(Gravity.CENTER);
+            targetrow.addView(target2,lp);
+            TextView target3 = new TextView(this);
+            target3.setBackgroundColor(Color.WHITE);
+            target3.setText(valueOf(targetCarbs));
+            target3.setTextColor(Color.BLACK);
+            target3.setGravity(Gravity.CENTER);
+            targetrow.addView(target3,lp);
+            TextView target4 = new TextView(this);
+            target4.setText(valueOf(targetProtein));
+            target4.setBackgroundColor(Color.WHITE);
+            target4.setTextColor(Color.BLACK);
+            target4.setGravity(Gravity.CENTER);
+            targetrow.addView(target4,lp);
+            table.addView(targetrow);
+
             for(final ImageButton minus : list){
                 minus.setOnClickListener(new View.OnClickListener() {
                     @Override
