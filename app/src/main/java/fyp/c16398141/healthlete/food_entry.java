@@ -1,5 +1,6 @@
 package fyp.c16398141.healthlete;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,14 +13,18 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class food_entry extends AppCompatActivity {
 
     LocalDB ldb;
     private Button button;
-    EditText field1,field2,field3,field4,field5,field6;
+    EditText field1,field2,field3,field4,field5,field6,date;
+    DatePickerDialog datePickerDialog;
     //String update= getIntent().getStringExtra("EXTRA_ID");
     //Integer result = Integer.parseInt(update);
 
@@ -38,8 +43,32 @@ public class food_entry extends AppCompatActivity {
         field4   = (EditText)findViewById(R.id.field4);
         field5   = (EditText)findViewById(R.id.field5);
         field6   = (EditText)findViewById(R.id.field6);
+        date = (EditText) findViewById(R.id.date);
 
         button = (Button) findViewById(R.id.button);
+        //*******************************************************************
+        //MAKE DYNAMIC, CENTRAL LAYOUT, DEFAULT SET TO TODAY'S DATE INCLUDING HINT ELEMENT AND COMPATIBLE WITH DB
+        // THEN SORT TABLE ROWS BY DATE WITH SELECTABLE POSSIBLE DATE PICKER FILTER ABOVE TABLE WITH ERROR CHECKS
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // calender class's instance and get current date , month and year from calender
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                // date picker dialog
+                datePickerDialog = new DatePickerDialog(food_entry.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+                                date.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
 
         //when button is clicked, collect the textview's contents and get ready to update the database with them
         button.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +84,7 @@ public class food_entry extends AppCompatActivity {
                 int carbsperqty = Integer.parseInt(carbs);
                 String proteins = field6.getText().toString();
                 int proteinsperqty = Integer.parseInt(proteins);
+                //String newDob = date.getText().toString();
 
                 int result = 1;
                 ldb.open();
