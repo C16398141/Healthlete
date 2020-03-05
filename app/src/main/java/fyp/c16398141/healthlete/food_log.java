@@ -302,7 +302,6 @@ public class food_log extends AppCompatActivity {
 
                 Intent intent = new Intent(food_log.this, food_entry.class);
                 startActivity(intent);
-                //RETURNING FROM TOP OF SCREEN SHOWS CHANGES WHILE BOTTOM BUTTON RETURN DOESN'T REFRESH PARENT
             }
         });
 
@@ -355,6 +354,55 @@ public class food_log extends AppCompatActivity {
                 tbrow.addView(t5v,lp);
                 table.addView(tbrow);
             } while (entries.moveToNext());
+
+            Integer count = totalCalories.size();
+            Integer totalCals = 0;
+            Integer totalCarbos = 0;
+            Integer totalProteins = 0;
+
+            for (Integer c : totalCalories)
+                totalCals += c;
+
+            for (Integer a : totalCarbs)
+                totalCarbos += a;
+
+            for (Integer p : totalProtein)
+                totalProteins += p;
+
+            TableRow totrow = new TableRow(this);
+            TextView total = new TextView(this);
+            totrow.setGravity(Gravity.CENTER);
+            total.setBackgroundColor(Color.WHITE);
+            total.setText("Total:");
+            total.setTextColor(Color.BLACK);
+            total.setGravity(Gravity.CENTER);
+            totrow.addView(total,lp);
+            TextView total1 = new TextView(this);
+            totrow.setGravity(Gravity.CENTER);
+            total1.setBackgroundColor(Color.WHITE);
+            total1.setText(valueOf(count));
+            total1.setTextColor(Color.BLACK);
+            total1.setGravity(Gravity.CENTER);
+            totrow.addView(total1,lp);
+            TextView total2 = new TextView(this);
+            total2.setBackgroundColor(Color.WHITE);
+            total2.setText(valueOf(totalCals));
+            total2.setTextColor(Color.BLACK);
+            total2.setGravity(Gravity.CENTER);
+            totrow.addView(total2,lp);
+            TextView total3 = new TextView(this);
+            total3.setText(valueOf(totalCarbos));
+            total3.setBackgroundColor(Color.WHITE);
+            total3.setTextColor(Color.BLACK);
+            total3.setGravity(Gravity.CENTER);
+            totrow.addView(total3,lp);
+            TextView total4 = new TextView(this);
+            total4.setText(valueOf(totalProteins));
+            total4.setBackgroundColor(Color.WHITE);
+            total4.setTextColor(Color.BLACK);
+            total4.setGravity(Gravity.CENTER);
+            totrow.addView(total4,lp);
+            table.addView(totrow);
 
             for(final ImageButton minus : list){
                 minus.setOnClickListener(new View.OnClickListener() {
