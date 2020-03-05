@@ -1,5 +1,6 @@
 package fyp.c16398141.healthlete;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -71,6 +72,8 @@ public class food_entry extends AppCompatActivity {
 
                     if (update == true) {
                         Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(food_entry.this, food_log.class);
+                        startActivity(intent);
                     } else {
                         Toast.makeText(getApplicationContext(), "unsuccessful insert", Toast.LENGTH_SHORT).show();
                     }

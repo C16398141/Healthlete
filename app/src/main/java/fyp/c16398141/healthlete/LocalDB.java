@@ -6,9 +6,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
-public class LocalDB
-{
+public class LocalDB {
 
     // database columns
     private static final String KEY_ROWID = "_id";
@@ -18,9 +18,9 @@ public class LocalDB
     private static final String KEY_DOB = "DOB";
     private static final String KEY_nationality = "nationality";
     private static final String DATABASE_NAME = "Players1";
-    private static final String DATABASE_TABLE 	= "Contact_Details2";
-    private static final String KEY_TNAME 	= "tournamentname";
-    private static final int DATABASE_VERSION 	= 1;
+    private static final String DATABASE_TABLE = "Contact_Details2";
+    private static final String KEY_TNAME = "tournamentname";
+    private static final int DATABASE_VERSION = 1;
 
     // SQL statement to create the database
     private static final String CreateUserTable =
@@ -34,7 +34,7 @@ public class LocalDB
             "create table if not exists FoodEntry (entry_id integer primary key autoincrement, " +
                     "foodname text unique not null, " +
                     "quantity integer not null, " +
-                    "date text not null, "  +
+                    "date text not null, " +
                     "cals_per_qty integer not null, " +
                     "carbs_per_qty integer not null, " +
                     "protein_per_qty integer not null);";
@@ -47,6 +47,13 @@ public class LocalDB
                     "sets integer not null, " +
                     "repetitions integer not null, " +
                     "date text not null);";
+
+    private static final String CreateGoalTable =
+            "create table if not exists Goals (entry_id integer primary key autoincrement, " +
+                    "type text not null, " +
+                    "targetCals integer not null, " +
+                    "targetCarbs integer not null, " +
+                    "targetProtein integer not null);";
     //add running/aerobic exercise formats and sports with duration perhaps
 
     private final Context context;
@@ -54,86 +61,76 @@ public class LocalDB
     private SQLiteDatabase db;
 
     // Constructor
-    public LocalDB(Context ctx)
-    {
+    public LocalDB(Context ctx) {
         //
-        this.context 	= ctx;
-        DBHelper 		= new DatabaseHelper(context);
+        this.context = ctx;
+        DBHelper = new DatabaseHelper(context);
     }
 
-    public LocalDB open() throws SQLException
-    {
-        db     = DBHelper.getWritableDatabase();
+    public LocalDB open() throws SQLException {
+        db = DBHelper.getWritableDatabase();
         return this;
     }
 
     // nested dB helper class
-    private static class DatabaseHelper extends SQLiteOpenHelper
-    {
+    private static class DatabaseHelper extends SQLiteOpenHelper {
         //
-        DatabaseHelper(Context context)
-        {
+        DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
 
         @Override
         //
-        public void onCreate(SQLiteDatabase db)
-        {
+        public void onCreate(SQLiteDatabase db) {
             db.execSQL(CreateUserTable);
             db.execSQL(CreateFoodEntryTable);
             db.execSQL(CreateWorkoutEntryTable);
+            db.execSQL(CreateGoalTable);
+            Log.i("tags","TABLES CREATED");
         }
 
         @Override
         //
         public void onUpgrade(SQLiteDatabase db, int oldVersion,
-                              int newVersion)
-        {
+                              int newVersion) {
             // dB structure change..
             db.execSQL("drop table if exists Contact_Details2;");
             db.execSQL("drop table if exists Points;");
         }
-    }   // end nested class
+    }  // end nested class
 
 
-    public void close()
-    {
+    public void close() {
         DBHelper.close();
     }
 
-    public boolean addFoodEntry(String foodname, Integer quantity, String date, Integer cals_per_qty, Integer carbs_per_qty, Integer proteins_per_qty)
-    {
+    public boolean addFoodEntry(String foodname, Integer quantity, String date, Integer cals_per_qty, Integer carbs_per_qty, Integer proteins_per_qty) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("foodname", foodname);
         initialValues.put("quantity", quantity);
         initialValues.put("date", date);
         initialValues.put("cals_per_qty", cals_per_qty);
         initialValues.put("carbs_per_qty", carbs_per_qty);
-        initialValues.put("protein_per_qty" , proteins_per_qty);
+        initialValues.put("protein_per_qty", proteins_per_qty);
         long result = db.insert("FoodEntry", null, initialValues);
-        if (result==-1) {
+        if (result == -1) {
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
 
-
-    public boolean deleteFoodEntry(Integer rowId)
-    {
+    public boolean deleteFoodEntry(Integer rowId) {
         //String strId = String.valueOf(rowId);
         String whereClause = "entry_id=?";
         String whereArgs[] = {rowId.toString()};
         //new String[] { strId }
-        long result = db.delete("FoodEntry",whereClause,whereArgs);
+        long result = db.delete("FoodEntry", whereClause, whereArgs);
         //long result = db.execSQL(DELETE FROM TABLE);
-        if (result==-1) {
+        if (result == -1) {
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
@@ -141,39 +138,16 @@ public class LocalDB
     public Cursor getAllFoodEntries() {
 
         Cursor data = db.rawQuery("SELECT * FROM FoodEntry ORDER BY foodname DESC;", null);
-        /**db.delete("DATABASE_TABLE", null, null);*/
         return data;
-
     }
 
-    public Cursor getAllPeople2() {
-
-        Cursor data = db.rawQuery("SELECT * FROM Contact_Details2 ORDER BY points DESC;", null);
-        /**db.delete("DATABASE_TABLE", null, null);*/
-        return data;
-
-    }
-
-    public Cursor getAllTournaments(String playername) {
-
-        Cursor data = db.rawQuery("SELECT * FROM Points WHERE playername LIKE '" + playername +"' ORDER BY tournamentname DESC;", null);
-        /**db.delete("DATABASE_TABLE", null, null);*/
-        return data;
-
-    }
-
-
-    //
-    public boolean updatePoints(String tournamentname, String playername, Integer points, String date1)
-    {
-
-        ContentValues args = new ContentValues();
-        args.put("tournamentname", tournamentname);
-        args.put("playername", playername);
-        args.put("points", points);
-        args.put("date1", date1);
-        long result= db.update("Points", args,
-                "playername" + "=" + playername + "AND" + "tournamentname" + "=" + tournamentname, null);
+    public boolean addGoals(String type, Integer targetCals, Integer targetCarbs, Integer targetProtein) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("type", type);
+        initialValues.put("targetCals", targetCals);
+        initialValues.put("targetCarbs", targetCarbs);
+        initialValues.put("targetProtein", targetProtein);
+        long result = db.insert("Goals", null, initialValues);
         if (result == -1) {
             return false;
         } else {
@@ -181,18 +155,9 @@ public class LocalDB
         }
     }
 
-    public boolean insertPoints(String tournamentname, String playername, Integer points, String date1)
-    {
-        ContentValues args = new ContentValues();
-        args.put("tournamentname", tournamentname);
-        args.put("playername", playername);
-        args.put("points", points);
-        args.put("date1", date1);
-        long result = db.insert("Points", null, args);
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
+    public Cursor getGoals() {
+
+        Cursor data = db.rawQuery("SELECT * FROM Goals;", null);
+        return data;
     }
 }

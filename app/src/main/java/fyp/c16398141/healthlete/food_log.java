@@ -54,6 +54,9 @@ public class food_log extends AppCompatActivity {
     //AnyChartView anyChartView;
     List<ImageButton> list = new ArrayList<ImageButton>();
     List<Integer> dimensions = new ArrayList<>();
+    List<Integer> totalCalories = new ArrayList<>();
+    List<Integer> totalCarbs = new ArrayList<>();
+    List<Integer> totalProtein = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,9 @@ public class food_log extends AppCompatActivity {
         TableLayout table = (TableLayout) findViewById(R.id.food_table);
 
         ldb = new LocalDB(this);
+        /*ldb.open();
+        addGoals();
+        ldb.close();*/
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init(table);
@@ -158,28 +164,53 @@ public class food_log extends AppCompatActivity {
         Bitmap bitmap = Bitmap.createBitmap(imageViewWidth, imageViewHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.BLUE);
         canvas.drawCircle(3*imageViewWidth/16, imageViewHeight/2, imageViewWidth/8, paint);
         canvas.drawCircle(8*imageViewWidth/16, imageViewHeight/2, imageViewWidth/8, paint);
         canvas.drawCircle(13*imageViewWidth/16, imageViewHeight/2, imageViewWidth/8, paint);
 
+        ldb.open();
+        Integer targetCals = 0;
+        Integer targetCarbs = 0;
+        Integer targetProtein = 0;
+        Cursor entries = ldb.getGoals();
+        while (entries.moveToNext()){
+            targetCals = entries.getInt(2);
+            targetCarbs = entries.getInt(3);
+            targetProtein = entries.getInt(4);
+        }
+        ldb.close();
+
         Paint paint2 = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint2.setColor(Color.BLUE);
-        RectF arc = new RectF(imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,5*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
-        canvas.drawArc (arc, -90, 90, true,  paint2);
+        paint2.setColor(Color.CYAN);
+
+        Integer totalCals = 0;
+        Integer totalCarbos = 0;
+        Integer totalProteins = 0;
+
+        for (Integer c : totalCalories)
+            totalCals += c;
+        Float angle = ((float)totalCals/targetCals*360);
+
+        for (Integer a : totalCarbs)
+            totalCarbos += a;
+        Float angle2 = ((float)totalCarbos/targetCarbs*360);
+
+        for (Integer p : totalProtein)
+            totalProteins += p;
+        Float angle3 = ((float)totalProteins/targetProtein*360);
+
+        Log.i("TAG",valueOf(totalCals));
+        Log.i("TAG",valueOf(targetCals));
+        Log.i("TAG",valueOf(angle));
+        RectF arc  = new RectF(imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,5*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
+        canvas.drawArc (arc, -90, angle, true,  paint2);
         RectF arc2 = new RectF(6*imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,10*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
-        canvas.drawArc (arc2, -90, 90, true,  paint2);
+        canvas.drawArc (arc2, -90, angle2, true,  paint2);
         RectF arc3 = new RectF(11*imageViewWidth/16,imageViewHeight/2 - imageViewWidth/8,15*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8);
-        canvas.drawArc (arc3, -90, 90, true,  paint2);
+        canvas.drawArc (arc3, -90, angle3, true,  paint2);
         imageView.setImageBitmap(bitmap);
         /*
-        int difference = dimensions.get(0) - dimensions.get(0);
-        Log.i("TAG",valueOf(difference));
-        Paint circleYellow;
-        Paint circleGray;
-        float radius;
-        RectF arcBounds = new RectF();
-
         circleYellow = new Paint(Paint.ANTI_ALIAS_FLAG);
         circleYellow.setStyle(Paint.Style.FILL);
         circleYellow.setColor(Color.YELLOW);
@@ -200,10 +231,18 @@ public class food_log extends AppCompatActivity {
          */
     }
 
-    public void addRows()
+    public void addGoals()
     {
-        String foodname = "porridge";
-        ldb.addFoodEntry(foodname,10,"16022020",68,20,12);
+        String type = "weightLoss";
+        Integer targetCals = 2000;
+        Integer targetCarbs = 400;
+        Integer targetProtein = 200;
+        Boolean result = ldb.addGoals("lose weight",2000,400,200);
+        if (result == true){
+            Log.i("TAGS","goals added");
+        }else{
+            Log.i("TAGS","goals failed");
+        }
     }
 
     public void drawArc(RectF oval, float startAngle, float sweepAngle, boolean useCenter, Paint paint){
@@ -267,6 +306,9 @@ public class food_log extends AppCompatActivity {
             }
         });
 
+        totalCalories.clear();
+        totalCarbs.clear();
+        totalProtein.clear();
         Cursor entries = ldb.getAllFoodEntries();
         int rows = entries.getCount();
         if (rows == 0) {
@@ -288,19 +330,25 @@ public class food_log extends AppCompatActivity {
                 t2v.setGravity(Gravity.CENTER);
                 tbrow.addView(t2v,lp);
                 TextView t3v = new TextView(this);
-                t3v.setText(Integer.toString(entries.getInt(4)));
+                Integer cals = entries.getInt(4);
+                totalCalories.add(cals);
+                t3v.setText(Integer.toString(cals));
                 t3v.setBackgroundColor(Color.WHITE);
                 t3v.setTextColor(Color.BLACK);
                 t3v.setGravity(Gravity.CENTER);
                 tbrow.addView(t3v,lp);
                 TextView t4v = new TextView(this);
-                t4v.setText(Integer.toString(entries.getInt(5)));
+                Integer carbs = entries.getInt(5);
+                totalCarbs.add(carbs);
+                t4v.setText(Integer.toString(carbs));
                 t4v.setBackgroundColor(Color.WHITE);
                 t4v.setTextColor(Color.BLACK);
                 t4v.setGravity(Gravity.CENTER);
                 tbrow.addView(t4v,lp);
                 TextView t5v = new TextView(this);
-                t5v.setText(Integer.toString(entries.getInt(6)));
+                Integer protein = entries.getInt(6);
+                totalProtein.add(protein);
+                t5v.setText(Integer.toString(protein));
                 t5v.setBackgroundColor(Color.WHITE);
                 t5v.setTextColor(Color.BLACK);
                 t5v.setGravity(Gravity.CENTER);
@@ -320,6 +368,7 @@ public class food_log extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Successfully deleted", Toast.LENGTH_SHORT).show();
                             table.removeAllViews();
                             displayRows(table);
+                            setupPieChart();
                         } else {
                             Toast.makeText(getApplicationContext(), "unsuccessful delete", Toast.LENGTH_SHORT).show();
                         }
