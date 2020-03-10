@@ -1,7 +1,9 @@
 package fyp.c16398141.healthlete;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -34,6 +36,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
             public void onClick(View v) {
                         signIn();
-                }
+            }
         });
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +148,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d("TAG*********", "firebaseAuthWithGoogle:" + acct.getId());
+        String email = acct.getEmail();
+        String firstName = acct.getGivenName();
+        String surname = acct.getFamilyName();
+        Uri image = acct.getPhotoUrl();
+
+        ldb.open();
+        Cursor users = ldb.getUsers();
+        Boolean unique = true;
+        while (users.moveToNext()){
+            String user_id = users.getString(0);
+            Log.i("tag",user_id);
+            if (email.equals(user_id)){
+                Log.i("tag","user already added");
+                unique = false;
+            }
+        }
+
+        if (unique == true) {
+            boolean result = ldb.addUser(email, firstName, surname);
+            if (result == true) {
+                Toast.makeText(getApplicationContext(), "New user created", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Failure in adding new user", Toast.LENGTH_SHORT).show();
+            }
+        }
+        ldb.close();
+
+        Log.d("TAG*********", "firebaseAuthWithGoogle:" + acct.getEmail() + acct.getGivenName() + acct.getFamilyName());
         //make sure to use acct.getId() as unique user id in user collection
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -157,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG***********", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intent = new Intent(MainActivity.this, home.class);
+                            startActivity(intent);
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.

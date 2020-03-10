@@ -22,13 +22,16 @@ public class LocalDB {
     private static final String KEY_TNAME = "tournamentname";
     private static final int DATABASE_VERSION = 1;
 
+    private static final String foreignKeyCheck =
+            "PRAGMA foreign_keys = ON;";
     // SQL statement to create the database
     private static final String CreateUserTable =
-            "create table if not exists User (user_id integer primary key autoincrement, " +
-                    "firstname text unique not null, " +
-                    "surname text unique not null, " +
-                    "dob text not null, " +
-                    "height integer not null);";
+            "create table if not exists User (user_id text primary key, " +
+                    "firstname text not null, " +
+                    "surname text, " +
+                    "dob text, " +
+                    "height real, " +
+                    "weight real);";
 
     private static final String CreateFoodEntryTable =
             "create table if not exists FoodEntry (entry_id integer primary key autoincrement, " +
@@ -37,7 +40,10 @@ public class LocalDB {
                     "date text not null, " +
                     "cals_per_qty integer not null, " +
                     "carbs_per_qty integer not null, " +
-                    "protein_per_qty integer not null);";
+                    "protein_per_qty integer not null, " +
+                    "user_id text not null, " +
+                    "FOREIGN KEY (user_id)" +
+                    "REFERENCES user (user_id));";
     //later on make food table with nutrient per qty values and take from them - remove from entry table
 
     private static final String CreateWorkoutEntryTable =
@@ -46,14 +52,21 @@ public class LocalDB {
                     "weight integer unique not null, " +
                     "sets integer not null, " +
                     "repetitions integer not null, " +
-                    "date text not null);";
+                    "date text not null," +
+                    "user_id text not null, " +
+                    "FOREIGN KEY (user_id)" +
+                    "REFERENCES user (user_id));";
 
     private static final String CreateGoalTable =
             "create table if not exists Goals (entry_id integer primary key autoincrement, " +
                     "type text not null, " +
                     "targetCals integer not null, " +
                     "targetCarbs integer not null, " +
-                    "targetProtein integer not null);";
+                    "targetProtein integer not null," +
+                    "user_id text not null, " +
+                    "FOREIGN KEY (user_id)" +
+                    "REFERENCES user (user_id));";
+
     //add running/aerobic exercise formats and sports with duration perhaps
 
     private final Context context;
@@ -83,6 +96,7 @@ public class LocalDB {
         @Override
         //
         public void onCreate(SQLiteDatabase db) {
+            db.execSQL(foreignKeyCheck);
             db.execSQL(CreateUserTable);
             db.execSQL(CreateFoodEntryTable);
             db.execSQL(CreateWorkoutEntryTable);
@@ -105,7 +119,25 @@ public class LocalDB {
         DBHelper.close();
     }
 
-    public boolean addFoodEntry(String foodname, Integer quantity, String date, Integer cals_per_qty, Integer carbs_per_qty, Integer proteins_per_qty) {
+    public boolean addUser(String email, String firstname, String surname) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("user_id", email);
+        initialValues.put("firstname", firstname);
+        initialValues.put("surname", surname);
+        long result = db.insert("User", null, initialValues);
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public Cursor getUsers() {
+        Cursor data = db.rawQuery("SELECT user_id FROM User ORDER BY user_id DESC;", null);
+        return data;
+    }
+
+    public boolean addFoodEntry(String foodname, Integer quantity, String date, Integer cals_per_qty, Integer carbs_per_qty, Integer proteins_per_qty, String user_id) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("foodname", foodname);
         initialValues.put("quantity", quantity);
@@ -113,6 +145,7 @@ public class LocalDB {
         initialValues.put("cals_per_qty", cals_per_qty);
         initialValues.put("carbs_per_qty", carbs_per_qty);
         initialValues.put("protein_per_qty", proteins_per_qty);
+        initialValues.put("user_id", user_id);
         long result = db.insert("FoodEntry", null, initialValues);
         if (result == -1) {
             return false;
@@ -136,18 +169,18 @@ public class LocalDB {
     }
 
     public Cursor getAllFoodEntries() {
-
         Cursor data = db.rawQuery("SELECT * FROM FoodEntry ORDER BY foodname DESC;", null);
         return data;
     }
 
     //make updateGoals
-    public boolean addGoals(String type, Integer targetCals, Integer targetCarbs, Integer targetProtein) {
+    public boolean addGoals(String type, Integer targetCals, Integer targetCarbs, Integer targetProtein, String user_id) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("type", type);
         initialValues.put("targetCals", targetCals);
         initialValues.put("targetCarbs", targetCarbs);
         initialValues.put("targetProtein", targetProtein);
+        initialValues.put("user_id", user_id);
         long result = db.insert("Goals", null, initialValues);
         if (result == -1) {
             return false;

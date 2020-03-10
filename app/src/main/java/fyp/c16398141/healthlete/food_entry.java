@@ -27,6 +27,7 @@ public class food_entry extends AppCompatActivity {
     DatePickerDialog datePickerDialog;
     //String update= getIntent().getStringExtra("EXTRA_ID");
     //Integer result = Integer.parseInt(update);
+    String user_id = "2013chrisclarke@gmail.com";
 
 
     @Override
@@ -91,14 +92,7 @@ public class food_entry extends AppCompatActivity {
 
                 //if previous activity says to insert, then call the insert method
                 if(result==1) {
-                    boolean update = ldb.addFoodEntry(
-                            foodname,
-                            quantity,
-                            date,
-                            calsperqty,
-                            carbsperqty,
-                            proteinsperqty
-                    );
+                    boolean update = ldb.addFoodEntry(foodname, quantity, date, calsperqty, carbsperqty, proteinsperqty, user_id);
 
                     if (update == true) {
                         Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();

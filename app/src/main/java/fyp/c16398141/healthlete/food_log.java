@@ -57,6 +57,7 @@ public class food_log extends AppCompatActivity {
     List<Integer> totalCalories = new ArrayList<>();
     List<Integer> totalCarbs = new ArrayList<>();
     List<Integer> totalProtein = new ArrayList<>();
+    String user_id = "2013chrisclarke@gmail.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +80,9 @@ public class food_log extends AppCompatActivity {
         TableLayout table = (TableLayout) findViewById(R.id.food_table);
 
         ldb = new LocalDB(this);
-        /*ldb.open();
+        ldb.open();
         addGoals();
-        ldb.close();*/
+        ldb.close();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         init(table);
@@ -258,7 +259,7 @@ public class food_log extends AppCompatActivity {
         Integer targetCals = 2000;
         Integer targetCarbs = 400;
         Integer targetProtein = 200;
-        Boolean result = ldb.addGoals("lose weight",2000,400,200);
+        Boolean result = ldb.addGoals("lose weight",2000,400,200, user_id);
         if (result == true){
             Log.i("TAGS","goals added");
         }else{
