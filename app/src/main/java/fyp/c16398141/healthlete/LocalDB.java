@@ -141,6 +141,7 @@ public class LocalDB {
         return data;
     }
 
+    //make updateGoals
     public boolean addGoals(String type, Integer targetCals, Integer targetCarbs, Integer targetProtein) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("type", type);
