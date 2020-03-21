@@ -351,7 +351,7 @@ public class food_log extends AppCompatActivity {
                 t2v.setGravity(Gravity.CENTER);
                 tbrow.addView(t2v,lp);
                 TextView t3v = new TextView(this);
-                Integer cals = entries.getInt(4);
+                Integer cals = entries.getInt(5);
                 totalCalories.add(cals);
                 t3v.setText(Integer.toString(cals));
                 t3v.setBackgroundColor(Color.WHITE);
@@ -359,7 +359,7 @@ public class food_log extends AppCompatActivity {
                 t3v.setGravity(Gravity.CENTER);
                 tbrow.addView(t3v,lp);
                 TextView t4v = new TextView(this);
-                Integer carbs = entries.getInt(5);
+                Integer carbs = entries.getInt(6);
                 totalCarbs.add(carbs);
                 t4v.setText(Integer.toString(carbs));
                 t4v.setBackgroundColor(Color.WHITE);
@@ -367,7 +367,7 @@ public class food_log extends AppCompatActivity {
                 t4v.setGravity(Gravity.CENTER);
                 tbrow.addView(t4v,lp);
                 TextView t5v = new TextView(this);
-                Integer protein = entries.getInt(6);
+                Integer protein = entries.getInt(7);
                 totalProtein.add(protein);
                 t5v.setText(Integer.toString(protein));
                 t5v.setBackgroundColor(Color.WHITE);

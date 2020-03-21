@@ -4,12 +4,15 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,16 +20,27 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Calendar;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static java.lang.String.valueOf;
 
 public class food_entry extends AppCompatActivity {
 
     LocalDB ldb;
     private Button button;
-    EditText field1,field2,field3,field4,field5,field6,date;
+    EditText food,qty_field,datefield,cal_field,carb_field,protein_field;
+    ChipGroup chipGroup;
+    Chip unitchip, gramchip, mlchip;
+
     DatePickerDialog datePickerDialog;
     //String update= getIntent().getStringExtra("EXTRA_ID");
     //Integer result = Integer.parseInt(update);
+    String qtype, date;
     String user_id = "2013chrisclarke@gmail.com";
 
 
@@ -37,34 +51,58 @@ public class food_entry extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ldb = new LocalDB(this);
+        final OkHttpClient client = new OkHttpClient();
 
-        field1   = (EditText)findViewById(R.id.field1);
-        field2   = (EditText)findViewById(R.id.field2);
-        field3   = (EditText)findViewById(R.id.field3);
-        field4   = (EditText)findViewById(R.id.field4);
-        field5   = (EditText)findViewById(R.id.field5);
-        field6   = (EditText)findViewById(R.id.field6);
-        date = (EditText) findViewById(R.id.date);
+        food   = (EditText)findViewById(R.id.food);
+        qty_field   = (EditText)findViewById(R.id.qty_field);
+        datefield = (EditText) findViewById(R.id.datefield);
+        cal_field   = (EditText)findViewById(R.id.cal_field);
+        carb_field   = (EditText)findViewById(R.id.carb_field);
+        protein_field   = (EditText)findViewById(R.id.protein_field);
 
-        button = (Button) findViewById(R.id.button);
+        chipGroup = (ChipGroup)findViewById(R.id.chip_group);
+        unitchip = (Chip)findViewById(R.id.unitchip);
+        gramchip = (Chip)findViewById(R.id.gramchip);
+        mlchip = (Chip)findViewById(R.id.mlchip);
+
+        qtype = unitchip.getText().toString();
+        chipGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(ChipGroup chipGroup, int i) {
+                Chip chip = chipGroup.findViewById(i);
+                if(chip != null){
+                    qtype = chip.getText().toString();
+                    Log.i("TAG", qtype);
+                }
+            }
+        });
+
+
+        button = (Button) findViewById(R.id.submit);
         //*******************************************************************
         //MAKE DYNAMIC, CENTRAL LAYOUT, DEFAULT SET TO TODAY'S DATE INCLUDING HINT ELEMENT AND COMPATIBLE WITH DB
         // THEN SORT TABLE ROWS BY DATE WITH SELECTABLE POSSIBLE DATE PICKER FILTER ABOVE TABLE WITH ERROR CHECKS
-        date.setOnClickListener(new View.OnClickListener() {
+
+        // calender class's instance and get current date , month and year from calender
+        Calendar c = Calendar.getInstance();
+        final int mYear = c.get(Calendar.YEAR); // current year
+        final int mMonth = c.get(Calendar.MONTH); // current month
+        final int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+        datefield.setText(mDay + "/" + mMonth + "/" + mYear);
+        date = "" + mDay + mMonth + mYear;
+
+        datefield.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // calender class's instance and get current date , month and year from calender
-                final Calendar c = Calendar.getInstance();
-                int mYear = c.get(Calendar.YEAR); // current year
-                int mMonth = c.get(Calendar.MONTH); // current month
-                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
                 // date picker dialog
                 datePickerDialog = new DatePickerDialog(food_entry.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 // set day of month , month and year value in the edit text
-                                date.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                datefield.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                date = "" + dayOfMonth + (monthOfYear +1) + year;
+                                Log.i("TAG",valueOf(date));
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
@@ -75,24 +113,44 @@ public class food_entry extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String foodname = field1.getText().toString();
-                String qty = field2.getText().toString();
+                String foodname = food.getText().toString();
+                String qty = qty_field.getText().toString();
                 int quantity = Integer.parseInt(qty);
-                String date = field3.getText().toString();
-                String cals = field4.getText().toString();
+                String cals = cal_field.getText().toString();
                 int calsperqty = Integer.parseInt(cals);
-                String carbs = field5.getText().toString();
+                String carbs = carb_field.getText().toString();
                 int carbsperqty = Integer.parseInt(carbs);
-                String proteins = field6.getText().toString();
+                String proteins = protein_field.getText().toString();
                 int proteinsperqty = Integer.parseInt(proteins);
                 //String newDob = date.getText().toString();
+                //String caloriesQ ="https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20many%20calories%20are%20in%20" + quantity + "%20" + foodname + "%253F";
+                //String carbsQ ="https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20many%20carbohydrates%20are%20in%20" +quantity + "%20" + foodname + "%253F";
+                //String proteinQ ="https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20many%20calories%20are%20in%20" +quantity + "%20" + foodname + "%253F";
+                /*Request request = new Request.Builder()
+                        .url(caloriesQ)
+                        .get()
+                        .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
+                        .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
+                        .build();
 
+                /*Request request = new Request.Builder()
+                        .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/guessNutrition?title=Spaghetti%20Aglio%20et%20Olio")
+                        .get()
+                        .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
+                        .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
+                        .build();
+
+                try {
+                    Response response = client.newCall(request).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
                 int result = 1;
                 ldb.open();
 
                 //if previous activity says to insert, then call the insert method
                 if(result==1) {
-                    boolean update = ldb.addFoodEntry(foodname, quantity, date, calsperqty, carbsperqty, proteinsperqty, user_id);
+                    boolean update = ldb.addFoodEntry(foodname, quantity, qtype, date, calsperqty, carbsperqty, proteinsperqty, user_id);
 
                     if (update == true) {
                         Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
@@ -141,5 +199,4 @@ public class food_entry extends AppCompatActivity {
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
 }

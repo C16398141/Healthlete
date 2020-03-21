@@ -37,6 +37,7 @@ public class LocalDB {
             "create table if not exists FoodEntry (entry_id integer primary key autoincrement, " +
                     "foodname text unique not null, " +
                     "quantity integer not null, " +
+                    "qty_type text not null, " +
                     "date text not null, " +
                     "cals_per_qty integer not null, " +
                     "carbs_per_qty integer not null, " +
@@ -137,10 +138,11 @@ public class LocalDB {
         return data;
     }
 
-    public boolean addFoodEntry(String foodname, Integer quantity, String date, Integer cals_per_qty, Integer carbs_per_qty, Integer proteins_per_qty, String user_id) {
+    public boolean addFoodEntry(String foodname, Integer quantity, String qty_type, String date, Integer cals_per_qty, Integer carbs_per_qty, Integer proteins_per_qty, String user_id) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("foodname", foodname);
         initialValues.put("quantity", quantity);
+        initialValues.put("qty_type", qty_type);
         initialValues.put("date", date);
         initialValues.put("cals_per_qty", cals_per_qty);
         initialValues.put("carbs_per_qty", carbs_per_qty);

@@ -13,7 +13,7 @@
             android:name=".food_entry"
             android:label="@string/title_activity_food_entry"
             android:parentActivityName=".food_log"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.FoodEntry">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fyp.c16398141.healthlete.food_log" />
