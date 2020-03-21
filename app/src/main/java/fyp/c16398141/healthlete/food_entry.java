@@ -143,11 +143,20 @@ public class food_entry extends AppCompatActivity {
                 urlBuilder.addQueryParameter("question", "How%20many%20calories%20are%20in%20");
                 urlBuilder.addQueryParameter("foodname", foodname);
                 String url = urlBuilder.build().toString();*/
+               String aggregate;
+               if (!qtype.contentEquals(unitchip.getText().toString()))
+               {
+                   aggregate = quantity + " " + qtype;
+               }
+               else aggregate = "";
 
-                try {
-                    doGetRequest("http://myurl/api/");
-                } catch (IOException e) {
-                    e.printStackTrace();
+                String nutrients[] = {"calories", "carbohydrates", "protein"};
+                for(String nutrient : nutrients){
+                    try {
+                        doGetRequest(nutrient, aggregate, foodname);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 /*Request request = new Request.Builder()
                         .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20much%20vitamin%20c%20is%20in%202%20apples%253F")
@@ -226,13 +235,12 @@ public class food_entry extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    void doGetRequest(String url) throws IOException{
-        /*Request request = new Request.Builder()
-                .url(url)
-                .build();*/
+    void doGetRequest(String nutrient, String aggregate, String item) throws IOException{
+        String site = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20much%20";
+        String url = site + nutrient + "%20is%20in%20" + aggregate + "%20" + item + "%253F";
 
         Request request = new Request.Builder()
-                .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20much%20vitamin%20c%20is%20in%202%20apples%253F")
+                .url(url)
                 .get()
                 .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
                 .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
