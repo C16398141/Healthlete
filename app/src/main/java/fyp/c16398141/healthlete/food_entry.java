@@ -9,6 +9,13 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.HttpUrl;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -22,10 +29,15 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Calendar;
-
+/*
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.RequestBody;
+import okhttp3.Response;*/
 
 import static java.lang.String.valueOf;
 
@@ -42,7 +54,7 @@ public class food_entry extends AppCompatActivity {
     //Integer result = Integer.parseInt(update);
     String qtype, date;
     String user_id = "2013chrisclarke@gmail.com";
-
+    OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +63,6 @@ public class food_entry extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ldb = new LocalDB(this);
-        final OkHttpClient client = new OkHttpClient();
 
         food   = (EditText)findViewById(R.id.food);
         qty_field   = (EditText)findViewById(R.id.qty_field);
@@ -126,25 +137,40 @@ public class food_entry extends AppCompatActivity {
                 //String caloriesQ ="https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20many%20calories%20are%20in%20" + quantity + "%20" + foodname + "%253F";
                 //String carbsQ ="https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20many%20carbohydrates%20are%20in%20" +quantity + "%20" + foodname + "%253F";
                 //String proteinQ ="https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20many%20calories%20are%20in%20" +quantity + "%20" + foodname + "%253F";
+               /* HttpUrl.Builder urlBuilder = new HttpUrl.Builder();
+                //urlBuilder = HttpUrl.parse("https://httpbin.org/get).newBuilder();
+                urlBuilder.addQueryParameter("website", "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=");
+                urlBuilder.addQueryParameter("question", "How%20many%20calories%20are%20in%20");
+                urlBuilder.addQueryParameter("foodname", foodname);
+                String url = urlBuilder.build().toString();*/
+
+                try {
+                    doGetRequest("http://myurl/api/");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 /*Request request = new Request.Builder()
-                        .url(caloriesQ)
+                        .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20much%20vitamin%20c%20is%20in%202%20apples%253F")
                         .get()
                         .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
                         .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
-                        .build();
+                        .build();*/
 
                 /*Request request = new Request.Builder()
                         .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/guessNutrition?title=Spaghetti%20Aglio%20et%20Olio")
                         .get()
                         .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
                         .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
-                        .build();
+                        .build();*/
 
-                try {
+                /*try {
                     Response response = client.newCall(request).execute();
+                    //final String logger = response.body().toString();
+                    //Log.i("TAG",logger);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }*/
+
                 int result = 1;
                 ldb.open();
 
@@ -154,8 +180,8 @@ public class food_entry extends AppCompatActivity {
 
                     if (update == true) {
                         Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(food_entry.this, food_log.class);
-                        startActivity(intent);
+                        //Intent intent = new Intent(food_entry.this, food_log.class);
+                        //startActivity(intent);
                     } else {
                         Toast.makeText(getApplicationContext(), "unsuccessful insert", Toast.LENGTH_SHORT).show();
                     }
@@ -198,5 +224,54 @@ public class food_entry extends AppCompatActivity {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    void doGetRequest(String url) throws IOException{
+        /*Request request = new Request.Builder()
+                .url(url)
+                .build();*/
+
+        Request request = new Request.Builder()
+                .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20much%20vitamin%20c%20is%20in%202%20apples%253F")
+                .get()
+                .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
+                .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
+                .build();
+
+        /*try {
+            Response response = client.newCall(request).execute();
+            //final String logger = response.body().toString();
+            //Log.i("TAG",logger);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        client.newCall(request)
+                .enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Request request, IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // For the example, you can show an error dialog or a toast
+                                // on the main UI thread
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(final Response response) throws IOException {
+                        String res = response.body().string();
+                        Log.i("TAG",res);
+                        // Do something with the response
+                    }
+
+                   /* @Override
+                    public void onResponse(Call call, final Response response) throws IOException {
+                        String res = response.body().string();
+
+                        // Do something with the response
+                    }*/
+                });
     }
 }
