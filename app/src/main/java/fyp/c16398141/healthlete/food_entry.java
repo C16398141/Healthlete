@@ -1,5 +1,6 @@
 package fyp.c16398141.healthlete;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,9 +22,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -134,72 +137,92 @@ public class food_entry extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                hideKeyboard(food_entry.this);
+                boolean errors = false;
                 String foodname = food.getText().toString();
                 String qty = qty_field.getText().toString();
-                int quantity = Integer.parseInt(qty);
 
-
-                String nutrients[] = {"calories", "carbohydrates", "protein"};
-                int n = 0;
-                for(String nutrient : nutrients){
-                    n++;
-                    try {
-                        doGetRequest(nutrient, quantity, qtype, foodname);
-                        while (nutrientQty.size()!=n)
-                        {
-                            //Toast.makeText(getApplicationContext(), "Calculating nutritional details", Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (TextUtils.isEmpty(foodname)) {
+                    food.setError("This field must be filled in");
+                    errors = true;
+                    return;
                 }
-                Log.i("number",valueOf(nutrientQty.size()));
-                if (nutrientQty.get(0)==10000)
-                {
-                    Toast.makeText(getApplicationContext(), "Nutrients not found, please enter estimates below", Toast.LENGTH_LONG).show();
+                if (TextUtils.isEmpty(qty)) {
+                    qty_field.setError("This field must be filled in");
+                    errors = true;
+                    return;
                 }
-                Log.i("number",valueOf(nutrientQty.size()));
-                int result = 1;
 
-                //if previous activity says to insert, then call the insert method
-                if(nutrientQty.get(1)!=10000) {
-                    if (result == 1) {
-                        ldb.open();
-                        boolean update = ldb.addFoodEntry(foodname, quantity, qtype, date, nutrientQty.get(0), nutrientQty.get(1), nutrientQty.get(2), user_id);
+                if (!TextUtils.isDigitsOnly(qty)) {
+                    qty_field.setError("The quantity must be a whole number");
+                    errors = true;
+                    return;
+                }
 
-                        if (update == true) {
-                            Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(food_entry.this, food_log.class);
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
-                        }
-                        ViewGroup group = (ViewGroup) findViewById(R.id.constraint);
-                        for (int i = 0, count = group.getChildCount(); i < count; ++i) {
-                            View view = group.getChildAt(i);
-                            if (view instanceof EditText) {
-                                ((EditText) view).setText("");
+                if (errors == true) {
+                    Toast.makeText(getApplicationContext(), "Please fill in the required field", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    int quantity = Integer.parseInt(qty);
+                    String nutrients[] = {"calories", "carbohydrates", "protein"};
+                    int n = 0;
+                    for (String nutrient : nutrients) {
+                        n++;
+                        try {
+                            doGetRequest(nutrient, quantity, qtype, foodname);
+                            while (nutrientQty.size() != n) {
+                                //Toast.makeText(getApplicationContext(), "Calculating nutritional details", Toast.LENGTH_SHORT).show();
                             }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        ldb.close();
                     }
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "Nutrients not found, please enter estimates above", Toast.LENGTH_LONG).show();
+                    Log.i("number", valueOf(nutrientQty.size()));
+                    if (nutrientQty.get(0) == 10000) {
+                        Toast.makeText(getApplicationContext(), "Nutrients not found, please enter estimates below", Toast.LENGTH_LONG).show();
+                    }
+                    Log.i("number", valueOf(nutrientQty.size()));
+                    int result = 1;
 
-                    ConstraintLayout constraintLayout = findViewById(R.id.constraint);
-                    ConstraintSet constraintSet = new ConstraintSet();
-                    constraintSet.clone(constraintLayout);
-                    constraintSet.connect(R.id.submit,ConstraintSet.TOP,R.id.protein_field,ConstraintSet.BOTTOM,0);
-                    constraintSet.applyTo(constraintLayout);
-                    cal_text.setVisibility(View.VISIBLE);
-                    carb_text.setVisibility(View.VISIBLE);
-                    protein_text.setVisibility(View.VISIBLE);
-                    cal_field.setVisibility(View.VISIBLE);
-                    carb_field.setVisibility(View.VISIBLE);
-                    protein_field.setVisibility(View.VISIBLE);
+                    //if previous activity says to insert, then call the insert method
+                    if (nutrientQty.get(1) != 10000) {
+                        if (result == 1) {
+                            ldb.open();
+                            boolean update = ldb.addFoodEntry(foodname, quantity, qtype, date, nutrientQty.get(0), nutrientQty.get(1), nutrientQty.get(2), user_id);
 
-                    //make global value above and change value here such that onclick second time requires all parameters below to be not null too
+                            if (update == true) {
+                                Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(food_entry.this, food_log.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
+                            }
+                            ViewGroup group = (ViewGroup) findViewById(R.id.constraint);
+                            for (int i = 0, count = group.getChildCount(); i < count; ++i) {
+                                View view = group.getChildAt(i);
+                                if (view instanceof EditText) {
+                                    ((EditText) view).setText("");
+                                }
+                            }
+                            ldb.close();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Nutrients not found, please enter estimates above", Toast.LENGTH_LONG).show();
+
+                        ConstraintLayout constraintLayout = findViewById(R.id.constraint);
+                        ConstraintSet constraintSet = new ConstraintSet();
+                        constraintSet.clone(constraintLayout);
+                        constraintSet.connect(R.id.submit, ConstraintSet.TOP, R.id.protein_field, ConstraintSet.BOTTOM, 0);
+                        constraintSet.applyTo(constraintLayout);
+                        cal_text.setVisibility(View.VISIBLE);
+                        carb_text.setVisibility(View.VISIBLE);
+                        protein_text.setVisibility(View.VISIBLE);
+                        cal_field.setVisibility(View.VISIBLE);
+                        carb_field.setVisibility(View.VISIBLE);
+                        protein_field.setVisibility(View.VISIBLE);
+
+                        //make global value above and change value here such that onclick second time requires all parameters below to be not null too
 
                     /*String cals = cal_field.getText().toString();
                     int calsperqty = Integer.parseInt(cals);
@@ -207,7 +230,9 @@ public class food_entry extends AppCompatActivity {
                     int carbsperqty = Integer.parseInt(carbs);
                     String proteins = protein_field.getText().toString();
                     int proteinsperqty = Integer.parseInt(proteins);*/
-                }
+
+                    }
+
                 /*
                 //if previous activity says to update, then call the update method
                 else{
@@ -226,6 +251,7 @@ public class food_entry extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "unsuccessful update", Toast.LENGTH_SHORT).show();
                     }
                 }*/
+                }
             }
         });
 
@@ -309,5 +335,16 @@ public class food_entry extends AppCompatActivity {
                         // Do something with the response
                     }*/
                 });
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
