@@ -35,7 +35,7 @@ public class LocalDB {
 
     private static final String CreateFoodEntryTable =
             "create table if not exists FoodEntry (entry_id integer primary key autoincrement, " +
-                    "foodname text unique not null, " +
+                    "foodname text not null, " +
                     "quantity integer not null, " +
                     "qty_type text not null, " +
                     "date text not null, " +

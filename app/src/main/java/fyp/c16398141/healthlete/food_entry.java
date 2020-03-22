@@ -18,6 +18,8 @@ import com.squareup.okhttp.Response;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.util.Log;
 import android.view.View;
@@ -25,19 +27,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
-/*
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;*/
+import java.util.List;
 
 import static java.lang.String.valueOf;
 
@@ -46,8 +42,10 @@ public class food_entry extends AppCompatActivity {
     LocalDB ldb;
     private Button button;
     EditText food,qty_field,datefield,cal_field,carb_field,protein_field;
+    TextView cal_text,carb_text,protein_text;
     ChipGroup chipGroup;
     Chip unitchip, gramchip, mlchip;
+    List<Integer> nutrientQty = new ArrayList<>();
 
     DatePickerDialog datePickerDialog;
     //String update= getIntent().getStringExtra("EXTRA_ID");
@@ -67,9 +65,21 @@ public class food_entry extends AppCompatActivity {
         food   = (EditText)findViewById(R.id.food);
         qty_field   = (EditText)findViewById(R.id.qty_field);
         datefield = (EditText) findViewById(R.id.datefield);
+        button = (Button)findViewById(R.id.submit);
+
+        cal_text = (TextView)findViewById(R.id.cal_text);
+        cal_text.setVisibility(View.INVISIBLE);
+        carb_text = (TextView)findViewById(R.id.carb_text);
+        carb_text.setVisibility(View.INVISIBLE);
+        protein_text = (TextView)findViewById(R.id.protein_text);
+        protein_text.setVisibility(View.INVISIBLE);
+
         cal_field   = (EditText)findViewById(R.id.cal_field);
+        cal_field.setVisibility(View.INVISIBLE);
         carb_field   = (EditText)findViewById(R.id.carb_field);
+        carb_field.setVisibility(View.INVISIBLE);
         protein_field   = (EditText)findViewById(R.id.protein_field);
+        protein_field.setVisibility(View.INVISIBLE);
 
         chipGroup = (ChipGroup)findViewById(R.id.chip_group);
         unitchip = (Chip)findViewById(R.id.unitchip);
@@ -127,82 +137,77 @@ public class food_entry extends AppCompatActivity {
                 String foodname = food.getText().toString();
                 String qty = qty_field.getText().toString();
                 int quantity = Integer.parseInt(qty);
-                String cals = cal_field.getText().toString();
-                int calsperqty = Integer.parseInt(cals);
-                String carbs = carb_field.getText().toString();
-                int carbsperqty = Integer.parseInt(carbs);
-                String proteins = protein_field.getText().toString();
-                int proteinsperqty = Integer.parseInt(proteins);
-                //String newDob = date.getText().toString();
-                //String caloriesQ ="https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20many%20calories%20are%20in%20" + quantity + "%20" + foodname + "%253F";
-                //String carbsQ ="https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20many%20carbohydrates%20are%20in%20" +quantity + "%20" + foodname + "%253F";
-                //String proteinQ ="https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20many%20calories%20are%20in%20" +quantity + "%20" + foodname + "%253F";
-               /* HttpUrl.Builder urlBuilder = new HttpUrl.Builder();
-                //urlBuilder = HttpUrl.parse("https://httpbin.org/get).newBuilder();
-                urlBuilder.addQueryParameter("website", "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=");
-                urlBuilder.addQueryParameter("question", "How%20many%20calories%20are%20in%20");
-                urlBuilder.addQueryParameter("foodname", foodname);
-                String url = urlBuilder.build().toString();*/
-               String aggregate;
-               if (!qtype.contentEquals(unitchip.getText().toString()))
-               {
-                   aggregate = quantity + " " + qtype;
-               }
-               else aggregate = "";
+
 
                 String nutrients[] = {"calories", "carbohydrates", "protein"};
+                int n = 0;
                 for(String nutrient : nutrients){
+                    n++;
                     try {
-                        doGetRequest(nutrient, aggregate, foodname);
+                        doGetRequest(nutrient, quantity, qtype, foodname);
+                        while (nutrientQty.size()!=n)
+                        {
+                            //Toast.makeText(getApplicationContext(), "Calculating nutritional details", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                /*Request request = new Request.Builder()
-                        .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20much%20vitamin%20c%20is%20in%202%20apples%253F")
-                        .get()
-                        .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
-                        .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
-                        .build();*/
-
-                /*Request request = new Request.Builder()
-                        .url("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/guessNutrition?title=Spaghetti%20Aglio%20et%20Olio")
-                        .get()
-                        .addHeader("x-rapidapi-host", "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com")
-                        .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
-                        .build();*/
-
-                /*try {
-                    Response response = client.newCall(request).execute();
-                    //final String logger = response.body().toString();
-                    //Log.i("TAG",logger);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
-
+                Log.i("number",valueOf(nutrientQty.size()));
+                if (nutrientQty.get(0)==10000)
+                {
+                    Toast.makeText(getApplicationContext(), "Nutrients not found, please enter estimates below", Toast.LENGTH_LONG).show();
+                }
+                Log.i("number",valueOf(nutrientQty.size()));
                 int result = 1;
-                ldb.open();
 
                 //if previous activity says to insert, then call the insert method
-                if(result==1) {
-                    boolean update = ldb.addFoodEntry(foodname, quantity, qtype, date, calsperqty, carbsperqty, proteinsperqty, user_id);
+                if(nutrientQty.get(1)!=10000) {
+                    if (result == 1) {
+                        ldb.open();
+                        boolean update = ldb.addFoodEntry(foodname, quantity, qtype, date, nutrientQty.get(0), nutrientQty.get(1), nutrientQty.get(2), user_id);
 
-                    if (update == true) {
-                        Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
-                        //Intent intent = new Intent(food_entry.this, food_log.class);
-                        //startActivity(intent);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "unsuccessful insert", Toast.LENGTH_SHORT).show();
-                    }
-                    ViewGroup group = (ViewGroup)findViewById(R.id.constraint);
-                    for (int i = 0, count = group.getChildCount(); i < count; ++i) {
-                        View view = group.getChildAt(i);
-                        if (view instanceof EditText) {
-                            ((EditText)view).setText("");
+                        if (update == true) {
+                            Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(food_entry.this, food_log.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
                         }
+                        ViewGroup group = (ViewGroup) findViewById(R.id.constraint);
+                        for (int i = 0, count = group.getChildCount(); i < count; ++i) {
+                            View view = group.getChildAt(i);
+                            if (view instanceof EditText) {
+                                ((EditText) view).setText("");
+                            }
+                        }
+                        ldb.close();
                     }
                 }
-                ldb.close();
+                else {
+                    Toast.makeText(getApplicationContext(), "Nutrients not found, please enter estimates above", Toast.LENGTH_LONG).show();
+
+                    ConstraintLayout constraintLayout = findViewById(R.id.constraint);
+                    ConstraintSet constraintSet = new ConstraintSet();
+                    constraintSet.clone(constraintLayout);
+                    constraintSet.connect(R.id.submit,ConstraintSet.TOP,R.id.protein_field,ConstraintSet.BOTTOM,0);
+                    constraintSet.applyTo(constraintLayout);
+                    cal_text.setVisibility(View.VISIBLE);
+                    carb_text.setVisibility(View.VISIBLE);
+                    protein_text.setVisibility(View.VISIBLE);
+                    cal_field.setVisibility(View.VISIBLE);
+                    carb_field.setVisibility(View.VISIBLE);
+                    protein_field.setVisibility(View.VISIBLE);
+
+                    //make global value above and change value here such that onclick second time requires all parameters below to be not null too
+
+                    /*String cals = cal_field.getText().toString();
+                    int calsperqty = Integer.parseInt(cals);
+                    String carbs = carb_field.getText().toString();
+                    int carbsperqty = Integer.parseInt(carbs);
+                    String proteins = protein_field.getText().toString();
+                    int proteinsperqty = Integer.parseInt(proteins);*/
+                }
                 /*
                 //if previous activity says to update, then call the update method
                 else{
@@ -235,7 +240,17 @@ public class food_entry extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    void doGetRequest(String nutrient, String aggregate, String item) throws IOException{
+    void doGetRequest(String nutrient, Integer quantity, String qtype, String item) throws IOException
+    {
+        String aggregate;
+        if (!qtype.contentEquals(unitchip.getText().toString()))
+        {
+            aggregate = quantity + " " + qtype;
+        }
+        else
+        {
+            aggregate = "" + quantity;
+        }
         String site = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/quickAnswer?q=How%20much%20";
         String url = site + nutrient + "%20is%20in%20" + aggregate + "%20" + item + "%253F";
 
@@ -246,31 +261,44 @@ public class food_entry extends AppCompatActivity {
                 .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
                 .build();
 
-        /*try {
-            Response response = client.newCall(request).execute();
-            //final String logger = response.body().toString();
-            //Log.i("TAG",logger);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
         client.newCall(request)
                 .enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // For the example, you can show an error dialog or a toast
-                                // on the main UI thread
-                            }
+                        runOnUiThread(() -> {
+                            Toast.makeText(getApplicationContext(), "Food not identified", Toast.LENGTH_LONG).show();
                         });
                     }
 
                     @Override
                     public void onResponse(final Response response) throws IOException {
                         String res = response.body().string();
-                        Log.i("TAG",res);
+                        Log.i("Contents", res);
+                        if (res.equals("{}"))
+                        {
+                            Log.i("Null", res);
+                            nutrientQty.add(10000);
+                        }
+                        else {
+                            res = res.replaceAll("[^[1-9]\\d*(\\.\\d+)?$]+", " ");
+
+                            String[] figures = res.split(" ");
+                            int data = 0;
+
+                            for (int i = 1; i < figures.length; i++) {
+                                Log.i("Exists", figures[i]);
+                                if (!figures[i].contentEquals(quantity.toString())) {
+                                    data = Math.round(Float.parseFloat(figures[i]));
+                                    break;
+                                }
+                            }
+                            Log.i("Nutrient", valueOf(data));//valueOf(data));
+                            nutrientQty.add(data);
+                        }
+
+                        //Account account = JsonConvert.DeserializeObject<Account>(json);
+
+                        //Log.i("TAG",account.Email);
                         // Do something with the response
                     }
 
