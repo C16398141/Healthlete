@@ -27,6 +27,10 @@ public class home extends AppCompatActivity {
 
     private EditText title;
     private DrawerLayout drawer;
+    //private static boolean init_user = false;
+    private static int init_user = 0;
+    private static String user;
+    String value;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +46,23 @@ public class home extends AppCompatActivity {
         RelativeLayout layout3 = findViewById(R.id.relative3);
         layout3.setBackgroundColor(Color.YELLOW);
 
-        String value = getIntent().getExtras().getString("userId");
+        if (init_user == 1) {
+            value = user;
+        }
+
+        if (init_user == 0) {
+            user = getIntent().getExtras().getString("userId");
+            value = "Welcome " + user;
+            init_user++;
+            //init_user = true;
+        }
+
         getSupportActionBar().setTitle(value);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = (TextView) headerView.findViewById(R.id.username);
         navUsername.setText(value);
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -60,12 +75,16 @@ public class home extends AppCompatActivity {
         Button button2 = findViewById(R.id.button2);
         Button button3 = findViewById(R.id.button3);
 
+        final int request_code = 1;
+
         button.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
                 Intent intent = new Intent(home.this, food_log.class);
-                startActivity(intent);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("userId", "welcome back");
+                startActivityForResult(intent, request_code);
             }
         });
 
@@ -118,6 +137,15 @@ public class home extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            value = data.getStringExtra("userId");
+        }
     }
 
 }

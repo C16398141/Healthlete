@@ -1,5 +1,6 @@
 package fyp.c16398141.healthlete;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -504,5 +505,14 @@ public class food_log extends AppCompatActivity {
             }
         }
     }
-}
 
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent data = new Intent();
+        data.putExtra("userId", "new_id");
+        setResult(RESULT_OK, data);
+        super.onBackPressed();
+    }
+}
