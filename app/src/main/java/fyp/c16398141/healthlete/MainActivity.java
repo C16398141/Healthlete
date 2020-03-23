@@ -41,7 +41,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     LocalDB ldb;
-    private DrawerLayout drawer;
+    //private DrawerLayout drawer;
     private FirebaseAuth mAuth;
     GoogleSignInClient mGoogleSignInClient;
     Integer RC_SIGN_IN = 1;
@@ -50,13 +50,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().getDecorView().setBackgroundColor(Color.parseColor("#FFFFFF"));
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        drawer = findViewById(R.id.drawer_layout);
+        //drawer = findViewById(R.id.drawer_layout);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        //ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        //drawer.addDrawerListener(toggle);
+        //toggle.syncState();
 
         /*ConstraintLayout layout1 = findViewById(R.id.constraint_main);
         layout1.setBackgroundColor(Color.BLUE);*/
@@ -188,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("TAG***********", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Intent intent = new Intent(MainActivity.this, home.class);
+                            intent.putExtra("userId",email);
                             startActivity(intent);
                             //updateUI(user);
                         } else {
@@ -202,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         if(drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -232,5 +234,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }

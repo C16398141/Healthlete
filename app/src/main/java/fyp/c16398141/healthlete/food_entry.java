@@ -49,6 +49,7 @@ public class food_entry extends AppCompatActivity {
     ChipGroup chipGroup;
     Chip unitchip, gramchip, mlchip;
     List<Integer> nutrientQty = new ArrayList<>();
+    Integer submitAttempts;
 
     DatePickerDialog datePickerDialog;
     //String update= getIntent().getStringExtra("EXTRA_ID");
@@ -64,6 +65,7 @@ public class food_entry extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ldb = new LocalDB(this);
+        submitAttempts = 0;
 
         food   = (EditText)findViewById(R.id.food);
         qty_field   = (EditText)findViewById(R.id.qty_field);
@@ -112,8 +114,9 @@ public class food_entry extends AppCompatActivity {
         final int mYear = c.get(Calendar.YEAR); // current year
         final int mMonth = c.get(Calendar.MONTH); // current month
         final int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
-        datefield.setText(mDay + "/" + mMonth + "/" + mYear);
-        date = "" + mDay + mMonth + mYear;
+        datefield.setText(mDay + "/" + (mMonth+1) + "/" + mYear);
+        date = "" + mDay + (mMonth+1) + mYear;
+        Log.i("date",date);
 
         datefield.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,8 +127,8 @@ public class food_entry extends AppCompatActivity {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 // set day of month , month and year value in the edit text
-                                datefield.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                                date = "" + dayOfMonth + (monthOfYear +1) + year;
+                                datefield.setText(dayOfMonth + "/" + (monthOfYear+1) + "/" + year);
+                                date = "" + dayOfMonth + (monthOfYear+1) + year;
                                 Log.i("TAG",valueOf(date));
                             }
                         }, mYear, mMonth, mDay);
@@ -139,32 +142,28 @@ public class food_entry extends AppCompatActivity {
             public void onClick(View v) {
 
                 hideKeyboard(food_entry.this);
-                boolean errors = false;
+
                 String foodname = food.getText().toString();
                 String qty = qty_field.getText().toString();
 
                 if (TextUtils.isEmpty(foodname)) {
                     food.setError("This field must be filled in");
-                    errors = true;
                     return;
                 }
                 if (TextUtils.isEmpty(qty)) {
                     qty_field.setError("This field must be filled in");
-                    errors = true;
                     return;
                 }
 
                 if (!TextUtils.isDigitsOnly(qty)) {
                     qty_field.setError("The quantity must be a whole number");
-                    errors = true;
                     return;
                 }
 
-                if (errors == true) {
-                    Toast.makeText(getApplicationContext(), "Please fill in the required field", Toast.LENGTH_SHORT).show();
-                } else {
+                int quantity = Integer.parseInt(qty);
 
-                    int quantity = Integer.parseInt(qty);
+                if (submitAttempts == 0) {
+
                     String nutrients[] = {"calories", "carbohydrates", "protein"};
                     int n = 0;
                     for (String nutrient : nutrients) {
@@ -209,6 +208,7 @@ public class food_entry extends AppCompatActivity {
                         }
                     } else {
                         Toast.makeText(getApplicationContext(), "Nutrients not found, please enter estimates above", Toast.LENGTH_LONG).show();
+                        submitAttempts++;
 
                         ConstraintLayout constraintLayout = findViewById(R.id.constraint);
                         ConstraintSet constraintSet = new ConstraintSet();
@@ -224,15 +224,57 @@ public class food_entry extends AppCompatActivity {
 
                         //make global value above and change value here such that onclick second time requires all parameters below to be not null too
 
-                    /*String cals = cal_field.getText().toString();
-                    int calsperqty = Integer.parseInt(cals);
+                    }
+                } else {
+                    String cals = cal_field.getText().toString();
                     String carbs = carb_field.getText().toString();
-                    int carbsperqty = Integer.parseInt(carbs);
                     String proteins = protein_field.getText().toString();
-                    int proteinsperqty = Integer.parseInt(proteins);*/
 
+                    if (TextUtils.isEmpty(cals)) {
+                        cal_field.setError("This field must be filled in");
+                        return;
                     }
 
+                    if (!TextUtils.isDigitsOnly(cals)) {
+                        cal_field.setError("The quantity must be a whole number");
+                        return;
+                    }
+
+                    if (TextUtils.isEmpty(carbs)) {
+                        carb_field.setError("This field must be filled in");
+                        return;
+                    }
+
+                    if (!TextUtils.isDigitsOnly(carbs)) {
+                        carb_field.setError("The quantity must be a whole number");
+                        return;
+                    }
+
+                    if (TextUtils.isEmpty(proteins)) {
+                        protein_field.setError("This field must be filled in");
+                        return;
+                    }
+
+                    if (!TextUtils.isDigitsOnly(proteins)) {
+                        protein_field.setError("The quantity must be a whole number");
+                        return;
+                    }
+
+                    int calories = Integer.parseInt(cals);
+                    int carbos = Integer.parseInt(carbs);
+                    int protein = Integer.parseInt(proteins);
+
+                    ldb.open();
+                    boolean update = ldb.addFoodEntry(foodname, quantity, qtype, date, calories, carbos, protein, user_id);
+
+                    if (update == true) {
+                        Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(food_entry.this, food_log.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
+                    }
+                }
                 /*
                 //if previous activity says to update, then call the update method
                 else{
@@ -251,7 +293,6 @@ public class food_entry extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "unsuccessful update", Toast.LENGTH_SHORT).show();
                     }
                 }*/
-                }
             }
         });
 

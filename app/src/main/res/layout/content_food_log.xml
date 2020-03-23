@@ -28,10 +28,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Daily Food Log"
-                android:layout_centerInParent="true"
-                app:layout_constraintHorizontal_weight="5"
-                tools:layout_editor_absoluteX="215dp"
-                tools:layout_editor_absoluteY="127dp" />
+                android:textSize="30sp"
+                android:layout_centerHorizontal="true"
+                app:layout_constraintHorizontal_weight="5"/>
+
+            <EditText
+                android:id="@+id/datefield"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:clickable="true"
+                android:focusable="false"
+                android:hint="Date"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
 
         </RelativeLayout>
 

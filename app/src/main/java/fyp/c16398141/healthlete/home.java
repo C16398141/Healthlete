@@ -1,10 +1,12 @@
 package fyp.c16398141.healthlete;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -39,6 +41,13 @@ public class home extends AppCompatActivity {
         layout2.setBackgroundColor(Color.CYAN);
         RelativeLayout layout3 = findViewById(R.id.relative3);
         layout3.setBackgroundColor(Color.YELLOW);
+
+        String value = getIntent().getExtras().getString("userId");
+        getSupportActionBar().setTitle(value);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.username);
+        navUsername.setText(value);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);

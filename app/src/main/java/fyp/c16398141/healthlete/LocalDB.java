@@ -170,8 +170,11 @@ public class LocalDB {
         }
     }
 
-    public Cursor getAllFoodEntries() {
-        Cursor data = db.rawQuery("SELECT * FROM FoodEntry ORDER BY foodname DESC;", null);
+    public Cursor getAllFoodEntries(String selected_date) {
+        //String selected_date = "2232020";
+        Log.i("DATE DB", selected_date);
+        Cursor data = db.rawQuery("SELECT * FROM FoodEntry WHERE date LIKE " + selected_date + " ORDER BY foodname DESC;", null);
+        //Cursor data = db.rawQuery("SELECT * FROM FoodEntry ORDER BY foodname DESC;", null);
         return data;
     }
 

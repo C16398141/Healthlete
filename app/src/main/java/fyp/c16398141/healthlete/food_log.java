@@ -1,5 +1,6 @@
 package fyp.c16398141.healthlete;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,6 +31,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableLayout;
@@ -41,6 +44,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import android.widget.TableRow.LayoutParams;
 
@@ -57,7 +61,10 @@ public class food_log extends AppCompatActivity {
     List<Integer> totalCalories = new ArrayList<>();
     List<Integer> totalCarbs = new ArrayList<>();
     List<Integer> totalProtein = new ArrayList<>();
+    EditText datefield;
+    DatePickerDialog datePickerDialog;
     String user_id = "2013chrisclarke@gmail.com";
+    String date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,8 @@ public class food_log extends AppCompatActivity {
         setSupportActionBar(toolbar);
         RelativeLayout layout1 = findViewById(R.id.relative1);
         layout1.setBackgroundColor(Color.CYAN);
+
+        datefield = (EditText) findViewById(R.id.datefield);
         /*Button addButton = findViewById(R.id.addButton);
         Spannable buttonLabel = new SpannableString(" Add New");
         buttonLabel.setSpan(new ImageSpan(getApplicationContext(), R.drawable.plus_circle,
@@ -85,7 +94,6 @@ public class food_log extends AppCompatActivity {
         ldb.close();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        init(table);
 
         final RelativeLayout rl = findViewById(R.id.relative3);
         final ConstraintLayout cl = findViewById(R.id.constraint1);
@@ -100,6 +108,36 @@ public class food_log extends AppCompatActivity {
                 dimensions.add(rlwidth);
                 dimensions.add(rlheight);
                 setupPieChart();
+            }
+        });
+
+        Calendar c = Calendar.getInstance();
+        final int mYear = c.get(Calendar.YEAR); // current year
+        final int mMonth = c.get(Calendar.MONTH); // current month
+        final int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+        datefield.setText(mDay + "/" + (mMonth+1) + "/" + mYear);
+        date = "" + mDay + (mMonth+1) + mYear;
+
+        init(table);
+
+        datefield.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // date picker dialog
+                datePickerDialog = new DatePickerDialog(food_log.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+                                datefield.setText(dayOfMonth + "/" + (monthOfYear+1) + "/" + year);
+                                date = "" + dayOfMonth + (monthOfYear+1) + year;
+                                Log.i("TAG",valueOf(date));
+                                table.removeAllViews();
+                                displayRows(table);
+                                setupPieChart();
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
             }
         });
         /*vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -137,22 +175,8 @@ public class food_log extends AppCompatActivity {
         startActivity(getIntent());
     }
 
-    protected void onDraw(Canvas canvas) {
-        /*Float drawUpto = 46f;
-
-
-        float mouthInset = mRadius / 3f;
-        mArcBounds.set(mouthInset, mouthInset, mRadius * 2 - mouthInset, mRadius * 2 - mouthInset);
-        canvas.drawArc(mArcBounds, 0f, 360f, false, circleGray);
-
-        canvas.drawArc(mArcBounds, 270f, drawUpto, false, circleYellow);*/
-
-
-    }
     public void init(TableLayout table) {
-        ldb.open();
         displayRows(table);
-        ldb.close();
     }
 
     public void setupPieChart() {
@@ -232,25 +256,6 @@ public class food_log extends AppCompatActivity {
         String proteinPercent = proteInt + "%";
         canvas.drawText(proteinPercent, 830, 245, paint);
         imageView.setImageBitmap(bitmap);
-        /*
-        circleYellow = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circleYellow.setStyle(Paint.Style.FILL);
-        circleYellow.setColor(Color.YELLOW);
-        circleYellow.setStyle(Paint.Style.STROKE);
-        circleYellow.setStrokeWidth(15 * getResources().getDisplayMetrics().density);
-        circleYellow.setStrokeCap(Paint.Cap.SQUARE);
-        // mEyeAndMouthPaint.setColor(getResources().getColor(R.color.colorAccent));
-        circleYellow.setColor(Color.parseColor("#F9A61A"));
-
-        circleGray = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circleGray.setStyle(Paint.Style.FILL);
-        circleGray.setColor(Color.GRAY);
-        circleGray.setStyle(Paint.Style.STROKE);
-        circleGray.setStrokeWidth(15 * getResources().getDisplayMetrics().density);
-        circleGray.setStrokeCap(Paint.Cap.SQUARE);
-        // mEyeAndMouthPaint.setColor(getResources().getColor(R.color.colorAccent));
-        circleGray.setColor(Color.parseColor("#76787a"));
-         */
     }
 
     public void addGoals()
@@ -330,7 +335,9 @@ public class food_log extends AppCompatActivity {
         totalCalories.clear();
         totalCarbs.clear();
         totalProtein.clear();
-        Cursor entries = ldb.getAllFoodEntries();
+
+        ldb.open();
+        Cursor entries = ldb.getAllFoodEntries(date);
         int rows = entries.getCount();
         if (rows == 0) {
         } else {
@@ -350,6 +357,9 @@ public class food_log extends AppCompatActivity {
                 t2v.setTextColor(Color.BLACK);
                 t2v.setGravity(Gravity.CENTER);
                 tbrow.addView(t2v,lp);
+
+                Log.i("Date",entries.getString(4));
+
                 TextView t3v = new TextView(this);
                 Integer cals = entries.getInt(5);
                 totalCalories.add(cals);
@@ -426,7 +436,6 @@ public class food_log extends AppCompatActivity {
             totrow.addView(total4,lp);
             table.addView(totrow);
 
-            ldb.open();
             Integer targetCals = 0;
             Integer targetCarbs = 0;
             Integer targetProtein = 0;

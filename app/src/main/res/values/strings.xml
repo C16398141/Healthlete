@@ -9,5 +9,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_food_entry">food_entry</string>
     <string name="web_client_id">1030506320648-njfvurcsd769vkr8oo9i3m2l5gibcbfh.apps.googleusercontent.com</string>
+    <string name="title_activity_workout_area">Map</string>
 
 </resources>
