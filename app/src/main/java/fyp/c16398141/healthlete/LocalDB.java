@@ -44,7 +44,7 @@ public class LocalDB {
                     "protein_per_qty integer not null, " +
                     "user_id text not null, " +
                     "FOREIGN KEY (user_id)" +
-                    "REFERENCES user (user_id));";
+                    "REFERENCES User (user_id));";
     //later on make food table with nutrient per qty values and take from them - remove from entry table
 
     private static final String CreateWorkoutEntryTable =
@@ -56,7 +56,8 @@ public class LocalDB {
                     "date text not null," +
                     "user_id text not null, " +
                     "FOREIGN KEY (user_id)" +
-                    "REFERENCES user (user_id));";
+                    "REFERENCES User (user_id));";
+    //add running/aerobic exercise formats and sports with duration perhaps
 
     private static final String CreateGoalTable =
             "create table if not exists Goals (entry_id integer primary key autoincrement, " +
@@ -66,9 +67,28 @@ public class LocalDB {
                     "targetProtein integer not null," +
                     "user_id text not null, " +
                     "FOREIGN KEY (user_id)" +
-                    "REFERENCES user (user_id));";
+                    "REFERENCES User (user_id));";
 
-    //add running/aerobic exercise formats and sports with duration perhaps
+    private static final String CreateWorkoutAreaTable =
+            "create table if not exists WorkoutArea (area_id integer primary key autoincrement, " +
+                    "place_id text not null, " +
+                    "name text not null, " +
+                    "times int not null," +
+                    "user_id text not null);";
+                    /*, " +
+                    "FOREIGN KEY (user_id)" +
+                    "REFERENCES User (user_id));";*/
+
+    private static final String CreateWorkoutAvailabilityTable =
+            "create table if not exists WorkoutAvailability (slot_id integer primary key autoincrement, " +
+                    "day text not null, " +
+                    "type text not null, " +
+                    "opening_time integer not null, " +
+                    "closing_time integer not null, " +
+                    "area_id integer not null, " +
+                    "FOREIGN KEY (area_id)" +
+                    "REFERENCES WorkoutArea (area_id));";
+
 
     private final Context context;
     private DatabaseHelper DBHelper;
@@ -102,6 +122,8 @@ public class LocalDB {
             db.execSQL(CreateFoodEntryTable);
             db.execSQL(CreateWorkoutEntryTable);
             db.execSQL(CreateGoalTable);
+            db.execSQL(CreateWorkoutAreaTable);
+            db.execSQL(CreateWorkoutAvailabilityTable);
             Log.i("tags","TABLES CREATED");
         }
 
@@ -198,5 +220,30 @@ public class LocalDB {
 
         Cursor data = db.rawQuery("SELECT * FROM Goals;", null);
         return data;
+    }
+
+    public long addWorkoutArea(String place_id, String name, Integer times, String user_id) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("place_id", place_id);
+        initialValues.put("name", name);
+        initialValues.put("times", times);
+        initialValues.put("user_id", user_id);
+        long result = db.insert("WorkoutArea", null, initialValues);
+        return result;
+    }
+
+    public boolean addWorkoutAvailability(String day, String type, Integer opening_time, Integer closing_time, Integer area_id) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("day", day);
+        initialValues.put("type", type);
+        initialValues.put("opening_time", opening_time);
+        initialValues.put("closing_time", closing_time);
+        initialValues.put("area_id", area_id);
+        long result = db.insert("WorkoutAvailability", null, initialValues);
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

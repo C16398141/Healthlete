@@ -1,29 +1,22 @@
 package fyp.c16398141.healthlete;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApi;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.PlaceReport;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,17 +27,9 @@ import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,24 +46,24 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
     EditText etext;
     Button button;
 
+    LocalDB ldb;
+
     ArrayList<String> aday = new ArrayList<>();
     ArrayList<String> atimes = new ArrayList<>();
     ArrayList<Integer> opening = new ArrayList<>();
     ArrayList<Integer> closing = new ArrayList<>();
 
+    String place_id;
+    String name;
+    String user_id = "2013chrisclarke@gmail.com";
+    Integer times;
+
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int request_code = 101;
 
     private GoogleApi googleApi;
-    //String key = getString(R.string.my_maps_key);
-    //GoogleApiClient client;
 
-    // Initialize Places.
-    //Places.initialize(getApplicationContext(), key);
-    // Create a new Places client instance.
-    //PlacesClient placesClient = Places.createClient(this);
     List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.OPENING_HOURS);
-
     FetchPlaceRequest request;
     PlacesClient placesClient;
 
@@ -86,7 +71,8 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout_area);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        ldb = new LocalDB(this);
+
         etext = (EditText) findViewById(R.id.text);
         button = (Button) findViewById(R.id.button);
         button.setVisibility(View.INVISIBLE);
@@ -100,7 +86,36 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
 
-            }
+                    ldb.open();
+                    long update = ldb.addWorkoutArea(place_id, name, times, user_id);
+
+                    if (update == -1) {
+                        Toast.makeText(getApplicationContext(), "Unsuccessful area insert", Toast.LENGTH_SHORT).show();
+                    } else if (times == 1){
+                        int area_id = (int) update;
+                        int inserts = 0;
+                        for (int i = 0; i<aday.size(); i++){
+                            boolean result = ldb.addWorkoutAvailability(aday.get(i), atimes.get(i), opening.get(i), closing.get(i), area_id);
+                            if (result == true){
+                                inserts++;
+                            }
+                        }
+                        if (inserts == 0)
+                        {
+                            Toast.makeText(getApplicationContext(), "Unsuccessful inserts", Toast.LENGTH_SHORT).show();
+                        }
+                        else if (inserts == aday.size())
+                        {
+                            Toast.makeText(getApplicationContext(), "Successful inserts", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "Partial opening time insert with area insert ", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Successful area insert with opening times not available", Toast.LENGTH_SHORT).show();
+                    }
+                    ldb.close();
+                }
         });
     }
 
@@ -147,16 +162,25 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onPoiClick(PointOfInterest poi) {
+
+        aday.clear();
+        atimes.clear();
+        opening.clear();
+        closing.clear();
+
         Toast.makeText(getApplicationContext(), poi.name + "\nPlace ID:" + poi.placeId + "\nLatitude:" + poi.latLng.latitude + " Longitude:" + poi.latLng.longitude, Toast.LENGTH_SHORT).show();
 
         request = FetchPlaceRequest.newInstance(poi.placeId, placeFields);
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
+            place_id = place.getId();
+            name = place.getName();
             try {
                 List<String> hours = place.getOpeningHours().getWeekdayText();
-                Log.i("Opening Times", "Weekday Text Found" + place.getName() + " " + hours);
+                Log.i("Opening Times", "Found " + name + " " + hours);
 
+                times = 1;
                 // convert from default abstract arraylist
                 Collection<String> times = hours;
                 Log.i("Collection", "Weekday Text Found" + place.getName() + " " + times);
@@ -173,13 +197,19 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                     if (matcher.find()) {
                         if (daytime.contains(always)){
                             type = "Open";
+                            int open = 1;
                             aday.add(daytime.substring(0, matcher.start()));
                             atimes.add(type);
+                            opening.add(open);
+                            closing.add(open);
                         }
                         else if (daytime.contains(never)){
                             type = "Closed";
+                            int closed = 0;
                             aday.add(daytime.substring(0, matcher.start()));
                             atimes.add(type);
+                            opening.add(closed);
+                            closing.add(closed);
                         }
                         else{
                             type = "Periodic";
@@ -222,36 +252,20 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                         }
 
                     }
-                int x = 0;
+
                 for(int i = 0; i<7; i++){
                     Log.i(aday.get(i),atimes.get(i));
-                    if(atimes.get(i).equals("Periodic")){
-                        Log.i("Opening",valueOf(opening.get(x)));
-                        Log.i("Closing",valueOf(closing.get(x)));
-                        x++;
-                    }
+                    Log.i("Opening",valueOf(opening.get(i)));
+                    Log.i("Closing",valueOf(closing.get(i)));
                 }
-
-                aday.clear();
-                atimes.clear();
 
                 etext.setText(place.getName());
                 button.setVisibility(View.VISIBLE);
             } catch(NullPointerException e) {
                 Log.i("Opening Times", place.getName() + " opening Times not available");
+                times = 0;
             }
 
-            /*if (place.getOpeningHours().getWeekdayText() != null){
-                List<String> hours = place.getOpeningHours().getWeekdayText();
-                Log.i("TAG", "Place found: " + place.getName() + " " + hours);
-            }
-            else if(place.getOpeningHours().getPeriods() != null){
-                List<Period> periods = place.getOpeningHours().getPeriods();
-                Log.i("TAG", "Place found: " + place.getName() + " " + periods);
-            }
-            else{
-                Log.i("TAG", "Place found: " + place.getName() + " Opening Times not available");
-            }*/
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 ApiException apiException = (ApiException) exception;
