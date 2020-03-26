@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApi;
@@ -26,7 +25,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -44,7 +42,7 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.valueOf;
 
-// TODO Handle multiple opening times (closed for lunch), add programmatic layout params for hidden button and fragment, update db to take area location
+// TODO Handle add programmatic layout params for hidden button and fragment, update db to take area location
 public class workout_area extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnPoiClickListener { //, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
@@ -207,11 +205,6 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onPoiClick(PointOfInterest poi) {
 
-        aday.clear();
-        atimes.clear();
-        opening.clear();
-        closing.clear();
-
         Toast.makeText(getApplicationContext(), poi.name + "\nPlace ID:" + poi.placeId + "\nLatitude:" + poi.latLng.latitude + " Longitude:" + poi.latLng.longitude, Toast.LENGTH_SHORT).show();
 
         request = FetchPlaceRequest.newInstance(poi.placeId, placeFields);
@@ -236,6 +229,12 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         double lat = place.getLatLng().latitude;
         double lng = place.getLatLng().longitude;
         updateMap(name,lat,lng);
+
+        aday.clear();
+        atimes.clear();
+        opening.clear();
+        closing.clear();
+
         try {
             List<String> hours = place.getOpeningHours().getWeekdayText();
             Log.i("Opening Times", "Found " + name + " " + hours);
@@ -249,9 +248,11 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
             Pattern pday = Pattern.compile(":");
             Pattern ptimes = Pattern.compile("–");
             Pattern pm = Pattern.compile("pm");
+            Pattern multiple = Pattern.compile(",");
 
             for (String daytime : times){
                 String type, time_brackets, opening_time, closing_time;
+                Matcher mult = multiple.matcher(daytime);
 
                 Matcher matcher = pday.matcher(daytime);
                 if (matcher.find()) {
@@ -273,6 +274,22 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                     }
                     else{
                         type = "Periodic";
+
+                        //if there are multiple opening and closing times in a single day, keep only the first opening time and last closing time
+                        if (mult.find()) {
+                            Log.i("Multiple Start",daytime);
+                            Matcher first = ptimes.matcher(daytime);
+                            if (first.find()) {
+                                String opening = daytime.substring(0, first.start());
+                                String body = daytime.substring(first.end());
+                                Matcher last = ptimes.matcher(body);
+                                if (last.find()){
+                                    String closing = body.substring(last.end());
+                                    daytime = opening + " – " + closing;
+                                    Log.i("Multiple End",daytime);
+                                }
+                            }
+                        }
                         daytime = daytime.toLowerCase();
                         aday.add(daytime.substring(0, matcher.start()));
                         atimes.add(type);
@@ -291,7 +308,13 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                             Matcher matcher3 = pm.matcher(opening_time);
                             if(matcher3.find()){
                                 opening_time = opening_time.replaceAll("pm","");
-                                opening.add((Integer.parseInt(opening_time))+1200);
+                                if (opening_time.contains("12"))
+                                {
+                                    opening.add(Integer.parseInt(opening_time));
+                                }
+                                else{
+                                    opening.add((Integer.parseInt(opening_time))+1200);
+                                }
                             }
                             else{
                                 opening_time = opening_time.replaceAll("am","");
@@ -301,7 +324,13 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                             Matcher matcher4 = pm.matcher(closing_time);
                             if(matcher4.find()){
                                 closing_time = closing_time.replaceAll("pm","");
-                                closing.add((Integer.parseInt(closing_time))+1200);
+                                if (closing_time.contains("12"))
+                                {
+                                    closing.add(Integer.parseInt(closing_time));
+                                }
+                                else{
+                                    closing.add((Integer.parseInt(closing_time))+1200);
+                                }
                             }
                             else{
                                 closing_time = closing_time.replaceAll("am","");
