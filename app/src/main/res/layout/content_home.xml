@@ -19,17 +19,50 @@
             android:id="@+id/relative1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" >
+            android:layout_weight="1"
+            android:background="@drawable/bowl">
+            <!--https://www.freepik.com/premium-photo/top-view-spoon-empty-bowl-dark-cement-table_6907144.htm#page=8&query=empty+plate&position=46-->
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Food"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/food"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:layout_width="150sp"
+                android:layout_height="150sp"
                 android:layout_centerInParent="true"
-                app:layout_constraintHorizontal_weight="5"
-                tools:layout_editor_absoluteX="215dp"
-                tools:layout_editor_absoluteY="127dp" />
+                app:cardCornerRadius="10sp"
+                android:layout_margin="10sp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="50sp"
+                        android:layout_height="50sp"
+                        android:background="@drawable/circlebackground"
+                        android:src="@drawable/ic_local_dining_black_24dp"
+                        android:padding="10sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginTop="5sp"
+                        android:text="Food"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="5sp"
+                        android:background="@color/lightGrey"
+                        android:layout_margin="5sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Keep track of your nutrient intake"
+                        android:padding="5sp"
+                        android:textColor="@android:color/darker_gray"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </RelativeLayout>
 
@@ -37,32 +70,100 @@
             android:id="@+id/relative2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" >
+            android:layout_weight="1"
+            android:background="@drawable/dumbbells">
+            <!--http://m.zhuoku.org/bizhi/7018.html-->
 
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fitness"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/fitness"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:layout_width="150sp"
+                android:layout_height="150sp"
                 android:layout_centerInParent="true"
-                tools:layout_editor_absoluteX="215dp"
-                tools:layout_editor_absoluteY="190dp" />
+                app:cardCornerRadius="10sp"
+                android:layout_margin="10sp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="50sp"
+                        android:layout_height="50sp"
+                        android:background="@drawable/green_circle_background"
+                        android:src="@drawable/ic_fitness_center_white_24dp"
+                        android:padding="10sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginTop="5sp"
+                        android:text="Fitness"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="5sp"
+                        android:background="@color/lightGrey"
+                        android:layout_margin="5sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Keep track of your workout progress"
+                        android:padding="5sp"
+                        android:textColor="@android:color/darker_gray"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/relative3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" >
+            android:layout_weight="1"
+            android:background="@drawable/trophy">
+            <!--https://www.freepik.com/premium-photo/champion-golden-trophy-placed-wooden-table_3064663.htm#page=1&query=awards&position=41-->
 
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Achievements"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/achievement"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:layout_width="150sp"
+                android:layout_height="150sp"
                 android:layout_centerInParent="true"
-                tools:layout_editor_absoluteX="218dp"
-                tools:layout_editor_absoluteY="253dp" />
+                app:cardCornerRadius="10sp"
+                android:layout_margin="10sp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="50sp"
+                        android:layout_height="50sp"
+                        android:background="@drawable/orange_circle_background"
+                        android:src="@drawable/ic_school_black_24dp"
+                        android:padding="10sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:layout_marginTop="5sp"
+                        android:text="Achievements"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="5sp"
+                        android:background="@color/lightGrey"
+                        android:layout_margin="5sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Take a look at some milestone achievements"
+                        android:padding="5sp"
+                        android:textColor="@android:color/darker_gray"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
 
     </LinearLayout>

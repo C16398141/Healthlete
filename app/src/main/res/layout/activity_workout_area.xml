@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".workout_area"
@@ -21,15 +21,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/autocomplete_fragment"
-        android:layout_above="@+id/button"/>
+        android:layout_above="@+id/home"/>
 
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="50sp"
-        android:layout_above="@+id/home"
+        android:layout_above="@+id/view_areas"
         android:gravity="center"
         android:text="Add Workout Area" />
+
+    <Button
+        android:id="@+id/view_areas"
+        android:layout_width="match_parent"
+        android:layout_height="50sp"
+        android:layout_above="@+id/home"
+        android:gravity="center"
+        android:text="View Workout Areas" />
 
     <Button
         android:id="@+id/home"

@@ -32,7 +32,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import static maes.tech.intentanim.CustomIntent.customType;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -105,9 +105,6 @@ public class food_entry extends AppCompatActivity {
 
 
         button = (Button) findViewById(R.id.submit);
-        //*******************************************************************
-        //MAKE DYNAMIC, CENTRAL LAYOUT, DEFAULT SET TO TODAY'S DATE INCLUDING HINT ELEMENT AND COMPATIBLE WITH DB
-        // THEN SORT TABLE ROWS BY DATE WITH SELECTABLE POSSIBLE DATE PICKER FILTER ABOVE TABLE WITH ERROR CHECKS
 
         // calender class's instance and get current date , month and year from calender
         Calendar c = Calendar.getInstance();
@@ -194,6 +191,7 @@ public class food_entry extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(food_entry.this, food_log.class);
                                 startActivity(intent);
+                                customType(food_entry.this,"right-to-left");
                             } else {
                                 Toast.makeText(getApplicationContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
                             }
@@ -271,6 +269,7 @@ public class food_entry extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(food_entry.this, food_log.class);
                         startActivity(intent);
+                        customType(food_entry.this,"right-to-left");
                     } else {
                         Toast.makeText(getApplicationContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
                     }
@@ -362,19 +361,8 @@ public class food_entry extends AppCompatActivity {
                             Log.i("Nutrient", valueOf(data));//valueOf(data));
                             nutrientQty.add(data);
                         }
-
-                        //Account account = JsonConvert.DeserializeObject<Account>(json);
-
-                        //Log.i("TAG",account.Email);
-                        // Do something with the response
                     }
 
-                   /* @Override
-                    public void onResponse(Call call, final Response response) throws IOException {
-                        String res = response.body().string();
-
-                        // Do something with the response
-                    }*/
                 });
     }
 

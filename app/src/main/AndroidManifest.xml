@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fyp.c16398141.healthlete">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -18,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".view_workout_areas"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -34,13 +33,17 @@
         <activity
             android:name=".workout_area"
             android:label="@string/title_activity_workout_area">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fyp.c16398141.healthlete.home" />
+            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            -->
         </activity>
-
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -61,7 +64,7 @@
             android:name=".food_entry"
             android:label="@string/title_activity_food_entry"
             android:parentActivityName=".food_log"
-            android:theme="@style/AppTheme.FoodEntry"
+            android:theme="@style/AppTheme.Modern"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -89,7 +92,7 @@
             android:name=".food_log"
             android:label="@string/title_activity_food_log"
             android:parentActivityName=".home"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.Modern">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fyp.c16398141.healthlete.home" />
@@ -97,16 +100,16 @@
         <activity
             android:name=".home"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.Modern" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-            <!--<intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
     </application>
 

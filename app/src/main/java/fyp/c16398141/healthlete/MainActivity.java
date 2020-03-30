@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setSize(SignInButton.SIZE_STANDARD);
 
         Button button = findViewById(R.id.button);
-        Button button2 = findViewById(R.id.button2);
 
         signInButton.setOnClickListener(new View.OnClickListener() {
 
@@ -86,14 +85,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         button.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, home.class);
-                startActivity(intent);
-            }
-        });
-
-        button2.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 signOut();

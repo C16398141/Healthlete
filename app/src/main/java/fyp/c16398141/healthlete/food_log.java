@@ -19,6 +19,7 @@ import com.anychart.charts.Polar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import static maes.tech.intentanim.CustomIntent.customType;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -327,9 +328,10 @@ public class food_log extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-
                 Intent intent = new Intent(food_log.this, food_entry.class);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                customType(food_log.this,"left-to-right");
             }
         });
 

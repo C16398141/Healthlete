@@ -73,7 +73,9 @@ public class LocalDB {
             "create table if not exists WorkoutArea (area_id integer primary key autoincrement, " +
                     "place_id text not null, " +
                     "name text not null, " +
-                    "times int not null," +
+                    "latitude real not null, " +
+                    "longitude real not null, " +
+                    "times int not null, " +
                     "user_id text not null);";
                     /*, " +
                     "FOREIGN KEY (user_id)" +
@@ -222,10 +224,12 @@ public class LocalDB {
         return data;
     }
 
-    public long addWorkoutArea(String place_id, String name, Integer times, String user_id) {
+    public long addWorkoutArea(String place_id, String name, Double lat, Double lng, Integer times, String user_id) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("place_id", place_id);
         initialValues.put("name", name);
+        initialValues.put("latitude", lat);
+        initialValues.put("longitude", lng);
         initialValues.put("times", times);
         initialValues.put("user_id", user_id);
         long result = db.insert("WorkoutArea", null, initialValues);

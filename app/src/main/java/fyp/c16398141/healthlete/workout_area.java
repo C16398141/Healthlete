@@ -4,12 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApi;
@@ -41,13 +43,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.valueOf;
+import static maes.tech.intentanim.CustomIntent.customType;
 
-// TODO Handle add programmatic layout params for hidden button and fragment, update db to take area location
-public class workout_area extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnPoiClickListener { //, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+// TODO make buttons card views at the bottom with add workout area in the centre, make nice view areas activity and then edit profile (incl goals). Set goals to default average human intake (possibly based on whether gender is received on sign up)
+public class workout_area extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnPoiClickListener {
 
     private GoogleMap mMap;
     Location currentLocation;
-    Button button, home;
+    Button button, view_areas, home;
 
     LocalDB ldb;
 
@@ -58,6 +61,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
 
     String place_id;
     String name;
+    Double lat,lng;
     String user_id = "2013chrisclarke@gmail.com";
     Integer times;
 
@@ -79,6 +83,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         button = (Button) findViewById(R.id.button);
         button.setVisibility(View.INVISIBLE);
 
+        view_areas = findViewById(R.id.view_areas);
         home = (Button) findViewById(R.id.home);
 
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
@@ -117,7 +122,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         button.setOnClickListener(v -> {
 
                 ldb.open();
-                long update = ldb.addWorkoutArea(place_id, name, times, user_id);
+                long update = ldb.addWorkoutArea(place_id, name, lat, lng, times, user_id);
 
                 if (update == -1) {
                     Toast.makeText(getApplicationContext(), "Unsuccessful area insert", Toast.LENGTH_SHORT).show();
@@ -132,20 +137,32 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                     }
                     if (inserts == 0)
                     {
-                        Toast.makeText(getApplicationContext(), "Unsuccessful inserts", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Failed to add workout area", Toast.LENGTH_SHORT).show();
                     }
                     else if (inserts == aday.size())
                     {
-                        Toast.makeText(getApplicationContext(), "Successful inserts", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Workout area added", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Toast.makeText(getApplicationContext(), "Partial opening time insert with area insert ", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Workout area added with partial opening times available", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Successful area insert with opening times not available", Toast.LENGTH_SHORT).show();
+                } else{
+                    Toast.makeText(getApplicationContext(), "Workout area added with opening times not available", Toast.LENGTH_SHORT).show();
                 }
+                Intent intent = new Intent(workout_area.this, home.class);
+                startActivity(intent);
                 ldb.close();
             });
+
+        view_areas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(workout_area.this, view_workout_areas.class);
+                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                customType(workout_area.this,"bottom-to-up");
+            }
+        });
 
         home.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,8 +243,8 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
     public void processPlaceDetails(Place place){
         place_id = place.getId();
         name = place.getName();
-        double lat = place.getLatLng().latitude;
-        double lng = place.getLatLng().longitude;
+        lat = place.getLatLng().latitude;
+        lng = place.getLatLng().longitude;
         updateMap(name,lat,lng);
 
         aday.clear();

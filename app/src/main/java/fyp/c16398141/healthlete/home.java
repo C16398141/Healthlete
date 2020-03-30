@@ -1,33 +1,35 @@
 package fyp.c16398141.healthlete;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import static java.lang.String.valueOf;
 
-public class home extends AppCompatActivity {
+public class home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private EditText title;
     private DrawerLayout drawer;
-    //private static boolean init_user = false;
     private static int init_user = 0;
     private static String user;
     String value;
@@ -40,11 +42,8 @@ public class home extends AppCompatActivity {
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
         RelativeLayout layout1 = findViewById(R.id.relative1);
-        layout1.setBackgroundColor(Color.RED);
         RelativeLayout layout2 = findViewById(R.id.relative2);
-        layout2.setBackgroundColor(Color.CYAN);
         RelativeLayout layout3 = findViewById(R.id.relative3);
-        layout3.setBackgroundColor(Color.YELLOW);
 
         if (init_user == 1) {
             value = user;
@@ -59,6 +58,7 @@ public class home extends AppCompatActivity {
 
         getSupportActionBar().setTitle(value);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(home.this);
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = (TextView) headerView.findViewById(R.id.username);
         navUsername.setText(value);
@@ -66,18 +66,19 @@ public class home extends AppCompatActivity {
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
+        //toggle.setDrawerIndicatorEnabled(true);
         toggle.syncState();
 
-        //title = (EditText) findViewById(R.id.editText);
-        //title.setText("Google is your friend.", TextView.BufferType.EDITABLE);
 
-        Button button = findViewById(R.id.button);
-        Button button2 = findViewById(R.id.button2);
-        Button button3 = findViewById(R.id.button3);
+        MaterialCardView food_card = (MaterialCardView) findViewById(R.id.food);
+        MaterialCardView fitness_card = (MaterialCardView) findViewById(R.id.fitness);
+        MaterialCardView achievement_card = (MaterialCardView) findViewById(R.id.achievement);
+        //Button button2 = findViewById(R.id.button2);
+        //Button button3 = findViewById(R.id.button3);
 
         final int request_code = 1;
 
-        button.setOnClickListener(new View.OnClickListener() {
+        food_card.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
@@ -88,7 +89,7 @@ public class home extends AppCompatActivity {
             }
         });
 
-        button2.setOnClickListener(new View.OnClickListener() {
+        fitness_card.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
@@ -97,11 +98,11 @@ public class home extends AppCompatActivity {
             }
         });
 
-        button3.setOnClickListener(new View.OnClickListener() {
+        achievement_card.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
-                Intent intent = new Intent(home.this, achievements.class);
+                Intent intent = new Intent(home.this, workout_area.class);
                 startActivity(intent);
             }
         });
@@ -125,21 +126,6 @@ public class home extends AppCompatActivity {
 
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
@@ -148,4 +134,22 @@ public class home extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.addgym:
+                Intent intent = new Intent(home.this, workout_area.class);
+                startActivity(intent);
+                break;
+
+            case R.id.sign_out:
+                Intent sign_out = new Intent(home.this, MainActivity.class);
+                startActivity(sign_out);
+                break;
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 }
