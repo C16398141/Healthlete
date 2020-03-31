@@ -21,30 +21,47 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/autocomplete_fragment"
-        android:layout_above="@+id/home"/>
+        android:layout_alignParentBottom="true"/>
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="50sp"
-        android:layout_above="@+id/view_areas"
-        android:gravity="center"
-        android:text="Add Workout Area" />
+    <ImageButton
+        android:id="@+id/add"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:layout_width="75sp"
+        android:layout_height="75sp"
+        android:layout_alignBottom="@id/map"
+        android:layout_marginBottom="25sp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/white_circle_background"
+        android:src="@drawable/ic_add_location_black_24dp"
+        android:scaleType="center"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/view_areas"
-        android:layout_width="match_parent"
-        android:layout_height="50sp"
-        android:layout_above="@+id/home"
-        android:gravity="center"
-        android:text="View Workout Areas" />
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:layout_width="75sp"
+        android:layout_height="75sp"
+        android:layout_alignBottom="@id/map"
+        android:layout_marginBottom="25sp"
+        android:layout_toLeftOf="@+id/add"
+        android:layout_marginRight="45sp"
+        android:background="@drawable/white_circle_background"
+        android:src="@drawable/ic_local_activity_black_24dp"
+        android:scaleType="center"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/home"
-        android:layout_width="match_parent"
-        android:layout_height="50sp"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:text="Home" />
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:layout_width="75sp"
+        android:layout_height="75sp"
+        android:layout_alignBottom="@id/map"
+        android:layout_marginBottom="25sp"
+        android:layout_toRightOf="@+id/add"
+        android:layout_marginLeft="45sp"
+        android:background="@drawable/white_circle_background"
+        android:src="@drawable/ic_my_location_black_24dp"
+        android:scaleType="center"/>
 
 </RelativeLayout>

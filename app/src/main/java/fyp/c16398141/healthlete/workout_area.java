@@ -6,11 +6,13 @@ import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.google.android.gms.common.api.ApiException;
@@ -34,6 +36,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,12 +48,11 @@ import java.util.regex.Pattern;
 import static java.lang.String.valueOf;
 import static maes.tech.intentanim.CustomIntent.customType;
 
-// TODO make buttons card views at the bottom with add workout area in the centre, make nice view areas activity and then edit profile (incl goals). Set goals to default average human intake (possibly based on whether gender is received on sign up)
+// TODO make nice view areas activity and then edit profile (incl goals). Set goals to default average human intake (possibly based on whether gender is received on sign up)
 public class workout_area extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnPoiClickListener {
 
     private GoogleMap mMap;
     Location currentLocation;
-    Button button, view_areas, home;
 
     LocalDB ldb;
 
@@ -68,8 +70,6 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int request_code = 101;
 
-    private GoogleApi googleApi;
-
     List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.OPENING_HOURS, Place.Field.LAT_LNG);
     FetchPlaceRequest request;
     PlacesClient placesClient;
@@ -80,11 +80,11 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_workout_area);
         ldb = new LocalDB(this);
 
-        button = (Button) findViewById(R.id.button);
-        button.setVisibility(View.INVISIBLE);
+        ImageButton add = findViewById(R.id.add);
+        add.setVisibility(View.INVISIBLE);
 
-        view_areas = findViewById(R.id.view_areas);
-        home = (Button) findViewById(R.id.home);
+        ImageButton view_areas = findViewById(R.id.view_areas);
+        ImageButton home = findViewById(R.id.home);
 
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
@@ -119,9 +119,17 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         fetchLastLocation();
 
-        button.setOnClickListener(v -> {
+        add.setOnClickListener(v -> {
 
                 ldb.open();
+                Cursor area = ldb.getWorkoutArea();
+                int rows = area.getCount();
+                if (rows == 0) {
+                } else {
+                    ldb.deletePreviousWorkoutArea();
+                    Log.i("Deleted","Probably");
+                }
+
                 long update = ldb.addWorkoutArea(place_id, name, lat, lng, times, user_id);
 
                 if (update == -1) {
@@ -144,12 +152,12 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                         Toast.makeText(getApplicationContext(), "Workout area added", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Toast.makeText(getApplicationContext(), "Workout area added with partial opening times available", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Workout area added with partial opening times available", Toast.LENGTH_LONG).show();
                     }
                 } else{
-                    Toast.makeText(getApplicationContext(), "Workout area added with opening times not available", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Workout area added with opening times not available", Toast.LENGTH_LONG).show();
                 }
-                Intent intent = new Intent(workout_area.this, home.class);
+                Intent intent = new Intent(workout_area.this, view_workout_areas.class);
                 startActivity(intent);
                 ldb.close();
             });
@@ -222,7 +230,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onPoiClick(PointOfInterest poi) {
 
-        Toast.makeText(getApplicationContext(), poi.name + "\nPlace ID:" + poi.placeId + "\nLatitude:" + poi.latLng.latitude + " Longitude:" + poi.latLng.longitude, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), poi.name + "\nPlace ID:" + poi.placeId + "\nLatitude:" + poi.latLng.latitude + " Longitude:" + poi.latLng.longitude, Toast.LENGTH_SHORT).show();
 
         request = FetchPlaceRequest.newInstance(poi.placeId, placeFields);
 
@@ -271,6 +279,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                 String type, time_brackets, opening_time, closing_time;
                 Matcher mult = multiple.matcher(daytime);
 
+                daytime = daytime.toLowerCase();
                 Matcher matcher = pday.matcher(daytime);
                 if (matcher.find()) {
                     if (daytime.contains(always)){
@@ -307,7 +316,6 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                                 }
                             }
                         }
-                        daytime = daytime.toLowerCase();
                         aday.add(daytime.substring(0, matcher.start()));
                         atimes.add(type);
                         time_brackets = (daytime.substring(matcher.end()));
@@ -357,18 +365,13 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                     }
                 }
             }
-
-            for(int i = 0; i<7; i++){
-                Log.i(aday.get(i),atimes.get(i));
-                Log.i("Opening",valueOf(opening.get(i)));
-                Log.i("Closing",valueOf(closing.get(i)));
-            }
         } catch(NullPointerException e) {
             Log.i("Opening Times", place.getName() + " opening Times not available");
             times = 0;
         }
 
-        button.setVisibility(View.VISIBLE);
+        ImageButton add = findViewById(R.id.add);
+        add.setVisibility(View.VISIBLE);
     }
 
    public void onLocationChanged(Location location) {

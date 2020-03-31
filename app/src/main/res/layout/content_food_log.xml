@@ -20,17 +20,8 @@
         <RelativeLayout
             android:id="@+id/relative1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="7.5" >
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Daily Food Log"
-                android:textSize="30sp"
-                android:layout_centerHorizontal="true"
-                app:layout_constraintHorizontal_weight="5"/>
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/blue">
 
             <EditText
                 android:id="@+id/datefield"
@@ -39,8 +30,14 @@
                 android:clickable="true"
                 android:focusable="false"
                 android:hint="Date"
+                android:textSize="15sp"
+                android:background="@drawable/date_background"
+                android:textColor="@color/quantum_white_100"
                 android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"/>
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="5sp"
+                android:layout_marginBottom="5sp"
+                android:padding="5sp"/>
 
         </RelativeLayout>
 
@@ -59,7 +56,7 @@
 
                 <TableLayout
                     android:id="@+id/food_table"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:stretchColumns="1,2,3,4"
                     android:background="#f1f1f1">
@@ -73,10 +70,18 @@
             android:layout_height="match_parent"
             android:layout_weight="6.5" >
 
+            <View
+                android:id="@+id/divide"
+                android:layout_width="match_parent"
+                android:layout_height="5sp"
+                android:background="@color/blue" />
+
             <ImageView
                 android:id="@+id/imageview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_below="@+id/divide"
+                android:background="@color/lightGrey">
             </ImageView>
 
         </RelativeLayout>

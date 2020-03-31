@@ -211,7 +211,7 @@ public class food_entry extends AppCompatActivity {
                         ConstraintLayout constraintLayout = findViewById(R.id.constraint);
                         ConstraintSet constraintSet = new ConstraintSet();
                         constraintSet.clone(constraintLayout);
-                        constraintSet.connect(R.id.submit, ConstraintSet.TOP, R.id.protein_field, ConstraintSet.BOTTOM, 0);
+                        constraintSet.connect(R.id.submit, ConstraintSet.TOP, R.id.protein_field, ConstraintSet.BOTTOM, 20);
                         constraintSet.applyTo(constraintLayout);
                         cal_text.setVisibility(View.VISIBLE);
                         carb_text.setVisibility(View.VISIBLE);
@@ -274,35 +274,9 @@ public class food_entry extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
                     }
                 }
-                /*
-                //if previous activity says to update, then call the update method
-                else{
-                    boolean update = ldb.editFoodEntry(
-                            foodname,
-                            quantity,
-                            date,
-                            calsperqty,
-                            carbsperqty,
-                            proteinsperqty
-                    );
-
-                    if (update == true) {
-                        Toast.makeText(getApplicationContext(), "Successful update", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "unsuccessful update", Toast.LENGTH_SHORT).show();
-                    }
-                }*/
             }
         });
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

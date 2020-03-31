@@ -126,7 +126,7 @@ public class LocalDB {
             db.execSQL(CreateGoalTable);
             db.execSQL(CreateWorkoutAreaTable);
             db.execSQL(CreateWorkoutAvailabilityTable);
-            Log.i("tags","TABLES CREATED");
+            Log.i("tags", "TABLES CREATED");
         }
 
         @Override
@@ -250,4 +250,24 @@ public class LocalDB {
             return true;
         }
     }
+
+    public Cursor getWorkoutArea() {
+        String username = "2013chrisclarke@gmail.com";
+        Log.i("Area", "Selected");
+        Cursor data = db.rawQuery("SELECT * FROM WorkoutArea WHERE user_id LIKE '" + username + "';", null);
+        //Cursor data = db.rawQuery("SELECT * FROM FoodEntry ORDER BY foodname DESC;", null);
+        return data;
+    }
+
+    public Cursor getWorkoutAvailability(int area_id) {
+        String username = "2013chrisclarke@gmail.com";
+        Log.i("Area", "Selected");
+        Cursor data = db.rawQuery("SELECT * FROM WorkoutAvailability WHERE area_id LIKE " + area_id + ";", null);
+        return data;
+    }
+
+    public void deletePreviousWorkoutArea() {
+
+        db.execSQL("delete from WorkoutArea;");
+        }
 }
