@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 import static java.lang.String.valueOf;
 import static maes.tech.intentanim.CustomIntent.customType;
 
-// TODO make nice view areas activity and then edit profile (incl goals). Set goals to default average human intake (possibly based on whether gender is received on sign up)
+// TODO make edit profile (incl goals). Set goals to default average human intake (possibly based on whether gender is received on sign up)
 public class workout_area extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnPoiClickListener {
 
     private GoogleMap mMap;

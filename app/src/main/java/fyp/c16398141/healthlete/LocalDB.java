@@ -47,14 +47,26 @@ public class LocalDB {
                     "REFERENCES User (user_id));";
     //later on make food table with nutrient per qty values and take from them - remove from entry table
 
+    private static final String CreateExerciseTable =
+            "create table if not exists Exercise (exercise_id integer primary key autoincrement, " +
+                    "exercisename text not null, " +
+                    "musclegroup text not null, " +
+                    "image blob," +
+                    "user_id text not null, " +
+                    "FOREIGN KEY (user_id)" +
+                    "REFERENCES User (user_id));";
+
     private static final String CreateWorkoutEntryTable =
             "create table if not exists WorkoutEntry (entry_id integer primary key autoincrement, " +
                     "exercisename text not null, " +
-                    "weight integer unique not null, " +
+                    "weight real unique not null, " +
                     "sets integer not null, " +
                     "repetitions integer not null, " +
+                    "repmax real not null," +
                     "date text not null," +
                     "user_id text not null, " +
+                    "FOREIGN KEY (exercisename)" +
+                    "REFERENCES Exercise (exercisename)," +
                     "FOREIGN KEY (user_id)" +
                     "REFERENCES User (user_id));";
     //add running/aerobic exercise formats and sports with duration perhaps
@@ -122,6 +134,7 @@ public class LocalDB {
             db.execSQL(foreignKeyCheck);
             db.execSQL(CreateUserTable);
             db.execSQL(CreateFoodEntryTable);
+            db.execSQL(CreateExerciseTable);
             db.execSQL(CreateWorkoutEntryTable);
             db.execSQL(CreateGoalTable);
             db.execSQL(CreateWorkoutAreaTable);
@@ -251,6 +264,7 @@ public class LocalDB {
         }
     }
 
+
     public Cursor getWorkoutArea() {
         String username = "2013chrisclarke@gmail.com";
         Log.i("Area", "Selected");
@@ -261,7 +275,6 @@ public class LocalDB {
 
     public Cursor getWorkoutAvailability(int area_id) {
         String username = "2013chrisclarke@gmail.com";
-        Log.i("Area", "Selected");
         Cursor data = db.rawQuery("SELECT * FROM WorkoutAvailability WHERE area_id LIKE " + area_id + ";", null);
         return data;
     }
@@ -269,5 +282,46 @@ public class LocalDB {
     public void deletePreviousWorkoutArea() {
 
         db.execSQL("delete from WorkoutArea;");
-        }
+    }
+
+    public long addExercise(String exercisename, String musclegroup, String user_id) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("exercisename", exercisename);
+        initialValues.put("musclegroup", musclegroup);
+        initialValues.put("user_id", user_id);
+        long result = db.insert("Exercise", null, initialValues);
+        return result;
+    }
+
+    public Cursor getAllExercises() {
+        String username = "2013chrisclarke@gmail.com";
+        Cursor data = db.rawQuery("SELECT * FROM Exercise WHERE user_id LIKE " + username + ";", null);
+        return data;
+    }
+
+    public long addWorkoutEntry(String exercisename, Float weight, Integer reps, Integer sets, Float repmax, String date, String user_id) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("exercisename", exercisename);
+        initialValues.put("weight", weight);
+        initialValues.put("repetitions", reps);
+        initialValues.put("sets", sets);
+        initialValues.put("repmax", repmax);
+        initialValues.put("date", date);
+        initialValues.put("user_id", user_id);
+        long result = db.insert("WorkoutEntry", null, initialValues);
+        return result;
+    }
+
+    public Cursor getExerciseEntries() {
+        String username = "2013chrisclarke@gmail.com";
+        String exercisename = "Benchpress";
+        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE " + username + "AND exercisename LIKE " + exercisename + " ORDER BY date DESC;", null);
+        return data;
+    }
+
+    public Cursor getWorkoutEntry(String date) {
+        String username = "2013chrisclarke@gmail.com";
+        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE " + username + "AND date LIKE " + date + " ORDER BY weight DESC;", null);
+        return data;
+    }
 }

@@ -8,4 +8,27 @@
     tools:context=".fitness"
     tools:showIn="@layout/activity_fitness">
 
+    <RelativeLayout
+        android:id="@+id/relative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3" >
+
+        <ScrollView
+            android:id="@+id/scrolling"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_weight="1">
+
+            <TableLayout
+                android:id="@+id/exercise_table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1,2,3,4"
+                android:background="#f1f1f1">
+            </TableLayout>
+        </ScrollView>
+    </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
