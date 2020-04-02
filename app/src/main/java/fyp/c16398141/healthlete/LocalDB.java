@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import static java.lang.String.valueOf;
+
 public class LocalDB {
 
     // database columns
@@ -59,7 +61,7 @@ public class LocalDB {
     private static final String CreateWorkoutEntryTable =
             "create table if not exists WorkoutEntry (entry_id integer primary key autoincrement, " +
                     "exercisename text not null, " +
-                    "weight real unique not null, " +
+                    "weight real not null, " +
                     "sets integer not null, " +
                     "repetitions integer not null, " +
                     "repmax real not null," +
@@ -194,12 +196,12 @@ public class LocalDB {
     }
 
     public boolean deleteFoodEntry(Integer rowId) {
-        //String strId = String.valueOf(rowId);
+
         String whereClause = "entry_id=?";
         String whereArgs[] = {rowId.toString()};
-        //new String[] { strId }
+
         long result = db.delete("FoodEntry", whereClause, whereArgs);
-        //long result = db.execSQL(DELETE FROM TABLE);
+
         if (result == -1) {
             return false;
         } else {
@@ -275,7 +277,7 @@ public class LocalDB {
 
     public Cursor getWorkoutAvailability(int area_id) {
         String username = "2013chrisclarke@gmail.com";
-        Cursor data = db.rawQuery("SELECT * FROM WorkoutAvailability WHERE area_id LIKE " + area_id + ";", null);
+        Cursor data = db.rawQuery("SELECT * FROM WorkoutAvailability WHERE area_id LIKE '" + area_id + "';", null);
         return data;
     }
 
@@ -284,22 +286,27 @@ public class LocalDB {
         db.execSQL("delete from WorkoutArea;");
     }
 
-    public long addExercise(String exercisename, String musclegroup, String user_id) {
+    public boolean addExercise(String exercisename, String musclegroup, String user_id) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("exercisename", exercisename);
         initialValues.put("musclegroup", musclegroup);
         initialValues.put("user_id", user_id);
         long result = db.insert("Exercise", null, initialValues);
-        return result;
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public Cursor getAllExercises() {
         String username = "2013chrisclarke@gmail.com";
-        Cursor data = db.rawQuery("SELECT * FROM Exercise WHERE user_id LIKE " + username + ";", null);
+        Cursor data = db.rawQuery("SELECT * FROM Exercise WHERE user_id LIKE '" + username + "';", null);
         return data;
     }
 
-    public long addWorkoutEntry(String exercisename, Float weight, Integer reps, Integer sets, Float repmax, String date, String user_id) {
+    public boolean addWorkoutEntry(String exercisename, Double weight, Integer reps, Integer sets, Double repmax, String date, String user_id) {
+        Log.i("inserted entry name",exercisename);
         ContentValues initialValues = new ContentValues();
         initialValues.put("exercisename", exercisename);
         initialValues.put("weight", weight);
@@ -309,19 +316,68 @@ public class LocalDB {
         initialValues.put("date", date);
         initialValues.put("user_id", user_id);
         long result = db.insert("WorkoutEntry", null, initialValues);
-        return result;
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    public Cursor getExerciseEntries() {
+    /*public Cursor getExerciseEntries(String exercisename) {
         String username = "2013chrisclarke@gmail.com";
-        String exercisename = "Benchpress";
-        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE " + username + "AND exercisename LIKE " + exercisename + " ORDER BY date DESC;", null);
+        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND exercisename LIKE '" + exercisename + "' ORDER BY date DESC;", null);
         return data;
+    }*/
+
+    public Cursor getExerciseEntries(String exercisename) {
+        String username = "2013chrisclarke@gmail.com";
+        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND exercisename LIKE '" + exercisename + "' ORDER BY date DESC;", null);
+        data.moveToFirst();
+        String name = data.getString(1);
+        Log.i("DB name",name);
+        return data;
+    }
+
+    public String getExerciseName(Integer e_id) {
+        String username = "2013chrisclarke@gmail.com";
+        Log.i("In DB",valueOf(e_id));
+        Cursor data = db.rawQuery("SELECT exercisename FROM Exercise WHERE user_id LIKE '" + username + "' AND exercise_id = " + e_id + ";", null);
+        data.moveToFirst();
+        String name = data.getString(0);
+        return name;
     }
 
     public Cursor getWorkoutEntry(String date) {
         String username = "2013chrisclarke@gmail.com";
-        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE " + username + "AND date LIKE " + date + " ORDER BY weight DESC;", null);
+        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND date LIKE " + date + " ORDER BY weight DESC;", null);
         return data;
+    }
+
+    public boolean deleteExercise(Integer rowId) {
+
+        String whereClause = "exercise_id=?";
+        String whereArgs[] = {rowId.toString()};
+
+        long result = db.delete("Exercise", whereClause, whereArgs);
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean deleteWorkoutEntry(Integer rowId) {
+
+        String whereClause = "entry_id=?";
+        String whereArgs[] = {rowId.toString()};
+
+        long result = db.delete("WorkoutEntry", whereClause, whereArgs);
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

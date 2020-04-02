@@ -20,7 +20,7 @@
         <activity
             android:name=".ui.fitness_entry"
             android:label="@string/title_activity_fitness_entry"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.Modern"></activity>
         <activity
             android:name=".Profile"
             android:label="@string/title_activity_profile"
@@ -66,7 +66,7 @@
             android:name=".fitness"
             android:label="@string/title_activity_fitness"
             android:parentActivityName=".home"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.Modern">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fyp.c16398141.healthlete.home" />

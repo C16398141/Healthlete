@@ -29,6 +29,92 @@
                 android:background="#f1f1f1">
             </TableLayout>
         </ScrollView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/popup"
+            android:layout_width="250sp"
+            android:layout_height="250sp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/popup_background"
+            android:visibility="gone"
+            android:layout_margin="5dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/quantum_black_100"
+                    android:layout_marginTop="15sp"
+                    android:text="Add New Exercise"/>
+                <View
+                    android:id="@+id/divide"
+                    android:layout_width="match_parent"
+                    android:layout_height="5sp"
+                    android:layout_below="@+id/title"
+                    android:background="@color/lightGrey"
+                    android:layout_margin="5sp"/>
+
+                <TextView
+                    android:id="@+id/text_name"
+                    android:layout_below="@+id/divide"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Exercise Name:"
+                    android:textColor="@color/blue"
+                    android:textSize="20sp"/>
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="10sp"
+                    android:layout_marginTop="5sp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/edittext_background"
+                    android:hint="Bench Press"
+                    android:layout_below="@+id/text_name"/>
+
+                <TextView
+                    android:id="@+id/text_muscle"
+                    android:layout_below="@+id/edit_name"
+                    android:layout_marginTop="10sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Muscle Group:"
+                    android:textColor="@color/blue"
+                    android:textSize="20sp"/>
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_muscle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="10sp"
+                    android:layout_marginTop="5sp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/edittext_background"
+                    android:hint="Chest"
+                    android:layout_below="@+id/text_muscle"/>
+
+                <ImageButton
+                    android:id="@+id/confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:src="@drawable/ic_done_black_24dp"
+                    android:background="@color/blue"
+                    android:layout_marginTop="10sp"/>
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
