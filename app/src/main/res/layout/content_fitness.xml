@@ -52,6 +52,17 @@
                     android:textColor="@color/quantum_black_100"
                     android:layout_marginTop="15sp"
                     android:text="Add New Exercise"/>
+                <ImageButton
+                    android:id="@+id/cancel"
+                    android:clickable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ic_cancel_black_24dp"
+                    android:background="@drawable/white_circle_background"
+                    android:layout_marginTop="2sp"
+                    android:layout_marginRight="2sp"/>
                 <View
                     android:id="@+id/divide"
                     android:layout_width="match_parent"

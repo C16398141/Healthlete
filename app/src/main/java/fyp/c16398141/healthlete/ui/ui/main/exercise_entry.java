@@ -328,6 +328,15 @@ public class exercise_entry extends Fragment {
                 popup.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.popup_background));
             }
         });
+
+        ImageButton cancel = getActivity().findViewById(R.id.cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MaterialCardView popup = getActivity().findViewById(R.id.popup);
+                popup.setVisibility(View.GONE);
+            }
+        });
     }
 
     public double CalculateRepMax(Double weight, Integer reps){

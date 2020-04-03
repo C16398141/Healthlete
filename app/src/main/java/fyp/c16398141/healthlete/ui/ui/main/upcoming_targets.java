@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.google.android.material.card.MaterialCardView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -51,8 +52,6 @@ import static maes.tech.intentanim.CustomIntent.customType;
 
 public class upcoming_targets extends Fragment {
 
-    String date;
-    DatePickerDialog datePickerDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -64,9 +63,9 @@ public class upcoming_targets extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-
         Integer exercise_id = ((fitness_entry) getActivity()).getExercisePassed();
+
+        String user_id = "2013chrisclarke@gmail.com";
 
         LocalDB ldb;
         ldb = new LocalDB(getContext());
@@ -74,108 +73,13 @@ public class upcoming_targets extends Fragment {
         String exercisename = ldb.getExerciseName(exercise_id);
         ldb.close();
 
-        toolbar.setTitle(valueOf(exercisename));
-        Log.i("ExerciseNAME", valueOf(exercisename));
         TableLayout table = view.findViewById(R.id.exercise_table);
-        displayTable(table, exercisename);
+        setupTable(table);
+        calculateTargets(exercisename, table);
 
-        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        MaterialCardView popup = view.findViewById(R.id.popup);
-        ImageButton confirm = view.findViewById(R.id.confirm);
-
-        EditText e_weight = view.findViewById(R.id.edit_weight);
-        EditText e_reps = view.findViewById(R.id.edit_reps);
-        EditText e_sets = view.findViewById(R.id.edit_sets);
-
-        Calendar c = Calendar.getInstance();
-        final int mYear = c.get(Calendar.YEAR); // current year
-        final int mMonth = c.get(Calendar.MONTH); // current month
-        final int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
-        EditText datefield = getActivity().findViewById(R.id.datefield);
-        datefield.setText(mDay + "/" + (mMonth+1) + "/" + mYear);
-        date = "" + mDay + "-" + (mMonth+1) + "-" + mYear;
-
-        datefield.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("Date","Selected-click");
-                // date picker dialog
-                datePickerDialog = new DatePickerDialog(getActivity(),
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                // set day of month , month and year value in the edit text
-                                datefield.setText(dayOfMonth + "/" + (monthOfYear+1) + "/" + year);
-                                date = "" + dayOfMonth + "-" + (monthOfYear+1) + "-" + year;
-                                Log.i("TAG",valueOf(date));
-                            }
-                        }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
-
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-                // hideKeyboard(exercise_entry.this);
-
-                if (TextUtils.isEmpty(e_weight.getText())) {
-                    e_weight.setError("This field must be filled in");
-                    return;
-                }
-
-                if (TextUtils.isEmpty(e_reps.getText())) {
-                    e_reps.setError("This field must be filled in");
-                    return;
-                }
-
-                if (TextUtils.isEmpty(e_sets.getText())) {
-                    e_sets.setError("This field must be filled in");
-                    return;
-                }
-
-                Double weight;
-                try {
-                    weight = Double.parseDouble(e_weight.getText().toString());
-                } catch (NumberFormatException nfe) {
-                    e_weight.setError("This field is numeric");
-                    return;
-                }
-
-                if (!TextUtils.isDigitsOnly(e_reps.getText())) {
-                    e_reps.setError("This field requires a whole number");
-                    return;
-                }
-
-                if (!TextUtils.isDigitsOnly(e_sets.getText())) {
-                    e_sets.setError("This field requires a whole number");
-                    return;
-                }
-
-                Integer reps = Integer.parseInt(e_reps.getText().toString());
-                Integer sets = Integer.parseInt(e_sets.getText().toString());
-                Double repmax = 5.5;
-                String user_id = "2013chrisclarke@gmail.com";
-
-                ldb.open();
-                boolean result = ldb.addWorkoutEntry(exercisename, weight, reps, sets, repmax, date, user_id);
-                ldb.close();
-                if (result == true) {
-                    Toast.makeText(getContext(), "Successful insert", Toast.LENGTH_SHORT).show();
-                    table.removeAllViews();
-                    displayTable(table, exercisename);
-                } else {
-                    Toast.makeText(getContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
-                }
-                popup.setVisibility(View.GONE);
-            }
-        });
     }
 
-    public void displayTable(TableLayout table, String exercisename) {
+    public void setupTable(TableLayout table) {
 
         TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
         lp.setMargins(0, 0, 0, 0);
@@ -186,13 +90,6 @@ public class upcoming_targets extends Fragment {
         TableRow heading = new TableRow(getContext());
         heading.setGravity(Gravity.CENTER);
         heading.setBackgroundColor(Color.BLUE);
-
-        ImageButton add = new ImageButton(getContext());
-        add.setId(View.generateViewId());
-        add.setImageResource(R.drawable.plus_circle);
-        add.setBackgroundColor(Color.BLUE);
-        //add.setScaleType(ImageButton.ScaleType.CENTER_INSIDE);
-        heading.addView(add, lp2);
 
         TextView tv1 = new TextView(getContext());
         tv1.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
@@ -208,13 +105,6 @@ public class upcoming_targets extends Fragment {
         tv2.setTextColor(Color.WHITE);
         heading.addView(tv2, lp);
 
-        TextView tv3 = new TextView(getContext());
-        tv3.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-        tv3.setText(" Sets ");
-        tv3.setTypeface(Typeface.DEFAULT_BOLD);
-        tv3.setTextColor(Color.WHITE);
-        heading.addView(tv3, lp);
-
         TextView tv4 = new TextView(getContext());
         tv4.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
         tv4.setText(" 1 Rep Max Estimate ");
@@ -223,110 +113,112 @@ public class upcoming_targets extends Fragment {
         tv4.setTextSize(10);
         heading.addView(tv4, lp);
 
-        TextView tv5 = new TextView(getContext());
-        tv5.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-        tv5.setText(" Date ");
-        tv5.setTypeface(Typeface.DEFAULT_BOLD);
-        tv5.setTextColor(Color.WHITE);
-        heading.addView(tv5, lp);
-
         table.addView(heading);
         table.setShrinkAllColumns(true);
         table.setColumnShrinkable(1, false);
+    }
 
-        LocalDB ldb = new LocalDB(getContext());
+    public void addRow(TableLayout table, Double weight, Integer reps, Double repmax)
+    {
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        lp.setMargins(0, 0, 0, 0);
+
+        TableRow.LayoutParams lp2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
+        lp.width = 120;
+
+            TableRow tbrow = new TableRow(getContext());
+            tbrow.setGravity(Gravity.CENTER);
+
+            TextView t2v = new Button(getContext());
+            t2v.setBackgroundColor(Color.WHITE);
+            t2v.setText(valueOf(weight));
+            t2v.setTextColor(Color.BLACK);
+            t2v.setGravity(Gravity.CENTER);
+            tbrow.addView(t2v, lp);
+
+            TextView t3v = new Button(getContext());
+            t3v.setBackgroundColor(Color.WHITE);
+            t3v.setText(valueOf(reps));
+            t3v.setTextColor(Color.BLACK);
+            t3v.setGravity(Gravity.CENTER);
+            tbrow.addView(t3v, lp);
+
+            TextView t5v = new Button(getContext());
+            t5v.setBackgroundColor(Color.WHITE);
+            t5v.setText(valueOf(repmax));
+            t5v.setTextColor(Color.BLACK);
+            t5v.setGravity(Gravity.CENTER);
+            tbrow.addView(t5v, lp);
+
+            tbrow.setBackgroundColor(Color.WHITE);
+            table.addView(tbrow);
+
+    }
+
+    public void calculateTargets(String exercisename, TableLayout table) {
+
+        LocalDB ldb;
+        ldb = new LocalDB(getContext());
         ldb.open();
-
-        Cursor entries = ldb.getExerciseEntries(exercisename);
-        int rows = entries.getCount();
+        Cursor entry = ldb.getExerciseEntries(exercisename);
+        int rows = entry.getCount();
         if (rows == 0) {
         } else {
-            List<ImageButton> delete = new ArrayList<ImageButton>();
-            entries.moveToFirst();
-            Log.i("DBreceievd",entries.getString(1));
-            do {
-                TableRow tbrow = new TableRow(getContext());
-                tbrow.setGravity(Gravity.CENTER);
+            entry.moveToFirst();
+            ldb.close();
+            Double last_repmax = entry.getDouble(5);
+            Log.i("Value", valueOf(last_repmax));
 
-                ImageButton minus = new ImageButton(getContext());
-                minus.setImageResource(R.drawable.minus_circle);
-                minus.setBackgroundResource(R.drawable.backgroundstate);
-                minus.setId(entries.getInt(0));
-                tbrow.addView(minus, lp2);
-                delete.add(minus);
+            Double weight =1.0, result = 1.0;
+            Integer reps = 1;
+            Integer[] reprange = {12, 11, 10, 9, 8, 7, 6, 5, 4, 3};
+            Double min_weight = 2.5, max_weight = 500.0, starting_weight = 2.5;
 
-                TextView t2v = new Button(getContext());
-                t2v.setBackgroundColor(Color.WHITE);
-                t2v.setText(valueOf(entries.getDouble(2)));
-                t2v.setTextColor(Color.BLACK);
-                t2v.setGravity(Gravity.CENTER);
-                tbrow.addView(t2v, lp);
+            //find a weight for each rep in rep range that is over the last 1rm estimate (navigate by increasing weight by 50 each time until greater then reset last one then 10, then 2.5 minimum)
+            for (Integer rep : reprange) {
+                for (weight = starting_weight; weight < max_weight; weight+=min_weight) {
+                    result = CalculateRepMax(weight, rep);
+                    if (result>last_repmax && (Math.abs(result - last_repmax)<(last_repmax*.1))){
 
-                TextView t3v = new Button(getContext());
-                t3v.setBackgroundColor(Color.WHITE);
-                t3v.setText(valueOf(entries.getInt(3)));
-                t3v.setTextColor(Color.BLACK);
-                t3v.setGravity(Gravity.CENTER);
-                tbrow.addView(t3v, lp);
+                        addRow(table,weight,rep,result);
 
-                TextView t4v = new Button(getContext());
-                t4v.setBackgroundColor(Color.WHITE);
-                t4v.setText(valueOf(entries.getInt(4)));
-                t4v.setTextColor(Color.BLACK);
-                t4v.setGravity(Gravity.CENTER);
-                tbrow.addView(t4v, lp);
-
-                TextView t5v = new Button(getContext());
-                t5v.setBackgroundColor(Color.WHITE);
-                t5v.setText(valueOf(entries.getDouble(5)));
-                t5v.setTextColor(Color.BLACK);
-                t5v.setGravity(Gravity.CENTER);
-                t5v.setId(entries.getInt(0));
-                tbrow.addView(t5v, lp);
-
-                TextView t6v = new Button(getContext());
-                t6v.setBackgroundColor(Color.WHITE);
-                t6v.setText(valueOf(entries.getString(6)));
-                t6v.setInputType(InputType.TYPE_CLASS_DATETIME);
-                t6v.setTextColor(Color.BLACK);
-                t6v.setTextSize(10);
-                t6v.setGravity(Gravity.CENTER);
-                t6v.setId(entries.getInt(0));
-                tbrow.addView(t6v, lp);
-
-                tbrow.setBackgroundColor(Color.WHITE);
-                table.addView(tbrow);
-            } while (entries.moveToNext());
-
-            for (final ImageButton minus : delete) {
-                minus.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        int id = minus.getId();
-                        ldb.open();
-                        boolean result = ldb.deleteWorkoutEntry(id);
-                        if (result) {
-                            Toast.makeText(getContext(), "Successfully deleted", Toast.LENGTH_SHORT).show();
-                            table.removeAllViews();
-                            displayTable(table, exercisename);
-                        } else {
-                            Toast.makeText(getContext(), "Unsuccessful delete", Toast.LENGTH_SHORT).show();
-                        }
-                        ldb.close();
+                        //as the rep range decreases, the amount of weight achievable can only go up
+                        starting_weight = weight;
+                        break;
                     }
-                });
-
+                }
             }
         }
+    }
 
-        add.setOnClickListener(new View.OnClickListener() {
+    public double CalculateRepMax (Double weight, Integer reps){
 
-            public void onClick(View v) {
-                MaterialCardView popup = getActivity().findViewById(R.id.popup);
-                popup.setVisibility(View.VISIBLE);
-                popup.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.popup_background));
-            }
-        });
+        Double r = reps.doubleValue();
+        Double epley, brzycki, repmax;
+        repmax = epley = brzycki = 0.0;
+        Double numerator, denominator;
+
+        //use epley formula if rep range is greater than or equal to 8
+        if (reps >= 8) {
+            numerator = weight * r;
+            denominator = 30.0;
+            Double sum = numerator / denominator;
+            repmax = epley = sum + weight;
+        }
+        //use brzychi formula if rep range is less than 10
+        if (reps < 10) {
+            numerator = 36 * weight;
+            denominator = 37 - r;
+            repmax = brzycki = numerator / denominator;
+        }
+        //if rep range falls within scope for both of them, find the mean result
+        if (brzycki != 0.0 && epley != 0.0) {
+            repmax = ((brzycki + epley) / 2);
+        }
+        //round result to two decimal places
+        DecimalFormat df = new DecimalFormat("####0.00");
+        repmax = Double.parseDouble(df.format(repmax));
+        return repmax;
     }
 
 }

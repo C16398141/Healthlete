@@ -94,6 +94,7 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
             public void onClick(View v) {
 
                 Intent intent = new Intent(home.this, fitness.class);
+                intent.putExtra("userId", user);
                 startActivity(intent);
             }
         });

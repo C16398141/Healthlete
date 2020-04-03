@@ -55,7 +55,7 @@ import static maes.tech.intentanim.CustomIntent.customType;
 // next workout rep ranges and weight calculator for potential 3rd fragment (for the inputted exercise)
 public class fitness extends AppCompatActivity {
 
-    String user_id = "2013chrisclarke@gmail.com";
+    String user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +63,9 @@ public class fitness extends AppCompatActivity {
         setContentView(R.layout.activity_fitness);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        user_id = getIntent().getExtras().getString("userId");
+
         LocalDB ldb;
         ldb = new LocalDB(this);
 
@@ -265,6 +268,15 @@ public class fitness extends AppCompatActivity {
                 MaterialCardView popup = findViewById(R.id.popup);
                 popup.setVisibility(View.VISIBLE);
                 popup.setBackground(ContextCompat.getDrawable(fitness.this, R.drawable.popup_background));
+            }
+        });
+
+        ImageButton cancel = findViewById(R.id.cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MaterialCardView popup = findViewById(R.id.popup);
+                popup.setVisibility(View.GONE);
             }
         });
     }

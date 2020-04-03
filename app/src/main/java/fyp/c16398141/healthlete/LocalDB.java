@@ -323,12 +323,6 @@ public class LocalDB {
         }
     }
 
-    /*public Cursor getExerciseEntries(String exercisename) {
-        String username = "2013chrisclarke@gmail.com";
-        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND exercisename LIKE '" + exercisename + "' ORDER BY date DESC;", null);
-        return data;
-    }*/
-
     public Cursor getExerciseEntries(String exercisename) {
         String username = "2013chrisclarke@gmail.com";
         Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND exercisename LIKE '" + exercisename + "' ORDER BY date DESC;", null);
