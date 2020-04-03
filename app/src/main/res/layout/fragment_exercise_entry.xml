@@ -116,15 +116,17 @@
                     android:hint="4"
                     android:layout_below="@+id/text_sets"/>
 
-                <TextView
-                    android:id="@+id/text_date"
+                <EditText
+                    android:id="@+id/datefield"
                     android:layout_below="@+id/edit_sets"
                     android:layout_marginTop="10sp"
                     android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Date:"
-                    android:textColor="@color/blue"
+                    android:clickable="true"
+                    android:focusable="false"
+                    android:hint="Date"
+                    android:textColor="@color/quantum_black_100"
                     android:textSize="20sp"/>
 
                 <ImageButton

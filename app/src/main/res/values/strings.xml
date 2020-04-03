@@ -39,4 +39,8 @@
     <string name="title_activity_fitness_entry">fitness_entry</string>
     <string name="tab_text_1">Exercise Entry</string>
     <string name="tab_text_2">Workout Entry</string>
+    <string name="tab_text_3">Upcoming Targets</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

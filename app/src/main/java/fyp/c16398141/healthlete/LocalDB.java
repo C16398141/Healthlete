@@ -62,8 +62,8 @@ public class LocalDB {
             "create table if not exists WorkoutEntry (entry_id integer primary key autoincrement, " +
                     "exercisename text not null, " +
                     "weight real not null, " +
-                    "sets integer not null, " +
                     "repetitions integer not null, " +
+                    "sets integer not null, " +
                     "repmax real not null," +
                     "date text not null," +
                     "user_id text not null, " +
@@ -332,9 +332,6 @@ public class LocalDB {
     public Cursor getExerciseEntries(String exercisename) {
         String username = "2013chrisclarke@gmail.com";
         Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND exercisename LIKE '" + exercisename + "' ORDER BY date DESC;", null);
-        data.moveToFirst();
-        String name = data.getString(1);
-        Log.i("DB name",name);
         return data;
     }
 
@@ -349,7 +346,7 @@ public class LocalDB {
 
     public Cursor getWorkoutEntry(String date) {
         String username = "2013chrisclarke@gmail.com";
-        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND date LIKE " + date + " ORDER BY weight DESC;", null);
+        Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND date LIKE '" + date + "' ORDER BY weight DESC;", null);
         return data;
     }
 

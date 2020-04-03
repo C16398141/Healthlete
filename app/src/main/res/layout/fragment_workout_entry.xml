@@ -5,9 +5,44 @@
     android:layout_height="match_parent"
     tools:context=".ui.ui.main.workout_entry">
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/top"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Workout frag"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@color/blue">
+
+        <EditText
+            android:id="@+id/date_field"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:clickable="true"
+            android:focusable="false"
+            android:hint="Date"
+            android:textSize="15sp"
+            android:textColor="@color/quantum_white_100"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5sp"
+            android:layout_marginBottom="5sp"
+            android:padding="5sp"/>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/scrolling"
+        android:layout_below="@+id/top"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_weight="1">
+
+        <TableLayout
+            android:id="@+id/workout_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0,1,2,3,4"
+            android:background="#f1f1f1">
+        </TableLayout>
+    </ScrollView>
 
 </RelativeLayout>

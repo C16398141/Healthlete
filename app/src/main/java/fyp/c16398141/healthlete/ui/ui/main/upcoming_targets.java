@@ -2,6 +2,7 @@ package fyp.c16398141.healthlete.ui.ui.main;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -47,16 +49,15 @@ import static java.lang.String.valueOf;
 import static maes.tech.intentanim.CustomIntent.customType;
 
 
-public class workout_entry extends Fragment {
+public class upcoming_targets extends Fragment {
 
     String date;
     DatePickerDialog datePickerDialog;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_workout_entry, container, false);
+        return inflater.inflate(R.layout.fragment_upcoming_targets, container, false);
     }
 
     @Override
@@ -69,27 +70,36 @@ public class workout_entry extends Fragment {
 
         LocalDB ldb;
         ldb = new LocalDB(getContext());
-        /*ldb.open();
+        ldb.open();
         String exercisename = ldb.getExerciseName(exercise_id);
-        ldb.close();*/
+        ldb.close();
 
-        String user_id = "2013chrisclarke@gmail.com";
+        toolbar.setTitle(valueOf(exercisename));
+        Log.i("ExerciseNAME", valueOf(exercisename));
+        TableLayout table = view.findViewById(R.id.exercise_table);
+        displayTable(table, exercisename);
+
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        MaterialCardView popup = view.findViewById(R.id.popup);
+        ImageButton confirm = view.findViewById(R.id.confirm);
+
+        EditText e_weight = view.findViewById(R.id.edit_weight);
+        EditText e_reps = view.findViewById(R.id.edit_reps);
+        EditText e_sets = view.findViewById(R.id.edit_sets);
 
         Calendar c = Calendar.getInstance();
         final int mYear = c.get(Calendar.YEAR); // current year
         final int mMonth = c.get(Calendar.MONTH); // current month
         final int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
-        EditText datefield = getActivity().findViewById(R.id.date_field);
+        EditText datefield = getActivity().findViewById(R.id.datefield);
         datefield.setText(mDay + "/" + (mMonth+1) + "/" + mYear);
         date = "" + mDay + "-" + (mMonth+1) + "-" + mYear;
-
-        Log.i("Date", valueOf(date));
-        TableLayout table = view.findViewById(R.id.workout_table);
-        displayTable(table, date);
 
         datefield.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("Date","Selected-click");
                 // date picker dialog
                 datePickerDialog = new DatePickerDialog(getActivity(),
                         new DatePickerDialog.OnDateSetListener() {
@@ -97,21 +107,76 @@ public class workout_entry extends Fragment {
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 // set day of month , month and year value in the edit text
                                 datefield.setText(dayOfMonth + "/" + (monthOfYear+1) + "/" + year);
-                                date = "" + dayOfMonth + (monthOfYear+1) + year;
+                                date = "" + dayOfMonth + "-" + (monthOfYear+1) + "-" + year;
                                 Log.i("TAG",valueOf(date));
-                                table.removeAllViews();
-                                displayTable(table, date);
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
             }
         });
 
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                // hideKeyboard(exercise_entry.this);
+
+                if (TextUtils.isEmpty(e_weight.getText())) {
+                    e_weight.setError("This field must be filled in");
+                    return;
+                }
+
+                if (TextUtils.isEmpty(e_reps.getText())) {
+                    e_reps.setError("This field must be filled in");
+                    return;
+                }
+
+                if (TextUtils.isEmpty(e_sets.getText())) {
+                    e_sets.setError("This field must be filled in");
+                    return;
+                }
+
+                Double weight;
+                try {
+                    weight = Double.parseDouble(e_weight.getText().toString());
+                } catch (NumberFormatException nfe) {
+                    e_weight.setError("This field is numeric");
+                    return;
+                }
+
+                if (!TextUtils.isDigitsOnly(e_reps.getText())) {
+                    e_reps.setError("This field requires a whole number");
+                    return;
+                }
+
+                if (!TextUtils.isDigitsOnly(e_sets.getText())) {
+                    e_sets.setError("This field requires a whole number");
+                    return;
+                }
+
+                Integer reps = Integer.parseInt(e_reps.getText().toString());
+                Integer sets = Integer.parseInt(e_sets.getText().toString());
+                Double repmax = 5.5;
+                String user_id = "2013chrisclarke@gmail.com";
+
+                ldb.open();
+                boolean result = ldb.addWorkoutEntry(exercisename, weight, reps, sets, repmax, date, user_id);
+                ldb.close();
+                if (result == true) {
+                    Toast.makeText(getContext(), "Successful insert", Toast.LENGTH_SHORT).show();
+                    table.removeAllViews();
+                    displayTable(table, exercisename);
+                } else {
+                    Toast.makeText(getContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
+                }
+                popup.setVisibility(View.GONE);
+            }
+        });
     }
 
-    public void displayTable(TableLayout table, String date) {
-        table.removeAllViews();
-        table.setShrinkAllColumns(true);
+    public void displayTable(TableLayout table, String exercisename) {
+
         TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
         lp.setMargins(0, 0, 0, 0);
 
@@ -122,12 +187,12 @@ public class workout_entry extends Fragment {
         heading.setGravity(Gravity.CENTER);
         heading.setBackgroundColor(Color.BLUE);
 
-        TextView tv = new TextView(getContext());
-        tv.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-        tv.setText(" Exercise ");
-        tv.setTypeface(Typeface.DEFAULT_BOLD);
-        tv.setTextColor(Color.WHITE);
-        heading.addView(tv, lp);
+        ImageButton add = new ImageButton(getContext());
+        add.setId(View.generateViewId());
+        add.setImageResource(R.drawable.plus_circle);
+        add.setBackgroundColor(Color.BLUE);
+        //add.setScaleType(ImageButton.ScaleType.CENTER_INSIDE);
+        heading.addView(add, lp2);
 
         TextView tv1 = new TextView(getContext());
         tv1.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
@@ -166,26 +231,29 @@ public class workout_entry extends Fragment {
         heading.addView(tv5, lp);
 
         table.addView(heading);
+        table.setShrinkAllColumns(true);
+        table.setColumnShrinkable(1, false);
 
         LocalDB ldb = new LocalDB(getContext());
         ldb.open();
 
-        Cursor entries = ldb.getWorkoutEntry(date);
+        Cursor entries = ldb.getExerciseEntries(exercisename);
         int rows = entries.getCount();
         if (rows == 0) {
         } else {
+            List<ImageButton> delete = new ArrayList<ImageButton>();
             entries.moveToFirst();
-            Log.i("DBreceievd", entries.getString(1));
+            Log.i("DBreceievd",entries.getString(1));
             do {
                 TableRow tbrow = new TableRow(getContext());
                 tbrow.setGravity(Gravity.CENTER);
 
-                TextView t1v = new Button(getContext());
-                t1v.setBackgroundColor(Color.WHITE);
-                t1v.setText(entries.getString(1));
-                t1v.setTextColor(Color.BLACK);
-                t1v.setGravity(Gravity.CENTER);
-                tbrow.addView(t1v, lp);
+                ImageButton minus = new ImageButton(getContext());
+                minus.setImageResource(R.drawable.minus_circle);
+                minus.setBackgroundResource(R.drawable.backgroundstate);
+                minus.setId(entries.getInt(0));
+                tbrow.addView(minus, lp2);
+                delete.add(minus);
 
                 TextView t2v = new Button(getContext());
                 t2v.setBackgroundColor(Color.WHITE);
@@ -230,8 +298,36 @@ public class workout_entry extends Fragment {
                 table.addView(tbrow);
             } while (entries.moveToNext());
 
+            for (final ImageButton minus : delete) {
+                minus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        int id = minus.getId();
+                        ldb.open();
+                        boolean result = ldb.deleteWorkoutEntry(id);
+                        if (result) {
+                            Toast.makeText(getContext(), "Successfully deleted", Toast.LENGTH_SHORT).show();
+                            table.removeAllViews();
+                            displayTable(table, exercisename);
+                        } else {
+                            Toast.makeText(getContext(), "Unsuccessful delete", Toast.LENGTH_SHORT).show();
+                        }
+                        ldb.close();
+                    }
+                });
+
+            }
         }
 
+        add.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                MaterialCardView popup = getActivity().findViewById(R.id.popup);
+                popup.setVisibility(View.VISIBLE);
+                popup.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.popup_background));
+            }
+        });
     }
+
 }
 

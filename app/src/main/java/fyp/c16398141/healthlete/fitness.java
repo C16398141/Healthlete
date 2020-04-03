@@ -1,5 +1,6 @@
 package fyp.c16398141.healthlete;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,6 +31,7 @@ import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -76,6 +78,7 @@ public class fitness extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                hideKeyboard(fitness.this);
                 String exercise = exercise_name.getText().toString();
                 String muscle = muscle_group.getText().toString();
 
@@ -264,5 +267,16 @@ public class fitness extends AppCompatActivity {
                 popup.setBackground(ContextCompat.getDrawable(fitness.this, R.drawable.popup_background));
             }
         });
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

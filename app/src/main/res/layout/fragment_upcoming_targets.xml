@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ui.main.upcoming_targets">
+
+    <ScrollView
+        android:id="@+id/scrolling"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_weight="1">
+
+        <TableLayout
+            android:id="@+id/exercise_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0,1,2,3,4"
+            android:background="#f1f1f1">
+        </TableLayout>
+    </ScrollView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/popup"
+        android:layout_width="250sp"
+        android:layout_height="350sp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/popup_background"
+        android:visibility="gone"
+        android:layout_margin="5dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/title"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="@color/quantum_black_100"
+                android:layout_marginTop="15sp"
+                android:text="Add New Entry"/>
+            <View
+                android:id="@+id/divide"
+                android:layout_width="match_parent"
+                android:layout_height="5sp"
+                android:layout_below="@+id/title"
+                android:background="@color/lightGrey"
+                android:layout_margin="5sp"/>
+
+            <TextView
+                android:id="@+id/text_weight"
+                android:layout_below="@+id/divide"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weight: (kg)"
+                android:textColor="@color/blue"
+                android:textSize="20sp"/>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10sp"
+                android:layout_marginTop="5sp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/edittext_background"
+                android:hint="30"
+                android:layout_below="@+id/text_weight"/>
+
+            <TextView
+                android:id="@+id/text_reps"
+                android:layout_below="@+id/edit_weight"
+                android:layout_marginTop="10sp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reps:"
+                android:textColor="@color/blue"
+                android:textSize="20sp"/>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_reps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10sp"
+                android:layout_marginTop="5sp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/edittext_background"
+                android:hint="6"
+                android:layout_below="@+id/text_reps"/>
+
+            <TextView
+                android:id="@+id/text_sets"
+                android:layout_below="@+id/edit_reps"
+                android:layout_marginTop="10sp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sets:"
+                android:textColor="@color/blue"
+                android:textSize="20sp"/>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_sets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10sp"
+                android:layout_marginTop="5sp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/edittext_background"
+                android:hint="4"
+                android:layout_below="@+id/text_sets"/>
+
+            <EditText
+                android:id="@+id/datefield"
+                android:layout_below="@+id/edit_sets"
+                android:layout_marginTop="10sp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="false"
+                android:hint="Date"
+                android:textColor="@color/quantum_black_100"
+                android:textSize="20sp"/>
+
+            <ImageButton
+                android:id="@+id/confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/ic_done_black_24dp"
+                android:background="@color/blue"
+                android:layout_marginTop="10sp"/>
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</RelativeLayout>

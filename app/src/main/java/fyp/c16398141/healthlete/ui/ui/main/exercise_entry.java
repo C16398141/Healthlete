@@ -1,5 +1,8 @@
 package fyp.c16398141.healthlete.ui.ui.main;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -20,7 +23,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,7 +36,9 @@ import android.widget.Toast;
 
 import com.google.android.material.card.MaterialCardView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import fyp.c16398141.healthlete.LocalDB;
@@ -45,6 +52,8 @@ import static maes.tech.intentanim.CustomIntent.customType;
 
 public class exercise_entry extends Fragment {
 
+    String date;
+    DatePickerDialog datePickerDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,6 +80,8 @@ public class exercise_entry extends Fragment {
         TableLayout table = view.findViewById(R.id.exercise_table);
         displayTable(table, exercisename);
 
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
         MaterialCardView popup = view.findViewById(R.id.popup);
         ImageButton confirm = view.findViewById(R.id.confirm);
 
@@ -78,9 +89,39 @@ public class exercise_entry extends Fragment {
         EditText e_reps = view.findViewById(R.id.edit_reps);
         EditText e_sets = view.findViewById(R.id.edit_sets);
 
+        Calendar c = Calendar.getInstance();
+        final int mYear = c.get(Calendar.YEAR); // current year
+        final int mMonth = c.get(Calendar.MONTH); // current month
+        final int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+        EditText datefield = getActivity().findViewById(R.id.datefield);
+        datefield.setText(mDay + "/" + (mMonth+1) + "/" + mYear);
+        date = "" + mDay + "-" + (mMonth+1) + "-" + mYear;
+
+        datefield.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("Date","Selected-click");
+                // date picker dialog
+                datePickerDialog = new DatePickerDialog(getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                // set day of month , month and year value in the edit text
+                                datefield.setText(dayOfMonth + "/" + (monthOfYear+1) + "/" + year);
+                                date = "" + dayOfMonth + "-" + (monthOfYear+1) + "-" + year;
+                                Log.i("TAG",valueOf(date));
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
+
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+               // hideKeyboard(exercise_entry.this);
 
                 if (TextUtils.isEmpty(e_weight.getText())) {
                     e_weight.setError("This field must be filled in");
@@ -117,8 +158,7 @@ public class exercise_entry extends Fragment {
 
                 Integer reps = Integer.parseInt(e_reps.getText().toString());
                 Integer sets = Integer.parseInt(e_sets.getText().toString());
-                Double repmax = 5.5;
-                String date = "2242020";
+                Double repmax = CalculateRepMax(weight,reps);
                 String user_id = "2013chrisclarke@gmail.com";
 
                 ldb.open();
@@ -126,6 +166,7 @@ public class exercise_entry extends Fragment {
                 ldb.close();
                 if (result == true) {
                     Toast.makeText(getContext(), "Successful insert", Toast.LENGTH_SHORT).show();
+                    table.removeAllViews();
                     displayTable(table, exercisename);
                 } else {
                     Toast.makeText(getContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
@@ -136,9 +177,7 @@ public class exercise_entry extends Fragment {
     }
 
     public void displayTable(TableLayout table, String exercisename) {
-        table.removeAllViews();
-        table.setShrinkAllColumns(true);
-        table.setColumnShrinkable(1, false);
+
         TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
         lp.setMargins(0, 0, 0, 0);
 
@@ -193,6 +232,8 @@ public class exercise_entry extends Fragment {
         heading.addView(tv5, lp);
 
         table.addView(heading);
+        table.setShrinkAllColumns(true);
+        table.setColumnShrinkable(1, false);
 
         LocalDB ldb = new LocalDB(getContext());
         ldb.open();
@@ -288,5 +329,37 @@ public class exercise_entry extends Fragment {
             }
         });
     }
+
+    public double CalculateRepMax(Double weight, Integer reps){
+
+        Double r = reps.doubleValue();
+        Double epley,brzycki,repmax;
+        repmax=epley=brzycki=0.0;
+        Double numerator,denominator;
+
+        //use epley formula if rep range is greater than or equal to 8
+        if (reps>=8){
+            numerator = weight*r;
+            denominator = 30.0;
+            Double sum = numerator/denominator;
+            repmax = epley = sum + weight;
+        }
+        //use brzychi formula if rep range is less than 10
+        if (reps<10) {
+            numerator = 36 * weight;
+            denominator = 37 - r;
+            repmax = brzycki = numerator / denominator;
+        }
+        //if rep range falls within scope for both of them, find the mean result
+        if (brzycki!=0.0 && epley!=0.0)
+        {
+            repmax=((brzycki+epley)/2);
+        }
+        //round result to two decimal places
+        DecimalFormat df = new DecimalFormat("####0.00");
+        repmax = Double.parseDouble(df.format(repmax));
+        return repmax;
+    }
+
 }
 
