@@ -1,6 +1,5 @@
 package fyp.c16398141.healthlete;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,27 +9,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
-
-import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
-import com.anychart.charts.Polar;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import static maes.tech.intentanim.CustomIntent.customType;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.view.ViewCompat;
-
-import android.text.SpannableString;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.DatePicker;
@@ -40,8 +27,6 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Button;
-import android.text.Spannable;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -51,13 +36,10 @@ import java.util.List;
 import android.widget.TableRow.LayoutParams;
 
 import static java.lang.String.valueOf;
-//import android.widget.RelativeLayout.LayoutParams;
-//import android.widget.LinearLayout.LayoutParams;
 
 public class food_log extends AppCompatActivity {
 
     LocalDB ldb;
-    //AnyChartView anyChartView;
     List<ImageButton> list = new ArrayList<ImageButton>();
     List<Integer> dimensions = new ArrayList<>();
     List<Integer> totalCalories = new ArrayList<>();
@@ -65,14 +47,13 @@ public class food_log extends AppCompatActivity {
     List<Integer> totalProtein = new ArrayList<>();
     EditText datefield;
     DatePickerDialog datePickerDialog;
-    String user_id = "2013chrisclarke@gmail.com";
+    static String user_id;
     String date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //View myView = null;
-        //LayoutInflater.from(context).inflate(R.layout.activity_food_log, myView, true);
+
         setContentView(R.layout.activity_food_log);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,15 +61,11 @@ public class food_log extends AppCompatActivity {
         layout1.setBackgroundColor(Color.CYAN);
 
         datefield = (EditText) findViewById(R.id.datefield);
-        /*Button addButton = findViewById(R.id.addButton);
-        Spannable buttonLabel = new SpannableString(" Add New");
-        buttonLabel.setSpan(new ImageSpan(getApplicationContext(), R.drawable.plus_circle,
-                ImageSpan.ALIGN_BOTTOM), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        addButton.setText(buttonLabel);
-
-*/
-        //anyChartView = findViewById(R.id.any_chart_view);
         TableLayout table = (TableLayout) findViewById(R.id.food_table);
+
+        if (user_id == null){
+            user_id = getIntent().getExtras().getString("userId");
+        }
 
         ldb = new LocalDB(this);
         ldb.open();
@@ -142,31 +119,6 @@ public class food_log extends AppCompatActivity {
                 datePickerDialog.show();
             }
         });
-        /*vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                cl.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int clwidth  = cl.getMeasuredWidth();
-                int clheight = cl.getMeasuredHeight();
-                dimensions.add(clheight);
-                dimensions.add(clwidth);
-                setupPieChart();
-            }
-        });*/
-
-        //int difference = dimensions.get(0) - dimensions.get(0);
-        //Log.i("TAG",valueOf(difference));
-
-        /*setupPolarChart();
-        drawArc(oval, 0F, 90F, true, turquoisePaint);
-        drawArc(oval, 90F, 90F, true, orangePaint);
-        drawArc(oval, 180F, 90F, true, yellowPaint);
-        drawArc(oval, 270F, 90F, true, hotPinkPaint);*/
-
-        //addRows()
-        //displayRows();
-
-        //ImageButton add = this.findViewById();
     }
 
     @Override
@@ -274,22 +226,19 @@ public class food_log extends AppCompatActivity {
         }
     }
 
-    public void drawArc(RectF oval, float startAngle, float sweepAngle, boolean useCenter, Paint paint){
-
-    }
-
     public void displayRows(final TableLayout table)
     {
         TableRow heading = new TableRow(this);
         heading.setGravity(Gravity.CENTER);
         heading.setBackgroundColor(Color.BLUE);
+
         int buttonStyle = R.style.Widget_AppCompat_Button_Borderless;
         ImageButton add = new ImageButton(new ContextThemeWrapper(this, buttonStyle));
         add.setId(View.generateViewId());
         add.setImageResource(R.drawable.plus_circle);
         add.setBackgroundColor(Color.BLUE);
-        //add.setBackgroundResource(R.drawable.backgroundstate);
         heading.addView(add);
+
         TextView tv1 = new TextView(this);
         tv1.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
         tv1.setText(" Name ");
@@ -298,18 +247,21 @@ public class food_log extends AppCompatActivity {
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         lp.setMargins(0,0,0,0);
         heading.addView(tv1,lp);
+
         TextView tv2 = new TextView(this);
         tv2.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
         tv2.setText(" Calories ");
         tv2.setTypeface(Typeface.DEFAULT_BOLD);
         tv2.setTextColor(Color.WHITE);
         heading.addView(tv2,lp);
+
         TextView tv3 = new TextView(this);
         tv3.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
         tv3.setText(" Carbs ");
         tv3.setTypeface(Typeface.DEFAULT_BOLD);
         tv3.setTextColor(Color.WHITE);
         heading.addView(tv3,lp);
+
         TextView tv4 = new TextView(this);
         tv4.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
         tv4.setText(" Protein ");
@@ -322,7 +274,7 @@ public class food_log extends AppCompatActivity {
 
             public void onClick(View v) {
                 Intent intent = new Intent(food_log.this, food_entry.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("userId", user_id);
                 startActivity(intent);
                 customType(food_log.this,"left-to-right");
             }
@@ -333,7 +285,7 @@ public class food_log extends AppCompatActivity {
         totalProtein.clear();
 
         ldb.open();
-        Cursor entries = ldb.getAllFoodEntries(date);
+        Cursor entries = ldb.getAllFoodEntries(date, user_id);
         int rows = entries.getCount();
         if (rows == 0) {
         } else {
@@ -341,12 +293,14 @@ public class food_log extends AppCompatActivity {
             do {
                 TableRow tbrow = new TableRow(this);
                 tbrow.setGravity(Gravity.CENTER);
+
                 ImageButton minus = new ImageButton(this);
                 minus.setImageResource(R.drawable.minus_circle);
                 minus.setBackgroundResource(R.drawable.backgroundstate);
                 minus.setId(entries.getInt(0));
                 tbrow.addView(minus);
                 list.add(minus);
+
                 TextView t2v = new TextView(this);
                 t2v.setBackgroundColor(Color.WHITE);
                 t2v.setText(entries.getString(1));
@@ -364,6 +318,7 @@ public class food_log extends AppCompatActivity {
                 t3v.setTextColor(Color.BLACK);
                 t3v.setGravity(Gravity.CENTER);
                 tbrow.addView(t3v,lp);
+
                 TextView t4v = new TextView(this);
                 Integer carbs = entries.getInt(6);
                 totalCarbs.add(carbs);
@@ -372,6 +327,7 @@ public class food_log extends AppCompatActivity {
                 t4v.setTextColor(Color.BLACK);
                 t4v.setGravity(Gravity.CENTER);
                 tbrow.addView(t4v,lp);
+
                 TextView t5v = new TextView(this);
                 Integer protein = entries.getInt(7);
                 totalProtein.add(protein);
@@ -380,6 +336,7 @@ public class food_log extends AppCompatActivity {
                 t5v.setTextColor(Color.BLACK);
                 t5v.setGravity(Gravity.CENTER);
                 tbrow.addView(t5v,lp);
+
                 table.addView(tbrow);
             } while (entries.moveToNext());
 
@@ -405,22 +362,26 @@ public class food_log extends AppCompatActivity {
             total.setTextColor(Color.BLACK);
             total.setGravity(Gravity.CENTER);
             totrow.addView(total,lp);
+
             TextView total1 = new TextView(this);
             totrow.setGravity(Gravity.CENTER);
             total1.setText(valueOf(count));
             total1.setTextColor(Color.BLACK);
             total1.setGravity(Gravity.CENTER);
             totrow.addView(total1,lp);
+
             TextView total2 = new TextView(this);
             total2.setText(valueOf(totalCals));
             total2.setTextColor(Color.BLACK);
             total2.setGravity(Gravity.CENTER);
             totrow.addView(total2,lp);
+
             TextView total3 = new TextView(this);
             total3.setText(valueOf(totalCarbos));
             total3.setTextColor(Color.BLACK);
             total3.setGravity(Gravity.CENTER);
             totrow.addView(total3,lp);
+
             TextView total4 = new TextView(this);
             total4.setText(valueOf(totalProteins));
             total4.setTextColor(Color.BLACK);
@@ -441,28 +402,33 @@ public class food_log extends AppCompatActivity {
 
             TableRow targetrow = new TableRow(this);
             targetrow.setBackgroundColor(Color.LTGRAY);
+
             TextView target = new TextView(this);
             totrow.setGravity(Gravity.CENTER);
             target.setText("Target:");
             target.setTextColor(Color.BLACK);
             target.setGravity(Gravity.CENTER);
             targetrow.addView(target,lp);
+
             TextView target1 = new TextView(this);
             targetrow.setGravity(Gravity.CENTER);
             target1.setText("-");
             target1.setTextColor(Color.BLACK);
             target1.setGravity(Gravity.CENTER);
             targetrow.addView(target1,lp);
+
             TextView target2 = new TextView(this);
             target2.setText(valueOf(targetCals));
             target2.setTextColor(Color.BLACK);
             target2.setGravity(Gravity.CENTER);
             targetrow.addView(target2,lp);
+
             TextView target3 = new TextView(this);
             target3.setText(valueOf(targetCarbs));
             target3.setTextColor(Color.BLACK);
             target3.setGravity(Gravity.CENTER);
             targetrow.addView(target3,lp);
+
             TextView target4 = new TextView(this);
             target4.setText(valueOf(targetProtein));
             target4.setTextColor(Color.BLACK);
@@ -475,7 +441,6 @@ public class food_log extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         int id = minus.getId();
-                        Log.i("TAG", "The id is" + id);
                         ldb.open();
                         boolean result = ldb.deleteFoodEntry(id);
                         if (result == true) {
@@ -484,7 +449,7 @@ public class food_log extends AppCompatActivity {
                             displayRows(table);
                             setupPieChart();
                         } else {
-                            Toast.makeText(getApplicationContext(), "unsuccessful delete", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Unsuccessful delete", Toast.LENGTH_SHORT).show();
                         }
                         ldb.close();
                     }

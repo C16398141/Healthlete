@@ -22,10 +22,14 @@ public class LocalDB {
     private static final String DATABASE_NAME = "Players1";
     private static final String DATABASE_TABLE = "Contact_Details2";
     private static final String KEY_TNAME = "tournamentname";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     private static final String foreignKeyCheck =
             "PRAGMA foreign_keys = ON;";
+
+    private static final String foreignKeyOff =
+            "PRAGMA foreign_keys = OFF;";
+
     // SQL statement to create the database
     private static final String CreateUserTable =
             "create table if not exists User (user_id text primary key, " +
@@ -71,7 +75,6 @@ public class LocalDB {
                     "REFERENCES Exercise (exercisename)," +
                     "FOREIGN KEY (user_id)" +
                     "REFERENCES User (user_id));";
-    //add running/aerobic exercise formats and sports with duration perhaps
 
     private static final String CreateGoalTable =
             "create table if not exists Goals (entry_id integer primary key autoincrement, " +
@@ -90,10 +93,9 @@ public class LocalDB {
                     "latitude real not null, " +
                     "longitude real not null, " +
                     "times int not null, " +
-                    "user_id text not null);";
-                    /*, " +
+                    "user_id text not null, " +
                     "FOREIGN KEY (user_id)" +
-                    "REFERENCES User (user_id));";*/
+                    "REFERENCES User (user_id));";
 
     private static final String CreateWorkoutAvailabilityTable =
             "create table if not exists WorkoutAvailability (slot_id integer primary key autoincrement, " +
@@ -149,10 +151,17 @@ public class LocalDB {
         public void onUpgrade(SQLiteDatabase db, int oldVersion,
                               int newVersion) {
             // dB structure change..
-            db.execSQL("drop table if exists Contact_Details2;");
-            db.execSQL("drop table if exists Points;");
+            db.execSQL(foreignKeyOff);
+            db.execSQL("drop table if exists User;");
+            db.execSQL("drop table if exists FoodEntry;");
+            db.execSQL("drop table if exists Exercise;");
+            db.execSQL("drop table if exists WorkoutEntry;");
+            db.execSQL("drop table if exists Goal;");
+            db.execSQL("drop table if exists WorkoutArea;");
+            db.execSQL("drop table if exists WorkoutAvailablity;");
+            onCreate(db);
         }
-    }  // end nested class
+    }
 
 
     public void close() {
@@ -209,11 +218,9 @@ public class LocalDB {
         }
     }
 
-    public Cursor getAllFoodEntries(String selected_date) {
-        //String selected_date = "2232020";
+    public Cursor getAllFoodEntries(String selected_date, String username) {
         Log.i("DATE DB", selected_date);
-        Cursor data = db.rawQuery("SELECT * FROM FoodEntry WHERE date LIKE " + selected_date + " ORDER BY foodname DESC;", null);
-        //Cursor data = db.rawQuery("SELECT * FROM FoodEntry ORDER BY foodname DESC;", null);
+        Cursor data = db.rawQuery("SELECT * FROM FoodEntry WHERE date LIKE " + selected_date + " AND user_id LIKE '" + username + "' ORDER BY foodname DESC;", null);
         return data;
     }
 
@@ -267,16 +274,13 @@ public class LocalDB {
     }
 
 
-    public Cursor getWorkoutArea() {
-        String username = "2013chrisclarke@gmail.com";
+    public Cursor getWorkoutArea(String username) {
         Log.i("Area", "Selected");
         Cursor data = db.rawQuery("SELECT * FROM WorkoutArea WHERE user_id LIKE '" + username + "';", null);
-        //Cursor data = db.rawQuery("SELECT * FROM FoodEntry ORDER BY foodname DESC;", null);
         return data;
     }
 
     public Cursor getWorkoutAvailability(int area_id) {
-        String username = "2013chrisclarke@gmail.com";
         Cursor data = db.rawQuery("SELECT * FROM WorkoutAvailability WHERE area_id LIKE '" + area_id + "';", null);
         return data;
     }
@@ -299,14 +303,12 @@ public class LocalDB {
         }
     }
 
-    public Cursor getAllExercises() {
-        String username = "2013chrisclarke@gmail.com";
+    public Cursor getAllExercises(String username) {
         Cursor data = db.rawQuery("SELECT * FROM Exercise WHERE user_id LIKE '" + username + "';", null);
         return data;
     }
 
     public boolean addWorkoutEntry(String exercisename, Double weight, Integer reps, Integer sets, Double repmax, String date, String user_id) {
-        Log.i("inserted entry name",exercisename);
         ContentValues initialValues = new ContentValues();
         initialValues.put("exercisename", exercisename);
         initialValues.put("weight", weight);
@@ -323,23 +325,20 @@ public class LocalDB {
         }
     }
 
-    public Cursor getExerciseEntries(String exercisename) {
-        String username = "2013chrisclarke@gmail.com";
+    public Cursor getExerciseEntries(String exercisename, String username) {
         Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND exercisename LIKE '" + exercisename + "' ORDER BY date DESC;", null);
         return data;
     }
 
     public String getExerciseName(Integer e_id) {
-        String username = "2013chrisclarke@gmail.com";
         Log.i("In DB",valueOf(e_id));
-        Cursor data = db.rawQuery("SELECT exercisename FROM Exercise WHERE user_id LIKE '" + username + "' AND exercise_id = " + e_id + ";", null);
+        Cursor data = db.rawQuery("SELECT exercisename FROM Exercise WHERE exercise_id = " + e_id + ";", null);
         data.moveToFirst();
         String name = data.getString(0);
         return name;
     }
 
-    public Cursor getWorkoutEntry(String date) {
-        String username = "2013chrisclarke@gmail.com";
+    public Cursor getWorkoutEntry(String date, String username) {
         Cursor data = db.rawQuery("SELECT * FROM WorkoutEntry WHERE user_id LIKE '" + username + "' AND date LIKE '" + date + "' ORDER BY weight DESC;", null);
         return data;
     }

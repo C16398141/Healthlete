@@ -51,7 +51,7 @@
         android:scaleType="center"/>
 
     <ImageButton
-        android:id="@+id/home"
+        android:id="@+id/current_location"
         android:foreground="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:layout_width="75sp"

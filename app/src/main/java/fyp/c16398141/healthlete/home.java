@@ -28,11 +28,8 @@ import static java.lang.String.valueOf;
 
 public class home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private EditText title;
     private DrawerLayout drawer;
-    private static int init_user = 0;
     private static String user;
-    String value;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,27 +38,17 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
-        RelativeLayout layout1 = findViewById(R.id.relative1);
-        RelativeLayout layout2 = findViewById(R.id.relative2);
-        RelativeLayout layout3 = findViewById(R.id.relative3);
 
-        if (init_user == 1) {
-            value = user;
-        }
-
-        if (init_user == 0) {
+        if (user == null) {
             user = getIntent().getExtras().getString("userId");
-            value = "Welcome " + user;
-            init_user++;
-            //init_user = true;
         }
 
-        getSupportActionBar().setTitle(value);
+        getSupportActionBar().setTitle(user);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(home.this);
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = (TextView) headerView.findViewById(R.id.username);
-        navUsername.setText(value);
+        navUsername.setText(user);
 
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
@@ -73,8 +60,6 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
         MaterialCardView food_card = (MaterialCardView) findViewById(R.id.food);
         MaterialCardView fitness_card = (MaterialCardView) findViewById(R.id.fitness);
         MaterialCardView achievement_card = (MaterialCardView) findViewById(R.id.achievement);
-        //Button button2 = findViewById(R.id.button2);
-        //Button button3 = findViewById(R.id.button3);
 
         final int request_code = 1;
 
@@ -103,7 +88,8 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
 
             public void onClick(View v) {
 
-                Intent intent = new Intent(home.this, workout_area.class);
+                Intent intent = new Intent(home.this, achievements.class);
+                intent.putExtra("userId", user);
                 startActivity(intent);
             }
         });
@@ -131,7 +117,7 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
     {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            value = data.getStringExtra("userId");
+            user = data.getStringExtra("userId");
         }
     }
 
@@ -141,6 +127,7 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
         switch (id) {
             case R.id.addgym:
                 Intent intent = new Intent(home.this, workout_area.class);
+                intent.putExtra("userId", user);
                 startActivity(intent);
                 break;
 

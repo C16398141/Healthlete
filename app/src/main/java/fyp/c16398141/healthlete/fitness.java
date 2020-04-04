@@ -22,14 +22,10 @@ import com.google.android.gms.fitness.request.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.transition.FragmentTransitionSupport;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -42,20 +38,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import fyp.c16398141.healthlete.ui.fitness_entry;
 
-import static com.google.android.gms.fitness.data.DataType.TYPE_WORKOUT_EXERCISE;
-import static java.lang.String.valueOf;
 import static maes.tech.intentanim.CustomIntent.customType;
 
-// TODO get fragment to refresh, track exercise id all the way to see why its bench, hide keyboard like food entry
-//  after submit, calculate 1rm, get last workout (all exercises) functionality (from last date entered if entered at all)
-// next workout rep ranges and weight calculator for potential 3rd fragment (for the inputted exercise)
+
 public class fitness extends AppCompatActivity {
 
-    String user_id;
+    static String user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +55,9 @@ public class fitness extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        user_id = getIntent().getExtras().getString("userId");
+        if (user_id == null){
+            user_id = getIntent().getExtras().getString("userId");
+        }
 
         LocalDB ldb;
         ldb = new LocalDB(this);
@@ -172,7 +165,7 @@ public class fitness extends AppCompatActivity {
 
         LocalDB ldb = new LocalDB(this);
         ldb.open();
-        Cursor entries = ldb.getAllExercises();
+        Cursor entries = ldb.getAllExercises(user_id);
         int rows = entries.getCount();
         if (rows == 0) {
         } else {

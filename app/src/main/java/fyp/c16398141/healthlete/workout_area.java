@@ -11,12 +11,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
@@ -64,7 +61,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
     String place_id;
     String name;
     Double lat,lng;
-    String user_id = "2013chrisclarke@gmail.com";
+    static String user_id;
     Integer times;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -80,11 +77,14 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_workout_area);
         ldb = new LocalDB(this);
 
+        if (user_id == null){
+            user_id = getIntent().getExtras().getString("userId");
+        }
         ImageButton add = findViewById(R.id.add);
         add.setVisibility(View.INVISIBLE);
 
         ImageButton view_areas = findViewById(R.id.view_areas);
-        ImageButton home = findViewById(R.id.home);
+        ImageButton current_location = findViewById(R.id.current_location);
 
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
@@ -122,7 +122,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         add.setOnClickListener(v -> {
 
                 ldb.open();
-                Cursor area = ldb.getWorkoutArea();
+                Cursor area = ldb.getWorkoutArea(user_id);
                 int rows = area.getCount();
                 if (rows == 0) {
                 } else {
@@ -158,6 +158,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                     Toast.makeText(getApplicationContext(), "Workout area added with opening times not available", Toast.LENGTH_LONG).show();
                 }
                 Intent intent = new Intent(workout_area.this, view_workout_areas.class);
+                intent.putExtra("userId", user_id);
                 startActivity(intent);
                 ldb.close();
             });
@@ -166,13 +167,12 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(workout_area.this, view_workout_areas.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 customType(workout_area.this,"bottom-to-up");
             }
         });
 
-        home.setOnClickListener(new View.OnClickListener() {
+        current_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateMap("Current Location",currentLocation.getLatitude(),currentLocation.getLongitude());

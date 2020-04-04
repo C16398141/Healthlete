@@ -1,8 +1,6 @@
 package fyp.c16398141.healthlete.ui.ui.main;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -11,13 +9,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,31 +20,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.material.card.MaterialCardView;
-
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import fyp.c16398141.healthlete.LocalDB;
 import fyp.c16398141.healthlete.R;
-import fyp.c16398141.healthlete.fitness;
 import fyp.c16398141.healthlete.ui.fitness_entry;
 
 import static java.lang.String.valueOf;
-import static maes.tech.intentanim.CustomIntent.customType;
 
 
 public class workout_entry extends Fragment {
 
     String date;
+    String user_id;
     DatePickerDialog datePickerDialog;
 
     @Override
@@ -63,17 +49,9 @@ public class workout_entry extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-
         Integer exercise_id = ((fitness_entry) getActivity()).getExercisePassed();
 
-        LocalDB ldb;
-        ldb = new LocalDB(getContext());
-        /*ldb.open();
-        String exercisename = ldb.getExerciseName(exercise_id);
-        ldb.close();*/
-
-        String user_id = "2013chrisclarke@gmail.com";
+        user_id = "2013chrisclarke@gmail.com";
 
         Calendar c = Calendar.getInstance();
         final int mYear = c.get(Calendar.YEAR); // current year
@@ -170,12 +148,11 @@ public class workout_entry extends Fragment {
         LocalDB ldb = new LocalDB(getContext());
         ldb.open();
 
-        Cursor entries = ldb.getWorkoutEntry(date);
+        Cursor entries = ldb.getWorkoutEntry(date, user_id);
         int rows = entries.getCount();
         if (rows == 0) {
         } else {
             entries.moveToFirst();
-            Log.i("DBreceievd", entries.getString(1));
             do {
                 TableRow tbrow = new TableRow(getContext());
                 tbrow.setGravity(Gravity.CENTER);

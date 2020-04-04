@@ -19,7 +19,7 @@ import static maes.tech.intentanim.CustomIntent.customType;
 
 public class view_workout_areas extends AppCompatActivity {
 
-    String username = "2013chrisclarke@gmail.com";
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,8 @@ public class view_workout_areas extends AppCompatActivity {
         setContentView(R.layout.activity_view_workout_areas);
         Button map_button = findViewById(R.id.map);
         Button home_button = findViewById(R.id.home);
+
+        username = getIntent().getExtras().getString("userId");
 
         map_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +58,7 @@ public class view_workout_areas extends AppCompatActivity {
         TableLayout table = (TableLayout) findViewById(R.id.opening_times_table);
         ldb.open();
 
-        Cursor area = ldb.getWorkoutArea();
+        Cursor area = ldb.getWorkoutArea(username);
         int rows = area.getCount();
         if (rows == 0) {
         } else {

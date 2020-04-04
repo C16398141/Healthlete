@@ -7,12 +7,7 @@ import android.os.Bundle;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -52,10 +47,8 @@ public class food_entry extends AppCompatActivity {
     Integer submitAttempts;
 
     DatePickerDialog datePickerDialog;
-    //String update= getIntent().getStringExtra("EXTRA_ID");
-    //Integer result = Integer.parseInt(update);
     String qtype, date;
-    String user_id = "2013chrisclarke@gmail.com";
+    String user_id;
     OkHttpClient client = new OkHttpClient();
 
     @Override
@@ -64,6 +57,8 @@ public class food_entry extends AppCompatActivity {
         setContentView(R.layout.activity_food_entry);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        user_id = getIntent().getExtras().getString("userId");
         ldb = new LocalDB(this);
         submitAttempts = 0;
 

@@ -1,9 +1,7 @@
 package fyp.c16398141.healthlete.ui.ui.main;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -18,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,14 +25,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.card.MaterialCardView;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,17 +37,16 @@ import java.util.List;
 
 import fyp.c16398141.healthlete.LocalDB;
 import fyp.c16398141.healthlete.R;
-import fyp.c16398141.healthlete.fitness;
 import fyp.c16398141.healthlete.ui.fitness_entry;
 
 import static java.lang.String.valueOf;
-import static maes.tech.intentanim.CustomIntent.customType;
 
 
 public class exercise_entry extends Fragment {
 
-    String date;
+    String date, user_id;
     DatePickerDialog datePickerDialog;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -121,7 +114,6 @@ public class exercise_entry extends Fragment {
             public void onClick(View v) {
 
                 imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-               // hideKeyboard(exercise_entry.this);
 
                 if (TextUtils.isEmpty(e_weight.getText())) {
                     e_weight.setError("This field must be filled in");
@@ -146,6 +138,11 @@ public class exercise_entry extends Fragment {
                     return;
                 }
 
+                if (weight>500.0){
+                    e_weight.setError("Please report your record to Guinness World Records");
+                    return;
+                }
+
                 if (!TextUtils.isDigitsOnly(e_reps.getText())) {
                     e_reps.setError("This field requires a whole number");
                     return;
@@ -156,10 +153,20 @@ public class exercise_entry extends Fragment {
                     return;
                 }
 
+                if (TextUtils.isEmpty(e_weight.getText())) {
+                    e_weight.setError("This field must be filled in");
+                    return;
+                }
+
                 Integer reps = Integer.parseInt(e_reps.getText().toString());
+                if (reps>99){
+                    e_reps.setError("This field must be less than 100");
+                    return;
+                }
+
                 Integer sets = Integer.parseInt(e_sets.getText().toString());
                 Double repmax = CalculateRepMax(weight,reps);
-                String user_id = "2013chrisclarke@gmail.com";
+                user_id = "2013chrisclarke@gmail.com";
 
                 ldb.open();
                 boolean result = ldb.addWorkoutEntry(exercisename, weight, reps, sets, repmax, date, user_id);
@@ -192,7 +199,6 @@ public class exercise_entry extends Fragment {
         add.setId(View.generateViewId());
         add.setImageResource(R.drawable.plus_circle);
         add.setBackgroundColor(Color.BLUE);
-        //add.setScaleType(ImageButton.ScaleType.CENTER_INSIDE);
         heading.addView(add, lp2);
 
         TextView tv1 = new TextView(getContext());
@@ -237,11 +243,11 @@ public class exercise_entry extends Fragment {
 
         LocalDB ldb = new LocalDB(getContext());
         ldb.open();
-
-        Cursor entries = ldb.getExerciseEntries(exercisename);
+        Cursor entries = ldb.getExerciseEntries(exercisename, user_id);
         int rows = entries.getCount();
         if (rows == 0) {
         } else {
+            //Customise each cell's layout and to contain its relevant database entry
             List<ImageButton> delete = new ArrayList<ImageButton>();
             entries.moveToFirst();
             Log.i("DBreceievd",entries.getString(1));

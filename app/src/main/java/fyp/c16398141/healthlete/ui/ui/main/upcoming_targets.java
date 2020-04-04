@@ -1,9 +1,5 @@
 package fyp.c16398141.healthlete.ui.ui.main;
 
-import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -11,46 +7,29 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
-import android.text.InputType;
-import android.text.TextUtils;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.material.card.MaterialCardView;
-
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import fyp.c16398141.healthlete.LocalDB;
 import fyp.c16398141.healthlete.R;
-import fyp.c16398141.healthlete.fitness;
 import fyp.c16398141.healthlete.ui.fitness_entry;
 
 import static java.lang.String.valueOf;
-import static maes.tech.intentanim.CustomIntent.customType;
 
 
 public class upcoming_targets extends Fragment {
+
+    String user_id;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -160,7 +139,8 @@ public class upcoming_targets extends Fragment {
         LocalDB ldb;
         ldb = new LocalDB(getContext());
         ldb.open();
-        Cursor entry = ldb.getExerciseEntries(exercisename);
+        user_id = "2013chrisclarke@gmail.com";
+        Cursor entry = ldb.getExerciseEntries(exercisename, user_id);
         int rows = entry.getCount();
         if (rows == 0) {
         } else {
