@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static java.lang.String.valueOf;
 import static maes.tech.intentanim.CustomIntent.customType;
@@ -44,7 +45,7 @@ public class view_workout_areas extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(view_workout_areas.this, home.class);
                 startActivity(intent);
-                customType(view_workout_areas.this,"right-to-left");
+                customType(view_workout_areas.this,"bottom-to-up");
             }
         });
         setupTable();
@@ -70,7 +71,7 @@ public class view_workout_areas extends AppCompatActivity {
                 Cursor times = ldb.getWorkoutAvailability(area_id);
                 rows = times.getCount();
                 if (rows == 0) {
-                    Log.i("Times", "NA");
+                    Toast.makeText(getApplicationContext(),"Times not available for this area",Toast.LENGTH_LONG).show();
                 } else {
                     times.moveToFirst();
                     do {

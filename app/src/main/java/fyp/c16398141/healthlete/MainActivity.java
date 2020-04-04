@@ -51,8 +51,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(Color.parseColor("#FFFFFF"));
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        try{
+            String sign_out = getIntent().getExtras().getString("userId");
+            Log.i("SIGN OUT INTENT", "HERE");
+            Toast.makeText(getApplicationContext(), sign_out + " signed out",Toast.LENGTH_SHORT).show();
+        }catch (NullPointerException e){
+            Log.i("Starting up","user");
+        }
         //drawer = findViewById(R.id.drawer_layout);
 
         //ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);

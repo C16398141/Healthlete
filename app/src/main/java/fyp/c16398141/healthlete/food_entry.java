@@ -345,4 +345,14 @@ public class food_entry extends AppCompatActivity {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent data = new Intent(food_entry.this,food_log.class);
+        data.putExtra("userId", user_id);
+        startActivity(data);
+        customType(food_entry.this,"right-to-left");
+        super.onBackPressed();
+    }
 }

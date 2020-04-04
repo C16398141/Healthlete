@@ -20,6 +20,7 @@ import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -68,9 +69,6 @@ public class food_log extends AppCompatActivity {
         }
 
         ldb = new LocalDB(this);
-        ldb.open();
-        addGoals();
-        ldb.close();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -152,7 +150,7 @@ public class food_log extends AppCompatActivity {
         Integer targetCals = 0;
         Integer targetCarbs = 0;
         Integer targetProtein = 0;
-        Cursor entries = ldb.getGoals();
+        Cursor entries = ldb.getGoals(user_id);
         while (entries.moveToNext()){
             targetCals = entries.getInt(2);
             targetCarbs = entries.getInt(3);
@@ -215,14 +213,15 @@ public class food_log extends AppCompatActivity {
     public void addGoals()
     {
         String type = "weightLoss";
-        Integer targetCals = 2000;
-        Integer targetCarbs = 400;
-        Integer targetProtein = 200;
-        Boolean result = ldb.addGoals("lose weight",2000,400,200, user_id);
+        Integer defaultCals = 2000;
+        Integer defaultCarbs = 400;
+        Integer defaultProtein = 200;
+        Boolean result = ldb.addGoals("lose weight",defaultCals,defaultCarbs,defaultProtein, user_id);
         if (result == true){
             Log.i("TAGS","goals added");
         }else{
             Log.i("TAGS","goals failed");
+            return;
         }
     }
 
@@ -392,7 +391,13 @@ public class food_log extends AppCompatActivity {
             Integer targetCals = 0;
             Integer targetCarbs = 0;
             Integer targetProtein = 0;
-            Cursor goals = ldb.getGoals();
+
+            Cursor goals = ldb.getGoals(user_id);
+            int num_goals = goals.getCount();
+            if (num_goals == 0) {
+                addGoals();
+                goals = ldb.getGoals(user_id);
+            }
             while (goals.moveToNext()){
                 targetCals = goals.getInt(2);
                 targetCarbs = goals.getInt(3);
@@ -403,9 +408,10 @@ public class food_log extends AppCompatActivity {
             TableRow targetrow = new TableRow(this);
             targetrow.setBackgroundColor(Color.LTGRAY);
 
-            TextView target = new TextView(this);
+            Button target = new Button(this);
+            target.setClickable(true);
             totrow.setGravity(Gravity.CENTER);
-            target.setText("Target:");
+            target.setText("Set Target:");
             target.setTextColor(Color.BLACK);
             target.setGravity(Gravity.CENTER);
             targetrow.addView(target,lp);
@@ -455,6 +461,16 @@ public class food_log extends AppCompatActivity {
                     }
                 });
             }
+
+            target.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent goals = new Intent(food_log.this, edit_goals.class);
+                    goals.putExtra("userId", user_id);
+                    startActivity(goals);
+                    customType(food_log.this,"up-to-bottom");
+                }
+            });
         }
     }
 
@@ -462,9 +478,10 @@ public class food_log extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        Intent data = new Intent();
-        data.putExtra("userId", "new_id");
-        setResult(RESULT_OK, data);
+        Intent data = new Intent(food_log.this,home.class);
+        data.putExtra("userId", user_id);
+        startActivity(data);
+        customType(food_log.this,"fadein-to-fadeout");
         super.onBackPressed();
     }
 }

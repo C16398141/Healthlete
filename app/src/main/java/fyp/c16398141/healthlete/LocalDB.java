@@ -51,7 +51,6 @@ public class LocalDB {
                     "user_id text not null, " +
                     "FOREIGN KEY (user_id)" +
                     "REFERENCES User (user_id));";
-    //later on make food table with nutrient per qty values and take from them - remove from entry table
 
     private static final String CreateExerciseTable =
             "create table if not exists Exercise (exercise_id integer primary key autoincrement, " +
@@ -240,10 +239,24 @@ public class LocalDB {
         }
     }
 
-    public Cursor getGoals() {
+    public Cursor getGoals(String user_id) {
 
-        Cursor data = db.rawQuery("SELECT * FROM Goals;", null);
+        Cursor data = db.rawQuery("SELECT * FROM Goals WHERE user_id LIKE '" + user_id + "' ;", null);
         return data;
+    }
+
+    public boolean deleteGoals(String user_id) {
+
+        String whereClause = "user_id=?";
+        String whereArgs[] = {user_id};
+
+        long result = db.delete("Goals", whereClause, whereArgs);
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public long addWorkoutArea(String place_id, String name, Double lat, Double lng, Integer times, String user_id) {

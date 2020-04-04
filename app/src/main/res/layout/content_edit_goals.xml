@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/lightGrey">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/container"
+            android:layout_width="300sp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/popup_background"
+            android:visibility="visible"
+            android:layout_marginTop="80sp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15sp"
+                    android:gravity="center|center_vertical"
+                    android:text="Edit Dietary Daily Goals"
+                    android:textColor="@color/quantum_black_100"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="2sp"
+                    android:layout_marginRight="2sp"
+                    android:background="@drawable/white_circle_background"
+                    android:clickable="true"
+                    android:src="@drawable/ic_cancel_black_24dp" />
+
+                <View
+                    android:id="@+id/divide"
+                    android:layout_width="match_parent"
+                    android:layout_height="5sp"
+                    android:layout_below="@+id/title"
+                    android:layout_margin="5sp"
+                    android:background="@color/lightGrey" />
+
+                <TextView
+                    android:id="@+id/text_calories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/divide"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15sp"
+                    android:text="Calories"
+                    android:textColor="@color/blue"
+                    android:textSize="20sp" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_calories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_calories"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5sp"
+                    android:background="@drawable/edittext_background"
+                    android:paddingHorizontal="10sp"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp" />
+
+                <TextView
+                    android:id="@+id/text_carbs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/edit_calories"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15sp"
+                    android:text="Carbohydrates:"
+                    android:textColor="@color/blue"
+                    android:textSize="20sp" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_carbs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_carbs"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5sp"
+                    android:background="@drawable/edittext_background"
+                    android:paddingHorizontal="10sp"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp" />
+
+                <TextView
+                    android:id="@+id/text_protein"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/edit_carbs"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15sp"
+                    android:text="Protein:"
+                    android:textColor="@color/blue"
+                    android:textSize="20sp" />
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_protein"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/text_protein"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5sp"
+                    android:background="@drawable/edittext_background"
+                    android:paddingHorizontal="10sp"
+                    android:paddingLeft="5sp"
+                    android:paddingRight="5sp" />
+
+                <Button
+                    android:id="@+id/log"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/edit_protein"
+                    android:layout_marginTop="30sp"
+                    android:background="@color/blue"
+                    android:text="Confirm Changes"
+                    android:textColor="@color/quantum_white_100" />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

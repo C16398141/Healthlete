@@ -284,4 +284,14 @@ public class fitness extends AppCompatActivity {
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent data = new Intent(fitness.this,home.class);
+        data.putExtra("userId", user_id);
+        startActivity(data);
+        customType(fitness.this,"fadein-to-fadeout");
+        super.onBackPressed();
+    }
 }

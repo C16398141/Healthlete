@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import static java.lang.String.valueOf;
+import static maes.tech.intentanim.CustomIntent.customType;
 
 public class home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -45,7 +46,10 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
                 user = getIntent().getExtras().getString("userId");
             }catch (NullPointerException e){
                 Log.i("Null Pointer Exception","user");
-                user = "Home";
+                Intent home = new Intent(home.this, MainActivity.class);
+                home.putExtra("userId", user);
+                startActivity(home);
+                customType(home.this,"right-to-left");
             }
         }
 
@@ -75,8 +79,9 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
 
                 Intent intent = new Intent(home.this, food_log.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("userId", "welcome back");
-                startActivityForResult(intent, request_code);
+                intent.putExtra("userId", user);
+                startActivity(intent);
+                customType(home.this,"fadein-to-fadeout");
             }
         });
 
@@ -87,6 +92,7 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
                 Intent intent = new Intent(home.this, fitness.class);
                 intent.putExtra("userId", user);
                 startActivity(intent);
+                customType(home.this,"fadein-to-fadeout");
             }
         });
 
@@ -97,6 +103,7 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
                 Intent intent = new Intent(home.this, achievements.class);
                 intent.putExtra("userId", user);
                 startActivity(intent);
+                customType(home.this,"fadein-to-fadeout");
             }
         });
     }
@@ -135,11 +142,28 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
                 Intent intent = new Intent(home.this, workout_area.class);
                 intent.putExtra("userId", user);
                 startActivity(intent);
+                customType(home.this,"up-to-bottom");
+                break;
+
+            case R.id.reminder:
+                Intent remind = new Intent(home.this, view_workout_areas.class);
+                remind.putExtra("userId", user);
+                startActivity(remind);
+                customType(home.this,"up-to-bottom");
+                break;
+
+            case R.id.editgoals:
+                Intent goals = new Intent(home.this, edit_goals.class);
+                goals.putExtra("userId", user);
+                startActivity(goals);
+                customType(home.this,"up-to-bottom");
                 break;
 
             case R.id.sign_out:
                 Intent sign_out = new Intent(home.this, MainActivity.class);
+                sign_out.putExtra("userId", user);
                 startActivity(sign_out);
+                customType(home.this,"right-to-left");
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

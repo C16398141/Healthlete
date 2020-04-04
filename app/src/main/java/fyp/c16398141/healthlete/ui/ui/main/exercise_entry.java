@@ -153,11 +153,6 @@ public class exercise_entry extends Fragment {
                     return;
                 }
 
-                if (TextUtils.isEmpty(e_weight.getText())) {
-                    e_weight.setError("This field must be filled in");
-                    return;
-                }
-
                 Integer reps = Integer.parseInt(e_reps.getText().toString());
                 if (reps>99){
                     e_reps.setError("This field must be less than 100");

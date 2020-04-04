@@ -45,7 +45,14 @@ import java.util.regex.Pattern;
 import static java.lang.String.valueOf;
 import static maes.tech.intentanim.CustomIntent.customType;
 
-// TODO make edit profile (incl goals). Set goals to default average human intake (possibly based on whether gender is received on sign up)
+/* TODO Make notifications and then set from available times (possibly similar to view workout availability. Actually
+    I THINK I SHOULD convert view workout availability to reminder tab. Make rows tick-able with if statement to display if necessary times N/A
+    For log out perhaps add Extra value to calling main activity intent and in main activity check if getExtra is null. if not then sign out
+    get sign out details to work and at least add user to firebase - im sure there's demos and examples
+    Maybe make loading screen for starting app
+    Maybe make achievement list addable (add their own (make sure there's a hint example and with difficult, expected time-frame, date added.
+    then when completed click button to change background colour and move it to bottom list so they're still viewable or maybe make switcher to view completed and incomplete achievements
+ */
 public class workout_area extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnPoiClickListener {
 
     private GoogleMap mMap;
@@ -141,6 +148,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
 
                     Integer size = aday.size();
 
+                    //ensure that no arraylist has less entries than the others before inserting into the database
                     ArrayList<Integer>minsize = new ArrayList<>();
                     minsize.add(aday.size());
                     minsize.add(atimes.size());
@@ -182,6 +190,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(workout_area.this, view_workout_areas.class);
+                intent.putExtra("userId", user_id);
                 startActivity(intent);
                 customType(workout_area.this, "bottom-to-up");
             }
