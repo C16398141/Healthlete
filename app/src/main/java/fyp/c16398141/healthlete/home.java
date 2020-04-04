@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,8 +40,13 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
 
-        if (user == null) {
-            user = getIntent().getExtras().getString("userId");
+        if (user == null || user.isEmpty()) {
+            try{
+                user = getIntent().getExtras().getString("userId");
+            }catch (NullPointerException e){
+                Log.i("Null Pointer Exception","user");
+                user = "Home";
+            }
         }
 
         getSupportActionBar().setTitle(user);

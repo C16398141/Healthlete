@@ -119,12 +119,13 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         fetchLastLocation();
 
-        add.setOnClickListener(v -> {
+        add.setOnClickListener((View v) -> {
 
                 ldb.open();
                 Cursor area = ldb.getWorkoutArea(user_id);
                 int rows = area.getCount();
                 if (rows == 0) {
+                    Log.i("Row Count","Empty");
                 } else {
                     ldb.deletePreviousWorkoutArea();
                     Log.i("Deleted","Probably");
@@ -137,9 +138,23 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                 } else if (times == 1){
                     int area_id = (int) update;
                     int inserts = 0;
-                    for (int i = 0; i<aday.size(); i++){
+
+                    Integer size = aday.size();
+
+                    ArrayList<Integer>minsize = new ArrayList<>();
+                    minsize.add(aday.size());
+                    minsize.add(atimes.size());
+                    minsize.add(opening.size());
+                    minsize.add(closing.size());
+                    for (Integer i : minsize){
+                        if (i<size){
+                            size=i;
+                        }
+                    }
+
+                    for (int i = 0; i<size; i++){
                         boolean result = ldb.addWorkoutAvailability(aday.get(i), atimes.get(i), opening.get(i), closing.get(i), area_id);
-                        if (result == true){
+                        if (result){
                             inserts++;
                         }
                     }
@@ -168,7 +183,7 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 Intent intent = new Intent(workout_area.this, view_workout_areas.class);
                 startActivity(intent);
-                customType(workout_area.this,"bottom-to-up");
+                customType(workout_area.this, "bottom-to-up");
             }
         });
 
@@ -265,8 +280,9 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
             Log.i("Opening Times", "Found " + name + " " + hours);
 
             times = 1;
+            Collection<String>times = hours;
             // convert from default abstract arraylist
-            Collection<String> times = hours;
+            //Collection<String> times = hours;
 
             String always = "Open 24 hours";
             String never = "Closed";
