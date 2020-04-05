@@ -41,7 +41,6 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     LocalDB ldb;
-    //private DrawerLayout drawer;
     private FirebaseAuth mAuth;
     GoogleSignInClient mGoogleSignInClient;
     Integer RC_SIGN_IN = 1;
@@ -52,22 +51,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(Color.parseColor("#FFFFFF"));
 
-        try{
-            String sign_out = getIntent().getExtras().getString("userId");
-            Log.i("SIGN OUT INTENT", "HERE");
-            Toast.makeText(getApplicationContext(), sign_out + " signed out",Toast.LENGTH_SHORT).show();
-        }catch (NullPointerException e){
-            Log.i("Starting up","user");
-        }
-        //drawer = findViewById(R.id.drawer_layout);
-
-        //ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
-        //drawer.addDrawerListener(toggle);
-        //toggle.syncState();
-
-        /*ConstraintLayout layout1 = findViewById(R.id.constraint_main);
-        layout1.setBackgroundColor(Color.BLUE);*/
-
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -77,24 +60,14 @@ public class MainActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        //EditText text = EditText findViewById(R.id.editText);
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-
-        Button button = findViewById(R.id.button);
 
         signInButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                         signIn();
             }
-        });
-
-        button.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                signOut();
-                }
         });
 
         ldb = new LocalDB(this);
@@ -113,17 +86,20 @@ public class MainActivity extends AppCompatActivity {
         //GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
+
+        try{
+            Intent intent = new Intent(MainActivity.this, home.class);
+            intent.putExtra("userId",currentUser.getEmail());
+            startActivity(intent);
+        }catch (NullPointerException e){
+            Log.i("Signed In","False");
+        }
+
     }
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    private void signOut() {
-        FirebaseAuth.getInstance().signOut();
-        Log.i("TAG*********","signed out");
     }
 
     @Override
@@ -138,9 +114,8 @@ public class MainActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                Log.w("TAG************", "Google sign in failed", e);
-                // ...
+                Toast.makeText(getApplicationContext(),"Google sign in failed",Toast.LENGTH_SHORT).show();
+
             }
         }
     }
@@ -188,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, home.class);
                             intent.putExtra("userId",email);
                             startActivity(intent);
-                            //updateUI(user);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("TAG***********", "signInWithCredential:failure", task.getException());

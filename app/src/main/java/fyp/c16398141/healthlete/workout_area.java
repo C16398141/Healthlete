@@ -52,6 +52,8 @@ import static maes.tech.intentanim.CustomIntent.customType;
     Maybe make loading screen for starting app
     Maybe make achievement list addable (add their own (make sure there's a hint example and with difficult, expected time-frame, date added.
     then when completed click button to change background colour and move it to bottom list so they're still viewable or maybe make switcher to view completed and incomplete achievements
+    if number of log entries is empty make view for drawing instruction and arrow to add button (Click here to make your first entry today)
+    account for screen rotations/ different screen sizes
  */
 public class workout_area extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnPoiClickListener {
 
@@ -159,9 +161,11 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                             size=i;
                         }
                     }
+                    //by default set reminders on for each available workout area day
+                    Integer reminder = 1;
 
                     for (int i = 0; i<size; i++){
-                        boolean result = ldb.addWorkoutAvailability(aday.get(i), atimes.get(i), opening.get(i), closing.get(i), area_id);
+                        boolean result = ldb.addWorkoutAvailability(aday.get(i), atimes.get(i), opening.get(i), closing.get(i), reminder, area_id);
                         if (result){
                             inserts++;
                         }

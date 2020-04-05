@@ -1,12 +1,12 @@
 package fyp.c16398141.healthlete;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -14,18 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import static java.lang.String.valueOf;
+import android.widget.Toast;
+
 import static maes.tech.intentanim.CustomIntent.customType;
 
 public class home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -40,6 +36,14 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            String user = firebaseUser.getEmail();
+        } else {
+            Log.i("Nope",":(");
+            // No user is signed in
+        }
 
         if (user == null || user.isEmpty()) {
             try{
@@ -161,7 +165,8 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
 
             case R.id.sign_out:
                 Intent sign_out = new Intent(home.this, MainActivity.class);
-                sign_out.putExtra("userId", user);
+                FirebaseAuth.getInstance().signOut();
+                Toast.makeText(getApplicationContext(),"Signed out",Toast.LENGTH_SHORT).show();
                 startActivity(sign_out);
                 customType(home.this,"right-to-left");
                 break;

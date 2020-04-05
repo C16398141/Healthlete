@@ -22,7 +22,7 @@ public class LocalDB {
     private static final String DATABASE_NAME = "Players1";
     private static final String DATABASE_TABLE = "Contact_Details2";
     private static final String KEY_TNAME = "tournamentname";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String foreignKeyCheck =
             "PRAGMA foreign_keys = ON;";
@@ -102,6 +102,7 @@ public class LocalDB {
                     "type text not null, " +
                     "opening_time integer not null, " +
                     "closing_time integer not null, " +
+                    "reminder integer not null," +
                     "area_id integer not null, " +
                     "FOREIGN KEY (area_id)" +
                     "REFERENCES WorkoutArea (area_id));";
@@ -271,12 +272,13 @@ public class LocalDB {
         return result;
     }
 
-    public boolean addWorkoutAvailability(String day, String type, Integer opening_time, Integer closing_time, Integer area_id) {
+    public boolean addWorkoutAvailability(String day, String type, Integer opening_time, Integer closing_time, Integer reminder, Integer area_id) {
         ContentValues initialValues = new ContentValues();
         initialValues.put("day", day);
         initialValues.put("type", type);
         initialValues.put("opening_time", opening_time);
         initialValues.put("closing_time", closing_time);
+        initialValues.put("reminder", reminder);
         initialValues.put("area_id", area_id);
         long result = db.insert("WorkoutAvailability", null, initialValues);
         if (result == -1) {
@@ -296,6 +298,14 @@ public class LocalDB {
     public Cursor getWorkoutAvailability(int area_id) {
         Cursor data = db.rawQuery("SELECT * FROM WorkoutAvailability WHERE area_id LIKE '" + area_id + "';", null);
         return data;
+    }
+
+    public boolean updateWorkoutAvailability(int slot_id, int reminder){
+        ContentValues updatedValues = new ContentValues();
+        updatedValues.put("slot_id", slot_id);
+        updatedValues.put("reminder", reminder);
+        boolean result = db.update("WorkoutAvailability", updatedValues, "slot_id" + "=" + slot_id, null)>0;
+        return result;
     }
 
     public void deletePreviousWorkoutArea() {

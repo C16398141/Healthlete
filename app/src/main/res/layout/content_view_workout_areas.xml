@@ -6,58 +6,64 @@
     android:layout_height="match_parent"
     tools:context=".view_workout_areas">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/name"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="80sp"
-            android:text="My Workout Area"
-            app:autoSizeTextType="uniform"
-            android:gravity="center|center_vertical"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="70sp"
-            android:layout_marginBottom="10sp"
-            android:layout_marginLeft="40sp"
-            android:layout_marginRight="40sp"/>
+            android:layout_height="match_parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/name"
-            app:cardCornerRadius="10sp"
-            android:layout_margin="10sp"
-            android:padding="10sp">
-
-            <TableLayout
-                android:id="@+id/opening_times_table"
+            <TextView
+                android:id="@+id/name"
                 android:layout_width="match_parent"
+                android:layout_height="80sp"
+                android:text="My Workout Area"
+                app:autoSizeTextType="uniform"
+                android:gravity="center|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="70sp"
+                android:layout_marginBottom="10sp"
+                android:layout_marginLeft="40sp"
+                android:layout_marginRight="40sp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:clickable="false"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/name">
-            </TableLayout>
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/name"
+                app:cardCornerRadius="10sp"
+                android:layout_margin="10sp"
+                android:padding="10sp">
 
-        </com.google.android.material.card.MaterialCardView>
+                <TableLayout
+                    android:id="@+id/opening_times_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/name">
+                </TableLayout>
 
-        <Button
-            android:id="@+id/map"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add New Workout Area"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@+id/home"/>
-        <Button
-            android:id="@+id/home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back to Home"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="30sp"/>
-    </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <Button
+                android:id="@+id/map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add New Workout Area"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/card"
+                android:layout_marginTop="50sp"/>
+            <Button
+                android:id="@+id/home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Back to Home"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/map"
+                android:layout_marginTop="20sp"/>
+        </RelativeLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
