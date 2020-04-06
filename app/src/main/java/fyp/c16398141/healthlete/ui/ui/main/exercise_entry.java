@@ -246,8 +246,11 @@ public class exercise_entry extends Fragment {
         ldb.open();
         Cursor entries = ldb.getExerciseEntries(exercisename, user_id);
         int rows = entries.getCount();
+        TextView first = getActivity().findViewById(R.id.instructions);
+        first.setText("Click on the ⊕ button to add your first " + exercisename + " entry");
         if (rows == 0) {
         } else {
+            first.setVisibility(View.GONE);
             //Customise each cell's layout and to contain its relevant database entry
             List<ImageButton> delete = new ArrayList<ImageButton>();
             entries.moveToFirst();

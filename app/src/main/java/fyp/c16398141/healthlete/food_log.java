@@ -15,6 +15,8 @@ import static maes.tech.intentanim.CustomIntent.customType;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
@@ -133,6 +135,12 @@ public class food_log extends AppCompatActivity {
 
     public void setupPieChart() {
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        food_log.this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        Integer screen_height = displayMetrics.heightPixels;
+        Integer screen_width = displayMetrics.widthPixels;
+        Log.i(screen_height.toString(),screen_width.toString());
+
         int imageViewWidth = dimensions.get(0);
         int imageViewHeight = dimensions.get(1);
         Log.i("TAG",valueOf(imageViewWidth));
@@ -216,7 +224,7 @@ public class food_log extends AppCompatActivity {
         Integer defaultCals = 2000;
         Integer defaultCarbs = 400;
         Integer defaultProtein = 200;
-        Boolean result = ldb.addGoals("lose weight",defaultCals,defaultCarbs,defaultProtein, user_id);
+        Boolean result = ldb.addGoals(type,defaultCals,defaultCarbs,defaultProtein, user_id);
         if (result == true){
             Log.i("TAGS","goals added");
         }else{
@@ -288,6 +296,8 @@ public class food_log extends AppCompatActivity {
         int rows = entries.getCount();
         if (rows == 0) {
         } else {
+            TextView first = findViewById(R.id.instructions);
+            first.setVisibility(View.GONE);
             entries.moveToFirst();
             do {
                 TableRow tbrow = new TableRow(this);

@@ -62,6 +62,20 @@
                     android:background="#f1f1f1">
                 </TableLayout>
             </ScrollView>
+
+            <TextView
+                android:id="@+id/instructions"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/scrolling"
+                android:text="Click on the ⊕ button to add your first entry today"
+                android:gravity="center_horizontal"
+                android:textColor="@color/lightGrey"
+                android:textSize="30sp"
+                android:background="@color/quantum_white_100"
+                android:visibility="visible">
+            </TextView>
+
         </RelativeLayout>
 
         <RelativeLayout

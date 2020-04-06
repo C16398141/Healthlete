@@ -99,19 +99,6 @@ public class fitness extends AppCompatActivity {
             }
         });
 
-        /*
-        for each exercise set  onclick listener like minus from food log
-        add.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                Intent intent = new Intent(fitness.this, fitness_entry.class);
-                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                customType(fitness.this,"left-to-right");
-            }
-        });
-         */
-
         /*Log.i("Explanation",valueOf(TYPE_WORKOUT_EXERCISE.getClass()));
         Log.i("Explanation",valueOf(DataType.TYPE_WORKOUT_EXERCISE.getName()));
         Log.i("Explanation",valueOf(DataType.TYPE_WORKOUT_EXERCISE.describeContents()));
@@ -166,8 +153,14 @@ public class fitness extends AppCompatActivity {
         ldb.open();
         Cursor entries = ldb.getAllExercises(user_id);
         int rows = entries.getCount();
+        TextView first = findViewById(R.id.instructions);
         if (rows == 0) {
-        } else {
+        } else{
+            if (rows == 1) {
+                first.setText("Click on your exercise for entry monitoring or add more exercises");
+            } else{
+                first.setVisibility(View.GONE);
+            }
             List<ImageButton> delete = new ArrayList<ImageButton>();
             List<Button> select = new ArrayList<Button>();
             entries.moveToFirst();

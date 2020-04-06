@@ -159,7 +159,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Take a look at some milestone achievements"
+                        android:text="Keep track of your milestones"
                         android:padding="5sp"
                         android:textColor="@android:color/darker_gray"/>
                 </LinearLayout>

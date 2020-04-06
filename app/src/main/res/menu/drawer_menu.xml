@@ -11,7 +11,7 @@
         <item
             android:id="@+id/addgym"
             android:icon="@drawable/ic_fitness_center_black_24dp"
-            android:title="Add Gym" />
+            android:title="Add Workout Area" />
         <item
             android:id="@+id/reminder"
             android:icon="@drawable/ic_add_alarm_black_24dp"

@@ -228,6 +228,10 @@ public class achievements extends AppCompatActivity {
         }
         int rows = entries.getCount();
         if (rows == 0) {
+            if(!completed){
+                TextView first = findViewById(R.id.instructions);
+                first.setVisibility(View.VISIBLE);
+            }
         } else {
             List<ImageButton> update = new ArrayList<ImageButton>();
             List<Button> select = new ArrayList<Button>();
