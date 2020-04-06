@@ -53,4 +53,5 @@ dependencies {
     implementation 'com.github.hajiyevelnur92:intentanimation:1.0'
     implementation 'com.google.android.gms:play-services-fitness:18.0.0'
     implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:cardview-v7:28.0.0'
 }

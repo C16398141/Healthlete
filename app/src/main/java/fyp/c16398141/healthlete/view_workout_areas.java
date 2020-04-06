@@ -81,13 +81,15 @@ public class view_workout_areas extends AppCompatActivity {
 
         //check every minute
         Integer time = getCurrentTime();
-        Integer difference = time - t;
+        Integer difference = t - time;
         Log.i("Difference", valueOf(difference));
-        if (difference == 0){
+
+        //if there's a two hour gap between closing time and current time (military format) then make the notification
+        if (difference == 200){
             Log.i("Now","now");
             buildNotification(area_name, true);
         }else{
-            Log.i("Wrong time", "Soz");
+            Log.i("Wrong time", "No notification");
         }
     }
 

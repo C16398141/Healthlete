@@ -22,7 +22,7 @@ public class LocalDB {
     private static final String DATABASE_NAME = "Players1";
     private static final String DATABASE_TABLE = "Contact_Details2";
     private static final String KEY_TNAME = "tournamentname";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     private static final String foreignKeyCheck =
             "PRAGMA foreign_keys = ON;";
@@ -107,6 +107,18 @@ public class LocalDB {
                     "FOREIGN KEY (area_id)" +
                     "REFERENCES WorkoutArea (area_id));";
 
+    private static final String CreateAchievementTable =
+            "create table if not exists Achievement (achievement_id integer primary key autoincrement, " +
+                    "title text not null, " +
+                    "description text not null, " +
+                    "expected_time_frame text not null, " +
+                    "difficulty integer not null," +
+                    "date_created text not null," +
+                    "date_completed text," +
+                    "user_id text not null, " +
+                    "FOREIGN KEY (user_id)" +
+                    "REFERENCES User (user_id));";
+
 
     private final Context context;
     private DatabaseHelper DBHelper;
@@ -143,6 +155,7 @@ public class LocalDB {
             db.execSQL(CreateGoalTable);
             db.execSQL(CreateWorkoutAreaTable);
             db.execSQL(CreateWorkoutAvailabilityTable);
+            db.execSQL(CreateAchievementTable);
             Log.i("tags", "TABLES CREATED");
         }
 
@@ -159,6 +172,7 @@ public class LocalDB {
             db.execSQL("drop table if exists Goal;");
             db.execSQL("drop table if exists WorkoutArea;");
             db.execSQL("drop table if exists WorkoutAvailablity;");
+            db.execSQL("drop table if exists Achievement;");
             onCreate(db);
         }
     }
@@ -386,6 +400,59 @@ public class LocalDB {
         String whereArgs[] = {rowId.toString()};
 
         long result = db.delete("WorkoutEntry", whereClause, whereArgs);
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean addAchievement(String name, String description, String expected_time_frame, Integer difficulty, String date_created, String user) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put("title", name);
+        initialValues.put("description", description);
+        initialValues.put("expected_time_frame", expected_time_frame);
+        initialValues.put("difficulty", difficulty);
+        initialValues.put("date_created", date_created);
+        initialValues.put("date_completed", "TBD");
+        initialValues.put("user_id", user);
+        long result = db.insert("Achievement", null, initialValues);
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean completeAchievement(int achievement_id, String time){
+        ContentValues updatedValues = new ContentValues();
+        updatedValues.put("date_completed", time);
+        boolean result = db.update("Achievement", updatedValues, "achievement_id" + "=" + achievement_id, null)>0;
+        return result;
+    }
+
+    public Cursor getUncompletedAchievements(String username) {
+        Cursor data = db.rawQuery("SELECT * FROM Achievement WHERE user_id LIKE '" + username + "' AND date_completed LIKE 'TBD' ORDER BY date_created DESC;", null);
+        return data;
+    }
+
+    public Cursor getCompletedAchievements(String username) {
+        Cursor data = db.rawQuery("SELECT * FROM Achievement WHERE user_id LIKE '" + username + "' AND date_completed NOT LIKE 'TBD' ORDER BY date_created DESC;", null);
+        return data;
+    }
+
+    public Cursor getAchievement(Integer id) {
+        Cursor data = db.rawQuery("SELECT * FROM Achievement WHERE achievement_id = " + id + ";", null);
+        return data;
+    }
+
+    public boolean deleteAchievement(Integer achievement_id) {
+
+        String whereClause = "achievement_id=?";
+        String whereArgs[] = {achievement_id.toString()};
+
+        long result = db.delete("Achievement", whereClause, whereArgs);
 
         if (result == -1) {
             return false;

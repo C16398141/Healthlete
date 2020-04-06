@@ -8,4 +8,230 @@
     tools:context=".achievements"
     tools:showIn="@layout/activity_achievements">
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10sp"
+            android:background="@color/blue">
+
+            <Switch
+                android:id="@+id/switcher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/quantum_white_100"
+                android:text=" To do " />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/scrolling"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:scrollbars="none">
+
+                <TableLayout
+                    android:id="@+id/achievement_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#f1f1f1"
+                    android:stretchColumns="1,2,3,4">
+                </TableLayout>
+            </ScrollView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/popup"
+                android:layout_width="350sp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20sp"
+                android:background="@drawable/popup_background"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15sp"
+                        android:text="Add New Target"
+                        android:textColor="@color/quantum_black_100"
+                        android:textSize="25sp"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="2sp"
+                        android:layout_marginRight="2sp"
+                        android:background="@drawable/white_circle_background"
+                        android:clickable="true"
+                        android:src="@drawable/ic_cancel_black_24dp" />
+
+                    <View
+                        android:id="@+id/divide"
+                        android:layout_width="match_parent"
+                        android:layout_height="5sp"
+                        android:layout_below="@+id/title"
+                        android:layout_margin="5sp"
+                        android:background="@color/lightGrey" />
+
+                    <TextView
+                        android:id="@+id/achievement_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/divide"
+                        android:layout_centerHorizontal="true"
+                        android:text="Title:"
+                        android:textColor="@color/blue"
+                        android:textSize="20sp" />
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_achievement"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/achievement_name"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5sp"
+                        android:background="@drawable/edittext_background"
+                        android:hint="Strength progress"
+                        android:paddingHorizontal="10sp" />
+
+                    <TextView
+                        android:id="@+id/text_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/edit_achievement"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10sp"
+                        android:text="Description:"
+                        android:textColor="@color/blue"
+                        android:textSize="20sp" />
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="50sp"
+                        android:layout_below="@+id/text_description"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginLeft="5sp"
+                        android:layout_marginTop="5sp"
+                        android:layout_marginRight="5sp"
+                        android:background="@drawable/edittext_background"
+                        android:hint="80kg Bench Press"
+                        android:paddingHorizontal="10sp" />
+
+                    <TextView
+                        android:id="@+id/text_timeframe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/edit_details"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10sp"
+                        android:text="Expected Time Frame:"
+                        android:textColor="@color/blue"
+                        android:textSize="20sp" />
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_timeframe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/text_timeframe"
+                        android:layout_toLeftOf="@id/chip_group"
+                        android:layout_marginEnd="10sp"
+                        android:layout_marginTop="15sp"
+                        android:background="@drawable/edittext_background"
+                        android:hint="5"
+                        android:paddingHorizontal="10sp" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chip_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/text_timeframe"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5sp"
+                        app:checkedChip="@+id/daychip"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/daychip"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Days" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/weekchip"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Weeks" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/monthchip"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Months" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <TextView
+                        android:id="@+id/text_difficulty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/chip_group"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10sp"
+                        android:text="Expected Difficulty:"
+                        android:textColor="@color/blue"
+                        android:textSize="20sp" />
+
+                    <SeekBar
+                        android:id="@+id/seekbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/text_difficulty"
+                        android:layout_marginLeft="5sp"
+                        android:layout_marginTop="5sp"
+                        android:layout_marginRight="5sp" />
+
+                    <ImageButton
+                        android:id="@+id/confirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/seekbar"
+                        android:layout_marginTop="20sp"
+                        android:background="@color/blue"
+                        android:src="@drawable/ic_done_black_24dp" />
+                </RelativeLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </RelativeLayout>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

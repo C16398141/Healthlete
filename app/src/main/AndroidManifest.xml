@@ -54,7 +54,7 @@
             android:name=".achievements"
             android:label="@string/title_activity_achievements"
             android:parentActivityName=".home"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.Modern">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fyp.c16398141.healthlete.home" />

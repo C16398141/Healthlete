@@ -18,7 +18,7 @@
             app:layout_collapseMode="pin"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-            app:title="View Workout Area"/>
+            app:title="Enable Workout Reminders"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

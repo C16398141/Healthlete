@@ -34,6 +34,8 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,13 +47,7 @@ import java.util.regex.Pattern;
 import static java.lang.String.valueOf;
 import static maes.tech.intentanim.CustomIntent.customType;
 
-/* TODO Make notifications and then set from available times (possibly similar to view workout availability. Actually
-    I THINK I SHOULD convert view workout availability to reminder tab. Make rows tick-able with if statement to display if necessary times N/A
-    For log out perhaps add Extra value to calling main activity intent and in main activity check if getExtra is null. if not then sign out
-    get sign out details to work and at least add user to firebase - im sure there's demos and examples
-    Maybe make loading screen for starting app
-    Maybe make achievement list addable (add their own (make sure there's a hint example and with difficult, expected time-frame, date added.
-    then when completed click button to change background colour and move it to bottom list so they're still viewable or maybe make switcher to view completed and incomplete achievements
+/* TODO Maybe make loading screen for starting app
     if number of log entries is empty make view for drawing instruction and arrow to add button (Click here to make your first entry today)
     account for screen rotations/ different screen sizes
  */
@@ -67,10 +63,8 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
     ArrayList<Integer> opening = new ArrayList<>();
     ArrayList<Integer> closing = new ArrayList<>();
 
-    String place_id;
-    String name;
+    String place_id, name, user_id;
     Double lat,lng;
-    static String user_id;
     Integer times;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -86,8 +80,9 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_workout_area);
         ldb = new LocalDB(this);
 
-        if (user_id == null){
-            user_id = getIntent().getExtras().getString("userId");
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            user_id = firebaseUser.getEmail();
         }
         ImageButton add = findViewById(R.id.add);
         add.setVisibility(View.INVISIBLE);

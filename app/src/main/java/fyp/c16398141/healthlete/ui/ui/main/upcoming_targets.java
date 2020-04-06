@@ -18,6 +18,10 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.text.DecimalFormat;
 
 import fyp.c16398141.healthlete.LocalDB;
@@ -44,7 +48,10 @@ public class upcoming_targets extends Fragment {
 
         Integer exercise_id = ((fitness_entry) getActivity()).getExercisePassed();
 
-        String user_id = "2013chrisclarke@gmail.com";
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            user_id = firebaseUser.getEmail();
+        }
 
         LocalDB ldb;
         ldb = new LocalDB(getContext());
@@ -139,7 +146,6 @@ public class upcoming_targets extends Fragment {
         LocalDB ldb;
         ldb = new LocalDB(getContext());
         ldb.open();
-        user_id = "2013chrisclarke@gmail.com";
         Cursor entry = ldb.getExerciseEntries(exercisename, user_id);
         int rows = entry.getCount();
         if (rows == 0) {

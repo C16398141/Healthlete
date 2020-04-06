@@ -30,6 +30,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,6 +63,10 @@ public class exercise_entry extends Fragment {
 
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
 
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            user_id = firebaseUser.getEmail();
+        }
         Integer exercise_id = ((fitness_entry) getActivity()).getExercisePassed();
 
         LocalDB ldb;
@@ -161,7 +168,6 @@ public class exercise_entry extends Fragment {
 
                 Integer sets = Integer.parseInt(e_sets.getText().toString());
                 Double repmax = CalculateRepMax(weight,reps);
-                user_id = "2013chrisclarke@gmail.com";
 
                 ldb.open();
                 boolean result = ldb.addWorkoutEntry(exercisename, weight, reps, sets, repmax, date, user_id);

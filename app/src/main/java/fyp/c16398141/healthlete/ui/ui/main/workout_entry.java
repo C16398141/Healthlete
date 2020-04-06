@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.text.InputType;
@@ -23,6 +22,10 @@ import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Calendar;
 
 import fyp.c16398141.healthlete.LocalDB;
@@ -51,7 +54,10 @@ public class workout_entry extends Fragment {
 
         Integer exercise_id = ((fitness_entry) getActivity()).getExercisePassed();
 
-        user_id = "2013chrisclarke@gmail.com";
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            user_id = firebaseUser.getEmail();
+        }
 
         Calendar c = Calendar.getInstance();
         final int mYear = c.get(Calendar.YEAR); // current year

@@ -39,7 +39,7 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
-            String user = firebaseUser.getEmail();
+            user = firebaseUser.getEmail();
         } else {
             Log.i("Nope",":(");
             // No user is signed in
