@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -37,19 +39,7 @@ import static java.lang.String.valueOf;
 
 public class food_entry extends AppCompatActivity {
 
-    LocalDB ldb;
-    private Button button;
-    EditText food,qty_field,datefield,cal_field,carb_field,protein_field;
-    TextView cal_text,carb_text,protein_text;
-    ChipGroup chipGroup;
-    Chip unitchip, gramchip, mlchip;
     List<Integer> nutrientQty = new ArrayList<>();
-    Integer submitAttempts;
-
-    DatePickerDialog datePickerDialog;
-    String qtype, date;
-    String user_id;
-    OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,48 +48,53 @@ public class food_entry extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        user_id = getIntent().getExtras().getString("userId");
-        ldb = new LocalDB(this);
-        submitAttempts = 0;
+        final String[] user_id = {"null"};
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            user_id[0] = firebaseUser.getEmail();
+        }else{
+            Intent logged_out = new Intent(food_entry.this, MainActivity.class);
+            startActivity(logged_out);
+        }
 
-        food   = (EditText)findViewById(R.id.food);
-        qty_field   = (EditText)findViewById(R.id.qty_field);
-        datefield = (EditText) findViewById(R.id.datefield);
-        button = (Button)findViewById(R.id.submit);
+        LocalDB ldb = new LocalDB(this);
+        final Integer[] submitAttempts = {0};
 
-        cal_text = (TextView)findViewById(R.id.cal_text);
+        EditText food   = (EditText)findViewById(R.id.food);
+        EditText qty_field   = (EditText)findViewById(R.id.qty_field);
+        EditText datefield = (EditText) findViewById(R.id.datefield);
+        Button button = (Button) findViewById(R.id.submit);
+
+        TextView cal_text = (TextView)findViewById(R.id.cal_text);
         cal_text.setVisibility(View.INVISIBLE);
-        carb_text = (TextView)findViewById(R.id.carb_text);
+        TextView carb_text = (TextView)findViewById(R.id.carb_text);
         carb_text.setVisibility(View.INVISIBLE);
-        protein_text = (TextView)findViewById(R.id.protein_text);
+        TextView protein_text = (TextView)findViewById(R.id.protein_text);
         protein_text.setVisibility(View.INVISIBLE);
 
-        cal_field   = (EditText)findViewById(R.id.cal_field);
+        EditText cal_field   = (EditText)findViewById(R.id.cal_field);
         cal_field.setVisibility(View.INVISIBLE);
-        carb_field   = (EditText)findViewById(R.id.carb_field);
+        EditText carb_field   = (EditText)findViewById(R.id.carb_field);
         carb_field.setVisibility(View.INVISIBLE);
-        protein_field   = (EditText)findViewById(R.id.protein_field);
+        EditText protein_field   = (EditText)findViewById(R.id.protein_field);
         protein_field.setVisibility(View.INVISIBLE);
 
-        chipGroup = (ChipGroup)findViewById(R.id.chip_group);
-        unitchip = (Chip)findViewById(R.id.unitchip);
-        gramchip = (Chip)findViewById(R.id.gramchip);
-        mlchip = (Chip)findViewById(R.id.mlchip);
+        ChipGroup chipGroup = (ChipGroup)findViewById(R.id.chip_group);
+        Chip unitchip = (Chip)findViewById(R.id.unitchip);
+        Chip gramchip = (Chip)findViewById(R.id.gramchip);
+        Chip mlchip = (Chip)findViewById(R.id.mlchip);
 
-        qtype = unitchip.getText().toString();
+        String qtype[] = {unitchip.getText().toString()};
         chipGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(ChipGroup chipGroup, int i) {
                 Chip chip = chipGroup.findViewById(i);
                 if(chip != null){
-                    qtype = chip.getText().toString();
-                    Log.i("TAG", qtype);
+                    qtype[0] = chip.getText().toString();
+                    Log.i("TAG", qtype[0]);
                 }
             }
         });
-
-
-        button = (Button) findViewById(R.id.submit);
 
         // calender class's instance and get current date , month and year from calender
         Calendar c = Calendar.getInstance();
@@ -107,21 +102,20 @@ public class food_entry extends AppCompatActivity {
         final int mMonth = c.get(Calendar.MONTH); // current month
         final int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
         datefield.setText(mDay + "/" + (mMonth+1) + "/" + mYear);
-        date = "" + mDay + (mMonth+1) + mYear;
-        Log.i("date",date);
+        final String[] date = {"" + mDay + (mMonth + 1) + mYear};
 
         datefield.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // date picker dialog
-                datePickerDialog = new DatePickerDialog(food_entry.this,
+                DatePickerDialog datePickerDialog = new DatePickerDialog(food_entry.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 // set day of month , month and year value in the edit text
                                 datefield.setText(dayOfMonth + "/" + (monthOfYear+1) + "/" + year);
-                                date = "" + dayOfMonth + (monthOfYear+1) + year;
-                                Log.i("TAG",valueOf(date));
+                                date[0] = "" + dayOfMonth + (monthOfYear+1) + year;
+                                Log.i("TAG",valueOf(date[0]));
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
@@ -154,14 +148,16 @@ public class food_entry extends AppCompatActivity {
 
                 int quantity = Integer.parseInt(qty);
 
-                if (submitAttempts == 0) {
+                String user_id = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+                if (submitAttempts[0] == 0) {
 
                     String nutrients[] = {"calories", "carbohydrates", "protein"};
                     int n = 0;
                     for (String nutrient : nutrients) {
                         n++;
                         try {
-                            doGetRequest(nutrient, quantity, qtype, foodname);
+                            doGetRequest(nutrient, quantity, qtype[0], foodname, unitchip);
                             while (nutrientQty.size() != n) {
                                 //Toast.makeText(getApplicationContext(), "Calculating nutritional details", Toast.LENGTH_SHORT).show();
                             }
@@ -180,7 +176,7 @@ public class food_entry extends AppCompatActivity {
                     if (nutrientQty.get(1) != 10000) {
                         if (result == 1) {
                             ldb.open();
-                            boolean update = ldb.addFoodEntry(foodname, quantity, qtype, date, nutrientQty.get(0), nutrientQty.get(1), nutrientQty.get(2), user_id);
+                            boolean update = ldb.addFoodEntry(foodname, quantity, qtype[0], date[0], nutrientQty.get(0), nutrientQty.get(1), nutrientQty.get(2), user_id);
 
                             if (update == true) {
                                 Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
@@ -201,7 +197,7 @@ public class food_entry extends AppCompatActivity {
                         }
                     } else {
                         Toast.makeText(getApplicationContext(), "Nutrients not found, please enter estimates above", Toast.LENGTH_LONG).show();
-                        submitAttempts++;
+                        submitAttempts[0]++;
 
                         ConstraintLayout constraintLayout = findViewById(R.id.constraint);
                         ConstraintSet constraintSet = new ConstraintSet();
@@ -258,7 +254,7 @@ public class food_entry extends AppCompatActivity {
                     int protein = Integer.parseInt(proteins);
 
                     ldb.open();
-                    boolean update = ldb.addFoodEntry(foodname, quantity, qtype, date, calories, carbos, protein, user_id);
+                    boolean update = ldb.addFoodEntry(foodname, quantity, qtype[0], date[0], calories, carbos, protein, user_id);
 
                     if (update == true) {
                         Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
@@ -275,9 +271,10 @@ public class food_entry extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    void doGetRequest(String nutrient, Integer quantity, String qtype, String item) throws IOException
+    void doGetRequest(String nutrient, Integer quantity, String qtype, String item, Chip unitchip) throws IOException
     {
         String aggregate;
+
         if (!qtype.contentEquals(unitchip.getText().toString()))
         {
             aggregate = quantity + " " + qtype;
@@ -296,6 +293,8 @@ public class food_entry extends AppCompatActivity {
                 .addHeader("x-rapidapi-key", "70bc3950damsh77f862bb1d46fc6p15525djsn68d30d563427")
                 .build();
 
+
+        OkHttpClient client = new OkHttpClient();
         client.newCall(request)
                 .enqueue(new Callback() {
                     @Override
@@ -350,7 +349,6 @@ public class food_entry extends AppCompatActivity {
     public void onBackPressed()
     {
         Intent data = new Intent(food_entry.this,food_log.class);
-        data.putExtra("userId", user_id);
         startActivity(data);
         customType(food_entry.this,"right-to-left");
         super.onBackPressed();

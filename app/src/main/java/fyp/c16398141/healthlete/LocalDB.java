@@ -6,22 +6,10 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import static java.lang.String.valueOf;
 
 public class LocalDB {
 
-    // database columns
-    private static final String KEY_ROWID = "_id";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_RANK = "rank";
-    private static final String KEY_POINTS = "pointss";
-    private static final String KEY_DOB = "DOB";
-    private static final String KEY_nationality = "nationality";
-    private static final String DATABASE_NAME = "Players1";
-    private static final String DATABASE_TABLE = "Contact_Details2";
-    private static final String KEY_TNAME = "tournamentname";
+    private static final String DATABASE_NAME = "Healthlete";
     private static final int DATABASE_VERSION = 5;
 
     private static final String foreignKeyCheck =
@@ -126,7 +114,7 @@ public class LocalDB {
 
     // Constructor
     public LocalDB(Context ctx) {
-        //
+
         this.context = ctx;
         DBHelper = new DatabaseHelper(context);
     }
@@ -156,7 +144,6 @@ public class LocalDB {
             db.execSQL(CreateWorkoutAreaTable);
             db.execSQL(CreateWorkoutAvailabilityTable);
             db.execSQL(CreateAchievementTable);
-            Log.i("tags", "TABLES CREATED");
         }
 
         @Override
@@ -233,7 +220,6 @@ public class LocalDB {
     }
 
     public Cursor getAllFoodEntries(String selected_date, String username) {
-        Log.i("DATE DB", selected_date);
         Cursor data = db.rawQuery("SELECT * FROM FoodEntry WHERE date LIKE " + selected_date + " AND user_id LIKE '" + username + "' ORDER BY foodname DESC;", null);
         return data;
     }
@@ -304,7 +290,6 @@ public class LocalDB {
 
 
     public Cursor getWorkoutArea(String username) {
-        Log.i("Area", "Selected");
         Cursor data = db.rawQuery("SELECT * FROM WorkoutArea WHERE user_id LIKE '" + username + "';", null);
         return data;
     }
@@ -368,7 +353,6 @@ public class LocalDB {
     }
 
     public String getExerciseName(Integer e_id) {
-        Log.i("In DB",valueOf(e_id));
         Cursor data = db.rawQuery("SELECT exercisename FROM Exercise WHERE exercise_id = " + e_id + ";", null);
         data.moveToFirst();
         String name = data.getString(0);

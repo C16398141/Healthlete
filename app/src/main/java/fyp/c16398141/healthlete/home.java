@@ -150,7 +150,7 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
                 break;
 
             case R.id.reminder:
-                Intent remind = new Intent(home.this, view_workout_areas.class);
+                Intent remind = new Intent(home.this, reminders_setup.class);
                 remind.putExtra("userId", user);
                 startActivity(remind);
                 customType(home.this,"up-to-bottom");

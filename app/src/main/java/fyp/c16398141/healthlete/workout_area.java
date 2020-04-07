@@ -48,6 +48,8 @@ import static java.lang.String.valueOf;
 import static maes.tech.intentanim.CustomIntent.customType;
 
 /* TODO Maybe make loading screen for starting app
+    Maybe make achievement list addable (add their own (make sure there's a hint example and with difficult, expected time-frame, date added.
+    then when completed click button to change background colour and move it to bottom list so they're still viewable or maybe make switcher to view completed and incomplete achievements
     if number of log entries is empty make view for drawing instruction and arrow to add button (Click here to make your first entry today)
     account for screen rotations/ different screen sizes
  */
@@ -174,13 +176,13 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
                         Toast.makeText(getApplicationContext(), "Workout area added", Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        Toast.makeText(getApplicationContext(), "Workout area added with partial opening times available", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Partial times found", Toast.LENGTH_LONG).show();
                     }
                 } else{
-                    Toast.makeText(getApplicationContext(), "Workout area added with opening times not available", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Opening times not available", Toast.LENGTH_LONG).show();
                 }
-                Intent intent = new Intent(workout_area.this, view_workout_areas.class);
-                intent.putExtra("userId", user_id);
+                Intent intent = new Intent(workout_area.this, reminders_setup.class);
+                intent.putExtra("updated", "true");
                 startActivity(intent);
                 ldb.close();
             });
@@ -188,8 +190,8 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         view_areas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(workout_area.this, view_workout_areas.class);
-                intent.putExtra("userId", user_id);
+                Intent intent = new Intent(workout_area.this, reminders_setup.class);
+                intent.putExtra("updated", false);
                 startActivity(intent);
                 customType(workout_area.this, "bottom-to-up");
             }
@@ -253,8 +255,6 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onPoiClick(PointOfInterest poi) {
 
-        //Toast.makeText(getApplicationContext(), poi.name + "\nPlace ID:" + poi.placeId + "\nLatitude:" + poi.latLng.latitude + " Longitude:" + poi.latLng.longitude, Toast.LENGTH_SHORT).show();
-
         request = FetchPlaceRequest.newInstance(poi.placeId, placeFields);
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
@@ -289,8 +289,6 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
 
             times = 1;
             Collection<String>times = hours;
-            // convert from default abstract arraylist
-            //Collection<String> times = hours;
 
             String always = "Open 24 hours";
             String never = "Closed";

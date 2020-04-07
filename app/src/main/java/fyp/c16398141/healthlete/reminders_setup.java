@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -23,74 +26,78 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 
 import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
 import static maes.tech.intentanim.CustomIntent.customType;
 
-public class view_workout_areas extends AppCompatActivity {
+public class reminders_setup extends AppCompatActivity {
 
-    String username, area_name;
-    ArrayList<String>day_list = new ArrayList<>();
-    ArrayList<Integer>closing_list = new ArrayList<>();
+    String updated, area_name;
+    ArrayList<String> time_list = new ArrayList<>();
+    ArrayList<String> day_list = new ArrayList<>();
+    ArrayList<Integer> closing_list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_workout_areas);
+        setContentView(R.layout.activity_reminders_setup);
         Button map_button = findViewById(R.id.map);
         Button home_button = findViewById(R.id.home);
 
-        username = getIntent().getExtras().getString("userId");
+        String username = "null";
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            username = firebaseUser.getEmail();
+        }else{
+            Intent logged_out = new Intent(reminders_setup.this, MainActivity.class);
+            startActivity(logged_out);
+        }
+
+        try{
+            updated = getIntent().getExtras().getString("updated");
+            if (updated.contentEquals("true")){
+                Log.i("tur","ytuiyg");
+                cancelNotificationTimers();
+            }
+        }catch (NullPointerException e){
+
+        }
+
 
         map_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(view_workout_areas.this, workout_area.class);
+                Intent intent = new Intent(reminders_setup.this, workout_area.class);
                 startActivity(intent);
-                customType(view_workout_areas.this,"up-to-bottom");
+                customType(reminders_setup.this, "up-to-bottom");
+                finish();
             }
         });
 
         home_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(view_workout_areas.this, home.class);
+                Intent intent = new Intent(reminders_setup.this, home.class);
                 startActivity(intent);
-                customType(view_workout_areas.this,"bottom-to-up");
+                customType(reminders_setup.this, "bottom-to-up");
+                finish();
             }
         });
         setupTable();
-        buildNotification(area_name, false);
-
-        //check every day
-        String day = getCurrentDay();
-        Integer t = 2500;
-        for (String d : day_list){
-
-            if (d.contains(day)){
-                Log.i("Day",d);
-                Integer position = day_list.indexOf(d);
-                t = closing_list.get(position);
-                Log.i("Closing time",valueOf(t));
-            }
-        }
-
-        //check every minute
-        Integer time = getCurrentTime();
-        Integer difference = t - time;
-        Log.i("Difference", valueOf(difference));
-
-        //if there's a two hour gap between closing time and current time (military format) then make the notification
-        if (difference == 200){
-            Log.i("Now","now");
-            buildNotification(area_name, true);
-        }else{
-            Log.i("Wrong time", "No notification");
-        }
+        initialiseReminders();
     }
 
     void setupTable() {
@@ -100,7 +107,7 @@ public class view_workout_areas extends AppCompatActivity {
         TextView name = findViewById(R.id.name);
         TableLayout table = (TableLayout) findViewById(R.id.opening_times_table);
         ldb.open();
-        Cursor area = ldb.getWorkoutArea(username);
+        Cursor area = ldb.getWorkoutArea(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         int rows = area.getCount();
         if (rows == 0) {
         } else {
@@ -139,8 +146,24 @@ public class view_workout_areas extends AppCompatActivity {
                         array[0] = Character.toUpperCase(array[0]);
                         day = new String(array);
                         if (times.getInt(5) == 1) {
-                            day_list.add(day);
+                            time_list.add(day);
                         }
+
+                        String hours = new String("");
+                        Integer opening = times.getInt(3);
+                        if (opening == 0) {
+                            hours = "Closed";
+                        } else if (opening == 1) {
+                            hours = "Open 24 Hours";
+                        } else {
+                            Integer closing = times.getInt(4);
+                            if (times.getInt(5) == 1) {
+                                day_list.add(day);
+                                closing_list.add(closing);
+                            }
+                            hours = valueOf(opening) + " - " + valueOf(closing);
+                        }
+
                         day = day + ": ";
                         tv.setText(day);
                         tv.setTextSize(30);
@@ -152,19 +175,6 @@ public class view_workout_areas extends AppCompatActivity {
                         tv.setGravity(Gravity.CENTER);
                         row.addView(tv);
 
-                        String hours = new String("");
-                        Integer opening = times.getInt(3);
-                        if (opening == 0) {
-                            hours = "Closed";
-                        } else if (opening == 1) {
-                            hours = "Open 24 Hours";
-                        } else {
-                            Integer closing = times.getInt(4);
-                            if (times.getInt(5) == 1) {
-                                closing_list.add(closing);
-                            }
-                            hours = valueOf(opening) + " - " + valueOf(closing);
-                        }
                         TextView slot = new TextView(this);
                         slot.setText(hours);
                         slot.setTextSize(30);
@@ -191,30 +201,57 @@ public class view_workout_areas extends AppCompatActivity {
                                 }
                                 ldb.open();
                                 boolean updated = ldb.updateWorkoutAvailability(id, reminder);
-                                if (!updated){
+                                if (!updated) {
                                     Toast.makeText(getApplicationContext(), "Failed to update", Toast.LENGTH_SHORT).show();
                                     ldb.close();
                                     return;
                                 }
                                 ldb.close();
                                 Toast.makeText(getApplicationContext(), "Successfully updated", Toast.LENGTH_SHORT).show();
+                                cancelNotificationTimers();
                                 table.removeAllViews();
                                 check.clear();
+                                time_list.clear();
                                 day_list.clear();
                                 closing_list.clear();
                                 setupTable();
+                                initialiseReminders();
                             }
                         });
                         ldb.close();
                     }
                 }
-            }else {
+            } else {
                 Toast.makeText(getApplicationContext(), "Times not available for this area", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    void buildNotification(String area_name, Boolean now){
+    private void initialiseReminders(){
+
+        Integer t, id = 0;
+        for (String d : day_list) {
+            Log.i("Day", d);
+            Integer position = day_list.indexOf(d);
+            t = closing_list.get(position);
+            Log.i("Closing time", valueOf(t));
+            Long future_time = null;
+            try {
+                future_time = formatTime(d, t);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return;
+            }
+            Long difference = future_time - currentTimeMillis();
+            Long two_hour_warning = 7200000L;
+            Long countdown = difference - two_hour_warning;
+
+            id++;
+            setNotificationTimer(buildNotification(area_name), countdown, id);
+        }
+    }
+
+    Notification buildNotification(String area_name) {
 
         createNotificationChannel();
 
@@ -233,33 +270,24 @@ public class view_workout_areas extends AppCompatActivity {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
-        if(now){
-            Log.i("Notification","Incoming");
-            //ensuring that the generated id is unique by using the current phone awake time
-            Integer notificationid = (int) SystemClock.uptimeMillis();
-            notificationManager.notify(notificationid, builder.build());
-        }
-
-        return;
+        return builder.build();
     }
 
-    private void createNotificationChannel(){
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
+    private void createNotificationChannel() {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Healthlete Channel";//getString(R.string.channel_name);
-            String description = "Reminder about workout";//getString(R.string.channel_description);
+            CharSequence name = "Healthlete Channel";
+            String description = "Reminder about workout";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel("1", name, importance);
             channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
+
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
     }
 
-    String getCurrentDay(){
+    String getCurrentDay() {
         Calendar calendar = Calendar.getInstance();
         int current_day = calendar.get(Calendar.DAY_OF_WEEK);
         String day;
@@ -272,38 +300,100 @@ public class view_workout_areas extends AppCompatActivity {
                 break;
             case Calendar.WEDNESDAY:
                 day = "Wednesday";
-            break;
+                break;
             case Calendar.THURSDAY:
                 day = "Thursday";
-            break;
+                break;
             case Calendar.FRIDAY:
                 day = "Friday";
-            break;
+                break;
             case Calendar.SATURDAY:
                 day = "Saturday";
-            break;
+                break;
             default:
                 day = "Sunday";
-            break;
+                break;
         }
         return day;
     }
 
-    Integer getCurrentTime(){
-        String time;
+    private long formatTime(String day, Integer time) throws ParseException {
         Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
-        if (minute<10){
-            time = valueOf(hour) + "0" + valueOf(minute);
-        } else{
-            time = valueOf(hour) + valueOf(minute);
+        LocalDate nextdate = LocalDate.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
+        if (!day.contentEquals(getCurrentDay())) {
+            switch (day) {
+                case "Monday":
+                    nextdate = nextdate.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+                    break;
+                case "Tuesday":
+                    nextdate = nextdate.with(TemporalAdjusters.next(DayOfWeek.TUESDAY));
+                    break;
+                case "Wednesday":
+                    nextdate = nextdate.with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY));
+                    break;
+                case "Thursday":
+                    nextdate = nextdate.with(TemporalAdjusters.next(DayOfWeek.THURSDAY));
+                    break;
+                case "Friday":
+                    nextdate = nextdate.with(TemporalAdjusters.next(DayOfWeek.FRIDAY));
+                    break;
+                case "Saturday":
+                    nextdate = nextdate.with(TemporalAdjusters.next(DayOfWeek.SATURDAY));
+                    break;
+                case "Sunday":
+                    nextdate = nextdate.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+                    break;
+            }
         }
-        Integer parsed_time = Integer.parseInt(time);
-        return parsed_time;
+
+        Double h = (Math.floor(time / 100));
+        Integer hours = h.intValue();
+        String hour = hours.toString();
+        if (hours < 10) {
+            hour = "0" + hour;
+        }
+
+        Integer minutes = time % 100;
+        String mins;
+        if (minutes < 10) {
+            mins = minutes + "0";
+        } else {
+            mins = minutes.toString();
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedString = nextdate.format(formatter) + " " + hours + ":" + mins + ":00";
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        Date date = dateFormat.parse(formattedString);
+        Log.i("Date", valueOf(date));
+        long milliseconds = date.getTime();
+
+        return milliseconds;
     }
+
+    private void setNotificationTimer(Notification notification, long timer, Integer id) {
+
+        Intent intent = new Intent(this, post_notification.class);
+        intent.putExtra("notification", notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        long reminderTime = SystemClock.elapsedRealtime() + timer;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, reminderTime, pendingIntent);
+    }
+
+
+    public void cancelNotificationTimers(){
+        for (int id=1; id<8; id++) {
+            Log.i(valueOf(id),"cancelled");
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent myIntent = new Intent(getApplicationContext(), post_notification.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+        }
+
+    }
+
 }
-
-
 
 

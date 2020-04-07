@@ -17,14 +17,14 @@
         <activity
             android:name=".ui.fitness_entry"
             android:label="@string/title_activity_fitness_entry"
-            android:theme="@style/AppTheme.Modern"></activity>
+            android:theme="@style/AppTheme.Modern"/>
         <activity
             android:name=".edit_goals"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.Modern" />
         <activity
-            android:name=".view_workout_areas"
-            android:label="view_workout_areas"
+            android:name=".reminders_setup"
+            android:label="reminders_setup"
             android:theme="@style/AppTheme.Modern"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
@@ -97,6 +97,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver android:name=".post_notification" />
     </application>
 
 </manifest>

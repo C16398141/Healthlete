@@ -38,6 +38,9 @@ import java.util.Calendar;
 import java.util.List;
 import android.widget.TableRow.LayoutParams;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import static java.lang.String.valueOf;
 
 public class food_log extends AppCompatActivity {
@@ -48,9 +51,7 @@ public class food_log extends AppCompatActivity {
     List<Integer> totalCalories = new ArrayList<>();
     List<Integer> totalCarbs = new ArrayList<>();
     List<Integer> totalProtein = new ArrayList<>();
-    EditText datefield;
     DatePickerDialog datePickerDialog;
-    static String user_id;
     String date;
 
     @Override
@@ -63,11 +64,16 @@ public class food_log extends AppCompatActivity {
         RelativeLayout layout1 = findViewById(R.id.relative1);
         layout1.setBackgroundColor(Color.CYAN);
 
-        datefield = (EditText) findViewById(R.id.datefield);
+        EditText datefield = (EditText) findViewById(R.id.datefield);
         TableLayout table = (TableLayout) findViewById(R.id.food_table);
 
-        if (user_id == null){
-            user_id = getIntent().getExtras().getString("userId");
+        String user_id = "null";
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            user_id = firebaseUser.getEmail();
+        }else{
+            Intent logged_out = new Intent(food_log.this, MainActivity.class);
+            startActivity(logged_out);
         }
 
         ldb = new LocalDB(this);
@@ -143,6 +149,7 @@ public class food_log extends AppCompatActivity {
 
         int imageViewWidth = dimensions.get(0);
         int imageViewHeight = dimensions.get(1);
+        int margin = 40;
         Log.i("TAG",valueOf(imageViewWidth));
         Log.i("TAG",valueOf(imageViewHeight));
         ImageView imageView = (ImageView) findViewById(R.id.imageview);
@@ -150,14 +157,16 @@ public class food_log extends AppCompatActivity {
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.BLUE);
-        canvas.drawCircle(3*imageViewWidth/16, imageViewHeight/2 +40, imageViewWidth/8, paint);
-        canvas.drawCircle(8*imageViewWidth/16, imageViewHeight/2 +40, imageViewWidth/8, paint);
-        canvas.drawCircle(13*imageViewWidth/16, imageViewHeight/2 +40, imageViewWidth/8, paint);
+        canvas.drawCircle(3*imageViewWidth/16, imageViewHeight/2 +margin, imageViewWidth/8, paint);
+        canvas.drawCircle(8*imageViewWidth/16, imageViewHeight/2 +margin, imageViewWidth/8, paint);
+        canvas.drawCircle(13*imageViewWidth/16, imageViewHeight/2 +margin, imageViewWidth/8, paint);
 
         ldb.open();
         Integer targetCals = 0;
         Integer targetCarbs = 0;
         Integer targetProtein = 0;
+
+        String user_id = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         Cursor entries = ldb.getGoals(user_id);
         while (entries.moveToNext()){
             targetCals = entries.getInt(2);
@@ -172,49 +181,49 @@ public class food_log extends AppCompatActivity {
         Integer totalCals = 0;
         Integer totalCarbos = 0;
         Integer totalProteins = 0;
-
+        Integer circleRange = 360;
         for (Integer c : totalCalories)
             totalCals += c;
-        Float angle = ((float)totalCals/targetCals*360);
+        Float angle = ((float)totalCals/targetCals*circleRange);
 
         for (Integer a : totalCarbs)
             totalCarbos += a;
-        Float angle2 = ((float)totalCarbos/targetCarbs*360);
+        Float angle2 = ((float)totalCarbos/targetCarbs*circleRange);
 
         for (Integer p : totalProtein)
             totalProteins += p;
-        Float angle3 = ((float)totalProteins/targetProtein*360);
+        Float angle3 = ((float)totalProteins/targetProtein*circleRange);
 
         Log.i("TAG",valueOf(totalCals));
         Log.i("TAG",valueOf(targetCals));
         Log.i("TAG",valueOf(angle));
-        RectF arc  = new RectF(imageViewWidth/16,imageViewHeight/2 +40 - imageViewWidth/8,5*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8 +40);
-        canvas.drawArc (arc, -90, angle, true,  paint2);
-        RectF arc2 = new RectF(6*imageViewWidth/16,imageViewHeight/2+40 - imageViewWidth/8,10*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8 +40);
-        canvas.drawArc (arc2, -90, angle2, true,  paint2);
-        RectF arc3 = new RectF(11*imageViewWidth/16,imageViewHeight/2+40 - imageViewWidth/8,15*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8 +40);
-        canvas.drawArc (arc3, -90, angle3, true,  paint2);
+        RectF arc  = new RectF(imageViewWidth/16,imageViewHeight/2 +margin - imageViewWidth/8,5*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8 +margin);
+        canvas.drawArc (arc, -circleRange/4, angle, true,  paint2);
+        RectF arc2 = new RectF(6*imageViewWidth/16,imageViewHeight/2+margin - imageViewWidth/8,10*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8 +margin);
+        canvas.drawArc (arc2, -circleRange/4, angle2, true,  paint2);
+        RectF arc3 = new RectF(11*imageViewWidth/16,imageViewHeight/2+margin - imageViewWidth/8,15*imageViewWidth/16,imageViewHeight/2 + imageViewWidth/8 +margin);
+        canvas.drawArc (arc3, -circleRange/4, angle3, true,  paint2);
 
         paint.setColor(Color.BLACK);
         paint.setTextSize(50);
-        canvas.drawText("Calories", 100, 85, paint);
-        canvas.drawText("Carbs", 470, 85, paint);
-        canvas.drawText("Protein", 795, 85, paint);
+        canvas.drawText("Calories", Math.round(imageViewWidth/10.8), Math.round(screen_height/21.1), paint);
+        canvas.drawText("Carbs", Math.round(imageViewWidth/2.3), Math.round(screen_height/21.1), paint);
+        canvas.drawText("Protein", Math.round(imageViewWidth/1.36), Math.round(screen_height/21.1), paint);
 
         Float calFigure = (float)totalCals/targetCals*100;
         Integer calInt = Math.round(calFigure);
         String calPercent = calInt + "%";
-        canvas.drawText(calPercent, 160, 265, paint);
+        canvas.drawText(calPercent, Math.round(imageViewWidth/6.75), Math.round(screen_height/6.77), paint);
 
         Float carbsFigure = (float)totalCarbos/targetCarbs*100;
         Integer carbsInt = Math.round(carbsFigure);
         String carbsPercent = carbsInt + "%";
-        canvas.drawText(carbsPercent, 500, 265, paint);
+        canvas.drawText(carbsPercent, Math.round(imageViewWidth/2.16), Math.round(screen_height/6.77), paint);
 
         Float proteinFigure = (float)totalProteins/targetProtein*100;
         Integer proteInt = Math.round(proteinFigure);
         String proteinPercent = proteInt + "%";
-        canvas.drawText(proteinPercent, 830, 265, paint);
+        canvas.drawText(proteinPercent, Math.round(imageViewWidth/1.3), Math.round(screen_height/6.77), paint);
         imageView.setImageBitmap(bitmap);
     }
 
@@ -224,6 +233,8 @@ public class food_log extends AppCompatActivity {
         Integer defaultCals = 2000;
         Integer defaultCarbs = 400;
         Integer defaultProtein = 200;
+        String user_id = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
         Boolean result = ldb.addGoals(type,defaultCals,defaultCarbs,defaultProtein, user_id);
         if (result == true){
             Log.i("TAGS","goals added");
@@ -281,7 +292,6 @@ public class food_log extends AppCompatActivity {
 
             public void onClick(View v) {
                 Intent intent = new Intent(food_log.this, food_entry.class);
-                intent.putExtra("userId", user_id);
                 startActivity(intent);
                 customType(food_log.this,"left-to-right");
             }
@@ -292,6 +302,7 @@ public class food_log extends AppCompatActivity {
         totalProtein.clear();
 
         ldb.open();
+        String user_id = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         Cursor entries = ldb.getAllFoodEntries(date, user_id);
         int rows = entries.getCount();
         if (rows == 0) {
@@ -489,7 +500,6 @@ public class food_log extends AppCompatActivity {
     public void onBackPressed()
     {
         Intent data = new Intent(food_log.this,home.class);
-        data.putExtra("userId", user_id);
         startActivity(data);
         customType(food_log.this,"fadein-to-fadeout");
         super.onBackPressed();

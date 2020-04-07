@@ -1,22 +1,14 @@
 package fyp.c16398141.healthlete;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import com.google.android.gms.fitness.data.DataPoint;
-import com.google.android.gms.fitness.data.DataSource;
-import com.google.android.gms.fitness.request.DataReadRequest.Builder;
-import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.gms.fitness.data.*;
-import com.google.android.gms.fitness.request.*;
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,6 +19,7 @@ import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import com.google.android.material.card.MaterialCardView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -34,18 +27,14 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import fyp.c16398141.healthlete.ui.fitness_entry;
-
 import static maes.tech.intentanim.CustomIntent.customType;
 
 
 public class fitness extends AppCompatActivity {
-
-    static String user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +43,13 @@ public class fitness extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (user_id == null){
-            user_id = getIntent().getExtras().getString("userId");
+        String user_id = "null";
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            user_id = firebaseUser.getEmail();
+        }else{
+            Intent logged_out = new Intent(fitness.this, MainActivity.class);
+            startActivity(logged_out);
         }
 
         LocalDB ldb;
@@ -87,7 +81,7 @@ public class fitness extends AppCompatActivity {
                 }
 
                 ldb.open();
-                boolean result = ldb.addExercise(exercise, muscle, user_id);
+                boolean result = ldb.addExercise(exercise, muscle, firebaseUser.getEmail());
                 if (result == true) {
                     Toast.makeText(getApplicationContext(), "Successful insert", Toast.LENGTH_SHORT).show();
                     table.removeAllViews();
@@ -99,31 +93,13 @@ public class fitness extends AppCompatActivity {
             }
         });
 
-        /*Log.i("Explanation",valueOf(TYPE_WORKOUT_EXERCISE.getClass()));
-        Log.i("Explanation",valueOf(DataType.TYPE_WORKOUT_EXERCISE.getName()));
-        Log.i("Explanation",valueOf(DataType.TYPE_WORKOUT_EXERCISE.describeContents()));
-        Log.i("Explanation",valueOf(DataType.TYPE_WORKOUT_EXERCISE.getFields()));
-
-        DataReadRequest reader = new Builder()
-                .setTimeRange(10000, 20000, TimeUnit.MILLISECONDS)
-                .read(TYPE_WORKOUT_EXERCISE)
-                .build();
-
-        Log.i("List",valueOf(createDeviceProtectedStorageContext().databaseList()));
-        Log.i("List",valueOf(reader.getActivityDataSource()));
-        Log.i("List",valueOf(reader.getDataSources()));
-        Log.i("List",valueOf(reader.getDataTypes().(Field.FIELD_EXERCISE)));
-        //List<DataType> = reader.getDataTypes();
-
-        DataSource exerciseSource = new DataSource.Builder()
-                .setDataType(DataType.TYPE_WORKOUT_EXERCISE).build();
-        Log.i("Data type",valueOf(exerciseSource.getDataType()));*/
-
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void displayTable(TableLayout table) {
+
+        String user_id = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
         TableRow heading = new TableRow(this);
         heading.setGravity(Gravity.CENTER);
         heading.setBackgroundColor(Color.BLUE);
@@ -281,7 +257,6 @@ public class fitness extends AppCompatActivity {
     public void onBackPressed()
     {
         Intent data = new Intent(fitness.this,home.class);
-        data.putExtra("userId", user_id);
         startActivity(data);
         customType(fitness.this,"fadein-to-fadeout");
         super.onBackPressed();

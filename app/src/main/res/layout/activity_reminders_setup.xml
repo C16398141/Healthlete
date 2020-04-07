@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view_workout_areas">
+    tools:context=".reminders_setup">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -22,6 +22,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_view_workout_areas" />
+    <include layout="@layout/content_reminders_setup" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

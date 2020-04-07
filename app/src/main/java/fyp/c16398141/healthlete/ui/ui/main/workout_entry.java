@@ -1,6 +1,7 @@
 package fyp.c16398141.healthlete.ui.ui.main;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -29,6 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Calendar;
 
 import fyp.c16398141.healthlete.LocalDB;
+import fyp.c16398141.healthlete.MainActivity;
 import fyp.c16398141.healthlete.R;
 import fyp.c16398141.healthlete.ui.fitness_entry;
 
@@ -37,9 +39,6 @@ import static java.lang.String.valueOf;
 
 public class workout_entry extends Fragment {
 
-    String date;
-    String user_id;
-    DatePickerDialog datePickerDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,11 +51,13 @@ public class workout_entry extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Integer exercise_id = ((fitness_entry) getActivity()).getExercisePassed();
-
+        String user_id = "null";
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             user_id = firebaseUser.getEmail();
+        }else{
+            Intent logged_out = new Intent(getActivity(), MainActivity.class);
+            startActivity(logged_out);
         }
 
         Calendar c = Calendar.getInstance();
@@ -65,26 +66,26 @@ public class workout_entry extends Fragment {
         final int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
         EditText datefield = getActivity().findViewById(R.id.date_field);
         datefield.setText(mDay + "/" + (mMonth+1) + "/" + mYear);
-        date = "" + mDay + "-" + (mMonth+1) + "-" + mYear;
+        String[] date ={"" + mDay + "-" + (mMonth+1) + "-" + mYear};
 
         Log.i("Date", valueOf(date));
         TableLayout table = view.findViewById(R.id.workout_table);
-        displayTable(table, date);
+        displayTable(table, user_id, date[0]);
 
         datefield.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // date picker dialog
-                datePickerDialog = new DatePickerDialog(getActivity(),
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 // set day of month , month and year value in the edit text
                                 datefield.setText(dayOfMonth + "/" + (monthOfYear+1) + "/" + year);
-                                date = "" + dayOfMonth + (monthOfYear+1) + year;
+                                date[0] = "" + dayOfMonth + (monthOfYear+1) + year;
                                 Log.i("TAG",valueOf(date));
                                 table.removeAllViews();
-                                displayTable(table, date);
+                                displayTable(table, FirebaseAuth.getInstance().getCurrentUser().getEmail(), date[0]);
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
@@ -93,7 +94,7 @@ public class workout_entry extends Fragment {
 
     }
 
-    public void displayTable(TableLayout table, String date) {
+    public void displayTable(TableLayout table, String user_id, String date) {
         table.removeAllViews();
         table.setShrinkAllColumns(true);
         TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
@@ -141,13 +142,6 @@ public class workout_entry extends Fragment {
         tv4.setTextColor(Color.WHITE);
         tv4.setTextSize(10);
         heading.addView(tv4, lp);
-
-        TextView tv5 = new TextView(getContext());
-        tv5.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-        tv5.setText(" Date ");
-        tv5.setTypeface(Typeface.DEFAULT_BOLD);
-        tv5.setTextColor(Color.WHITE);
-        heading.addView(tv5, lp);
 
         table.addView(heading);
 
@@ -198,16 +192,6 @@ public class workout_entry extends Fragment {
                 t5v.setGravity(Gravity.CENTER);
                 t5v.setId(entries.getInt(0));
                 tbrow.addView(t5v, lp);
-
-                TextView t6v = new Button(getContext());
-                t6v.setBackgroundColor(Color.WHITE);
-                t6v.setText(valueOf(entries.getString(6)));
-                t6v.setInputType(InputType.TYPE_CLASS_DATETIME);
-                t6v.setTextColor(Color.BLACK);
-                t6v.setTextSize(10);
-                t6v.setGravity(Gravity.CENTER);
-                t6v.setId(entries.getInt(0));
-                tbrow.addView(t6v, lp);
 
                 tbrow.setBackgroundColor(Color.WHITE);
                 table.addView(tbrow);
