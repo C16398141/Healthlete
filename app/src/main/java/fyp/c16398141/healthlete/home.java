@@ -1,6 +1,8 @@
 package fyp.c16398141.healthlete;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.card.MaterialCardView;
@@ -38,32 +40,25 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
         drawer = findViewById(R.id.drawer_layout);
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null) {
+        try{
             user = firebaseUser.getEmail();
-        } else {
-            Log.i("Nope",":(");
-            // No user is signed in
-        }
-
-        if (user == null || user.isEmpty()) {
-            try{
-                user = getIntent().getExtras().getString("userId");
-            }catch (NullPointerException e){
-                Log.i("Null Pointer Exception","user");
-                Intent home = new Intent(home.this, MainActivity.class);
-                home.putExtra("userId", user);
-                startActivity(home);
-                customType(home.this,"right-to-left");
-            }
+        } catch (NullPointerException e){
+            Intent home = new Intent(home.this, MainActivity.class);
+            startActivity(home);
+            customType(home.this,"right-to-left");
         }
 
         getSupportActionBar().setTitle(user);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(home.this);
         View headerView = navigationView.getHeaderView(0);
+
         TextView navUsername = (TextView) headerView.findViewById(R.id.username);
         navUsername.setText(user);
 
+        TextView navName = (TextView) headerView.findViewById(R.id.first_name);
+        String first_name = firebaseUser.getDisplayName();
+        navName.setText(first_name);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -71,11 +66,9 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
         toggle.syncState();
 
 
-        MaterialCardView food_card = (MaterialCardView) findViewById(R.id.food);
-        MaterialCardView fitness_card = (MaterialCardView) findViewById(R.id.fitness);
-        MaterialCardView achievement_card = (MaterialCardView) findViewById(R.id.achievement);
-
-        final int request_code = 1;
+        MaterialCardView food_card = findViewById(R.id.food);
+        MaterialCardView fitness_card = findViewById(R.id.fitness);
+        MaterialCardView achievement_card = findViewById(R.id.achievement);
 
         food_card.setOnClickListener(new View.OnClickListener() {
 
@@ -161,6 +154,13 @@ public class home extends AppCompatActivity implements NavigationView.OnNavigati
                 goals.putExtra("userId", user);
                 startActivity(goals);
                 customType(home.this,"up-to-bottom");
+                break;
+
+            case R.id.howtoguide:
+                String url = "https://youtu.be/Xfz_hpAGukQ";
+                Intent guide = new Intent(Intent.ACTION_VIEW);
+                guide.setData(Uri.parse(url));
+                startActivity(guide);
                 break;
 
             case R.id.sign_out:

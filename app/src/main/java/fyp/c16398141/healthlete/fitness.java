@@ -130,10 +130,13 @@ public class fitness extends AppCompatActivity {
         Cursor entries = ldb.getAllExercises(user_id);
         int rows = entries.getCount();
         TextView first = findViewById(R.id.instructions);
+        TextView second = findViewById(R.id.delete_instructions);
+        second.setVisibility(View.GONE);
         if (rows == 0) {
         } else{
             if (rows == 1) {
-                first.setText("Click on your exercise for entry monitoring or add more exercises");
+                first.setText("Click on your exercise name for entry monitoring or add more exercises");
+                second.setVisibility(View.VISIBLE);
             } else{
                 first.setVisibility(View.GONE);
             }
@@ -145,7 +148,7 @@ public class fitness extends AppCompatActivity {
                 tbrow.setGravity(Gravity.CENTER);
                 ImageButton minus = new ImageButton(this);
                 minus.setImageResource(R.drawable.ic_fitness_center_black_24dp);
-                minus.setClickable(false);
+                minus.setTag("default");
                 minus.setBackgroundResource(R.drawable.backgroundstate);
                 minus.setId(entries.getInt(0));
                 tbrow.addView(minus);
@@ -177,17 +180,18 @@ public class fitness extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         int id = minus.getId();
-                        Log.i("TAG", "The id is" + id);
-                        ldb.open();
-                        boolean result = ldb.deleteExercise(id);
-                        if (result) {
-                            Toast.makeText(getApplicationContext(), "Successfully deleted", Toast.LENGTH_SHORT).show();
-                            table.removeAllViews();
-                            displayTable(table);
-                        } else {
-                            Toast.makeText(getApplicationContext(), "unsuccessful delete", Toast.LENGTH_SHORT).show();
+                        if (minus.getTag().toString()=="delete"){
+                            ldb.open();
+                            boolean result = ldb.deleteExercise(id);
+                            if (result) {
+                                Toast.makeText(getApplicationContext(), "Successfully deleted", Toast.LENGTH_SHORT).show();
+                                table.removeAllViews();
+                                displayTable(table);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "unsuccessful delete", Toast.LENGTH_SHORT).show();
+                            }
+                            ldb.close();
                         }
-                        ldb.close();
                     }
                 });
 
@@ -214,6 +218,7 @@ public class fitness extends AppCompatActivity {
                                 if (minus.getId()==id){
                                     minus.setImageResource(R.drawable.minus_circle);
                                     minus.setClickable(true);
+                                    minus.setTag("delete");
                                 }
                             }
                             return true;

@@ -69,7 +69,6 @@ public class reminders_setup extends AppCompatActivity {
         try{
             updated = getIntent().getExtras().getString("updated");
             if (updated.contentEquals("true")){
-                Log.i("tur","ytuiyg");
                 cancelNotificationTimers();
             }
         }catch (NullPointerException e){
@@ -385,7 +384,6 @@ public class reminders_setup extends AppCompatActivity {
 
     public void cancelNotificationTimers(){
         for (int id=1; id<8; id++) {
-            Log.i(valueOf(id),"cancelled");
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent myIntent = new Intent(getApplicationContext(), post_notification.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);

@@ -48,13 +48,27 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <TextView
+                android:id="@+id/instructions"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/card"
+                android:paddingTop="20sp"
+                android:text="Select which days to receive reminders two hours before your workout area closes"
+                android:gravity="center_horizontal"
+                android:textColor="@color/lightGrey"
+                android:textSize="15sp"
+                android:background="@color/quantum_white_100"
+                android:visibility="visible">
+            </TextView>
+
             <Button
                 android:id="@+id/map"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Add New Workout Area"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/card"
+                android:layout_below="@+id/instructions"
                 android:layout_marginTop="50sp"/>
             <Button
                 android:id="@+id/home"

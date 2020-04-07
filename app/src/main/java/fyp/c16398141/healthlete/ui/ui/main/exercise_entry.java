@@ -150,6 +150,11 @@ public class exercise_entry extends Fragment {
                     return;
                 }
 
+                if (weight<1.0){
+                    e_weight.setError("Please enter body-weight if you didn't use weights");
+                    return;
+                }
+
                 if (!TextUtils.isDigitsOnly(e_reps.getText())) {
                     e_reps.setError("This field requires a whole number");
                     return;
@@ -161,12 +166,17 @@ public class exercise_entry extends Fragment {
                 }
 
                 Integer reps = Integer.parseInt(e_reps.getText().toString());
-                if (reps>99){
-                    e_reps.setError("This field must be less than 100");
+                if (reps>99 || reps<1){
+                    e_reps.setError("This field must be between 1 and 100");
                     return;
                 }
 
                 Integer sets = Integer.parseInt(e_sets.getText().toString());
+                if (sets>99 || sets<1){
+                    e_sets.setError("This field must be between 1 and 100");
+                    return;
+                }
+
                 Double repmax = CalculateRepMax(weight,reps);
 
                 ldb.open();

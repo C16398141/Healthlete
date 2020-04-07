@@ -27,6 +27,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import static maes.tech.intentanim.CustomIntent.customType;
@@ -64,20 +65,6 @@ public class food_entry extends AppCompatActivity {
         EditText qty_field   = (EditText)findViewById(R.id.qty_field);
         EditText datefield = (EditText) findViewById(R.id.datefield);
         Button button = (Button) findViewById(R.id.submit);
-
-        TextView cal_text = (TextView)findViewById(R.id.cal_text);
-        cal_text.setVisibility(View.INVISIBLE);
-        TextView carb_text = (TextView)findViewById(R.id.carb_text);
-        carb_text.setVisibility(View.INVISIBLE);
-        TextView protein_text = (TextView)findViewById(R.id.protein_text);
-        protein_text.setVisibility(View.INVISIBLE);
-
-        EditText cal_field   = (EditText)findViewById(R.id.cal_field);
-        cal_field.setVisibility(View.INVISIBLE);
-        EditText carb_field   = (EditText)findViewById(R.id.carb_field);
-        carb_field.setVisibility(View.INVISIBLE);
-        EditText protein_field   = (EditText)findViewById(R.id.protein_field);
-        protein_field.setVisibility(View.INVISIBLE);
 
         ChipGroup chipGroup = (ChipGroup)findViewById(R.id.chip_group);
         Chip unitchip = (Chip)findViewById(R.id.unitchip);
@@ -186,7 +173,7 @@ public class food_entry extends AppCompatActivity {
                             } else {
                                 Toast.makeText(getApplicationContext(), "Unsuccessful insert", Toast.LENGTH_SHORT).show();
                             }
-                            ViewGroup group = (ViewGroup) findViewById(R.id.constraint);
+                            ViewGroup group = (ViewGroup) findViewById(R.id.relative);
                             for (int i = 0, count = group.getChildCount(); i < count; ++i) {
                                 View view = group.getChildAt(i);
                                 if (view instanceof EditText) {
@@ -199,11 +186,13 @@ public class food_entry extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Nutrients not found, please enter estimates above", Toast.LENGTH_LONG).show();
                         submitAttempts[0]++;
 
-                        ConstraintLayout constraintLayout = findViewById(R.id.constraint);
-                        ConstraintSet constraintSet = new ConstraintSet();
-                        constraintSet.clone(constraintLayout);
-                        constraintSet.connect(R.id.submit, ConstraintSet.TOP, R.id.protein_field, ConstraintSet.BOTTOM, 20);
-                        constraintSet.applyTo(constraintLayout);
+                        TextView cal_text = (TextView)findViewById(R.id.cal_text);
+                        TextView carb_text = (TextView)findViewById(R.id.carb_text);
+                        TextView protein_text = (TextView)findViewById(R.id.protein_text);
+                        EditText cal_field   = (EditText)findViewById(R.id.cal_field);
+                        EditText carb_field   = (EditText)findViewById(R.id.carb_field);
+                        EditText protein_field   = (EditText)findViewById(R.id.protein_field);
+
                         cal_text.setVisibility(View.VISIBLE);
                         carb_text.setVisibility(View.VISIBLE);
                         protein_text.setVisibility(View.VISIBLE);
@@ -211,10 +200,11 @@ public class food_entry extends AppCompatActivity {
                         carb_field.setVisibility(View.VISIBLE);
                         protein_field.setVisibility(View.VISIBLE);
 
-                        //make global value above and change value here such that onclick second time requires all parameters below to be not null too
-
                     }
                 } else {
+                    EditText cal_field   = (EditText)findViewById(R.id.cal_field);
+                    EditText carb_field   = (EditText)findViewById(R.id.carb_field);
+                    EditText protein_field   = (EditText)findViewById(R.id.protein_field);
                     String cals = cal_field.getText().toString();
                     String carbs = carb_field.getText().toString();
                     String proteins = protein_field.getText().toString();

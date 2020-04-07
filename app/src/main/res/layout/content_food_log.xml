@@ -68,6 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/scrolling"
+                android:layout_marginTop="10sp"
                 android:text="Click on the ⊕ button to add your first entry today"
                 android:gravity="center_horizontal"
                 android:textColor="@color/lightGrey"

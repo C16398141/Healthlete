@@ -46,7 +46,7 @@ public class edit_goals extends AppCompatActivity {
         Cursor goals = ldb.getGoals(user_id);
         int num_goals = goals.getCount();
         if (num_goals == 0) {
-            updateGoals(2000,400,200);
+            updateGoals(2000,325,100);
             goals = ldb.getGoals(user_id);
         }
         while (goals.moveToNext()){

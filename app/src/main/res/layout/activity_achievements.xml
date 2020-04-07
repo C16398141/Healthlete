@@ -17,7 +17,8 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="Achievements"/>
+            app:title="Achievements"
+            app:contentInsetStart="130dp"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

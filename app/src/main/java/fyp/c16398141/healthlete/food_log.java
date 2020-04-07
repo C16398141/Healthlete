@@ -231,8 +231,8 @@ public class food_log extends AppCompatActivity {
     {
         String type = "weightLoss";
         Integer defaultCals = 2000;
-        Integer defaultCarbs = 400;
-        Integer defaultProtein = 200;
+        Integer defaultCarbs = 325;
+        Integer defaultProtein = 100;
         String user_id = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
         Boolean result = ldb.addGoals(type,defaultCals,defaultCarbs,defaultProtein, user_id);

@@ -33,7 +33,6 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -44,15 +43,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.lang.String.valueOf;
 import static maes.tech.intentanim.CustomIntent.customType;
 
-/* TODO Maybe make loading screen for starting app
-    Maybe make achievement list addable (add their own (make sure there's a hint example and with difficult, expected time-frame, date added.
-    then when completed click button to change background colour and move it to bottom list so they're still viewable or maybe make switcher to view completed and incomplete achievements
-    if number of log entries is empty make view for drawing instruction and arrow to add button (Click here to make your first entry today)
-    account for screen rotations/ different screen sizes
- */
+//Initially had the desire to implement geotracking however on user interest thought it wasn't worth using the
+// phone's resources to check for a relatively convenient feature
+//log how many days in gym as well as updating reminders if have already been
 public class workout_area extends FragmentActivity implements OnMapReadyCallback, LocationListener, GoogleMap.OnPoiClickListener {
 
     private GoogleMap mMap;
@@ -215,7 +210,6 @@ public class workout_area extends FragmentActivity implements OnMapReadyCallback
         task.addOnSuccessListener(location -> {
             if (location != null){
                 currentLocation = location;
-                Toast.makeText(getApplicationContext(),currentLocation.getLatitude() + "" +currentLocation.getLongitude(),Toast.LENGTH_SHORT).show();
                 SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.map);
                 mapFragment.getMapAsync(workout_area.this);

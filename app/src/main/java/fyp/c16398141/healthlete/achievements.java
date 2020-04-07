@@ -165,6 +165,10 @@ public class achievements extends AppCompatActivity {
     }
 
     public void displayTable(TableLayout table, Switch switcher) {
+        TextView first = findViewById(R.id.instructions);
+        first.setVisibility(View.GONE);
+        TextView second = findViewById(R.id.delete_instructions);
+        second.setVisibility(View.GONE);
         Boolean completed = false;
         if (switcher.isChecked()){
             completed = true;
@@ -228,11 +232,17 @@ public class achievements extends AppCompatActivity {
         }
         int rows = entries.getCount();
         if (rows == 0) {
-            if(!completed){
-                TextView first = findViewById(R.id.instructions);
+            if (!completed){
                 first.setVisibility(View.VISIBLE);
             }
         } else {
+            if (rows == 1) {
+                if (!completed) {
+                    first.setVisibility(View.VISIBLE);
+                    second.setVisibility(View.VISIBLE);
+                    first.setText("Tap on your achievement title to see more details below");
+                }
+            }
             List<ImageButton> update = new ArrayList<ImageButton>();
             List<Button> select = new ArrayList<Button>();
             HashMap<Integer, Button> hashievement = new HashMap<Integer, Button>();
